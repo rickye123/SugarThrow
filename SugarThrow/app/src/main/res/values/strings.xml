@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">SugarThrow</string>
+    <string name="title">Sugar Throw</string>
+    <string name="search">Search</string>
+    <string name="action_settings">Settings</string>
+    <string name="food_diary_space">\tFood Diary</string>
+    <string name="play_space">\tPlay Sugar Throw</string>
+    <string name="title_activity_nav_drawer">nav_drawer</string>
+    <string name="search_text">Food Search</string>
+    <string name="your_regular">Your Regular Foods</string>
+
+    <!-- Activity Titles -->
+    <string name="home_title">Sugar Throw</string>
+    <string name="diary_title">Diary</string>
+
+    <!-- Content descriptions -->
+    <string name="firstAdd">First Add Item from Regular Foods</string>
+    <string name="secondAdd">Second Add Item from Regular Foods</string>
+    <string name="thirdAdd">Third Add Item from Regular Foods</string>
+    <string name="fourthAdd">Fourth Add Item from Regular Foods</string>
+    <string name="fifthAdd">Fifth Add Item from Regular Foods</string>
+
+    <string name="search_icon">The Search Icon</string>
+
+    <string name="yesterdayChevron">Select Left Chevron to Return Yesterday\'s Date</string>
+    <string name="tomorrowChevron">Select Right Chevron to Return Tomorrow\'s Date</string>
+
+    <string name="right_chevron">Chevron used as a link</string>
+    <string name="hero_image">Hero image goes here</string>
+
+    <string name="right_border">Right Border for Image</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <!-- Placeholders -->
+    <string name="placeholder_regFoods_1">Avacado</string>
+    <string name="placeholder_regFoods_2">415g of Heinz Baked Beans</string>
+    <string name="placeholder_regFoods_3">Jelly Babies</string>
+    <string name="placeholder_regFoods_4">Sugar Sugar Sugar Sugar</string>
+    <string name="placeholder_regFoods_5">Egg</string>
+    <string name="placeholder_date">01-01-1970</string>
+    <string name="placeholder_no_entries">No Entries</string>
+
+</resources>

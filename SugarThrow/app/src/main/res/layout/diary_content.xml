@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.example.richa.sugarthrow.DiaryActivity"
+    tools:showIn="@layout/diary_toolbar">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="8dp"
+        tools:ignore="UselessParent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <SearchView
+                android:id="@+id/diary_search"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </SearchView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    app:srcCompat="@drawable/ic_chevron_left_black"
+                    android:contentDescription="@string/yesterdayChevron" />
+
+                <TextView
+                    android:id="@+id/date_text"
+                    android:layout_width="252dp"
+                    android:layout_height="51dp"
+                    android:layout_weight="0.15"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:text="@string/placeholder_date"
+                    android:textColor="@color/black"
+                    android:textSize="24sp"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/imageView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    app:srcCompat="@drawable/ic_chevron_right_black"
+                    android:contentDescription="@string/tomorrowChevron"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/wrapper_diary"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal|center"
+                android:gravity="center_horizontal|center"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/diary_entries"
+                    android:layout_width="340dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/entry_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="42dp"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:text="@string/placeholder_no_entries"
+                        android:textSize="24sp" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/reg_food"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="@string/your_regular"
+                android:textColor="@color/black"
+                android:textSize="24sp" />
+
+            <LinearLayout
+                android:layout_width="313dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="10dp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/firstRegItem"
+                    android:layout_width="225dp"
+                    android:layout_height="46dp"
+                    android:layout_weight="1.00"
+                    android:gravity="start|center_vertical|center"
+                    android:text="@string/placeholder_regFoods_1"
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+
+                <ImageView
+                    android:id="@+id/addFirstReg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.00"
+                    android:contentDescription="@string/firstAdd"
+                    app:srcCompat="@drawable/ic_add_circle_black" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="313dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="10dp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/secondRegItem"
+                    android:layout_width="225dp"
+                    android:layout_height="46dp"
+                    android:layout_weight="1.00"
+                    android:gravity="start|center_vertical|center"
+                    android:text="@string/placeholder_regFoods_2"
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+
+                <ImageView
+                    android:id="@+id/addSecondReg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.00"
+                    android:contentDescription="@string/secondAdd"
+                    app:srcCompat="@drawable/ic_add_circle_black" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="313dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="10dp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/thirdRegItem"
+                    android:layout_width="225dp"
+                    android:layout_height="46dp"
+                    android:layout_weight="1.00"
+                    android:gravity="start|center_vertical|center"
+                    android:text="@string/placeholder_regFoods_3"
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+
+                <ImageView
+                    android:id="@+id/addThirdReg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.00"
+                    android:contentDescription="@string/thirdAdd"
+                    app:srcCompat="@drawable/ic_add_circle_black" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="313dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="10dp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/fourthRegItem"
+                    android:layout_width="225dp"
+                    android:layout_height="46dp"
+                    android:layout_weight="1.00"
+                    android:gravity="start|center_vertical|center"
+                    android:text="@string/placeholder_regFoods_4"
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+
+                <ImageView
+                    android:id="@+id/addFourthReg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.00"
+                    android:contentDescription="@string/fourthAdd"
+                    app:srcCompat="@drawable/ic_add_circle_black" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="313dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="10dp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/fifthRegItem"
+                    android:layout_width="225dp"
+                    android:layout_height="46dp"
+                    android:layout_weight="1.00"
+                    android:gravity="start|center_vertical|center"
+                    android:text="@string/placeholder_regFoods_5"
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+
+                <ImageView
+                    android:id="@+id/addFifthReg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.00"
+                    android:contentDescription="@string/fifthAdd"
+                    app:srcCompat="@drawable/ic_add_circle_black" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

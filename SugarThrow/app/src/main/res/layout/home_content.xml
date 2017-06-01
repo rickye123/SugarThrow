@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.example.richa.sugarthrow.MainActivity"
+    tools:showIn="@layout/home_toolbar">
+
+    <ScrollView
+        android:layout_width="368dp"
+        android:layout_height="499dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        tools:layout_editor_absoluteY="8dp"
+        tools:layout_editor_absoluteX="8dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        tools:ignore="UselessParent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:weightSum="1">
+
+            <ImageView
+                android:id="@+id/hero_image"
+                android:layout_width="match_parent"
+                android:layout_height="277dp"
+                app:srcCompat="@mipmap/ic_launcher"
+                android:contentDescription="@string/hero_image" />
+
+            <LinearLayout
+                android:layout_width="375dp"
+                android:layout_height="66dp"
+                android:layout_gravity="center"
+                android:layout_weight="0.47"
+                android:background="@drawable/rectangle_border"
+                android:foregroundGravity="center"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <ImageView
+                    android:id="@+id/diary_image"
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.11"
+                    android:clickable="true"
+                    android:background="@drawable/border_right"
+                    app:srcCompat="@mipmap/ic_launcher"
+                    android:contentDescription="@string/right_border"
+                    tools:ignore="NestedWeights" />
+
+                <TextView
+                    android:id="@+id/diary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:clickable="true"
+                    android:layout_weight="0.75"
+                    android:gravity="center_vertical"
+                    android:text="@string/food_diary_space"
+                    android:textSize="26sp" />
+
+                <ImageView
+                    android:id="@+id/diary_chevron"
+                    android:clickable="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.11"
+                    app:srcCompat="@drawable/ic_chevron_right_black"
+                    android:contentDescription="@string/right_chevron"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="375dp"
+                android:layout_height="66dp"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:layout_weight="0.47"
+                android:background="@drawable/rectangle_border"
+                android:foregroundGravity="center"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <ImageView
+                    android:id="@+id/play_sugar_image"
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.19"
+                    android:clickable="true"
+                    android:background="@drawable/border_right"
+                    app:srcCompat="@mipmap/ic_launcher"
+                    android:contentDescription="@string/right_border"
+                    tools:ignore="NestedWeights" />
+
+                <TextView
+                    android:id="@+id/play_sugar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="0.60"
+                    android:clickable="true"
+                    android:gravity="center_vertical"
+                    android:text="@string/play_space"
+                    android:textSize="26sp" />
+
+                <ImageView
+                    android:id="@+id/play_sugar_chevron"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:clickable="true"
+                    android:layout_weight="0.18"
+                    app:srcCompat="@drawable/ic_chevron_right_black"
+                    android:contentDescription="@string/right_chevron"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

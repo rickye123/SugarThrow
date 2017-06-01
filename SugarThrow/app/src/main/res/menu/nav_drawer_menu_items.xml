@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home_black"
+            android:title="Home" />
+        <item
+            android:id="@+id/nav_diary"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Diary" />
+        <item
+            android:id="@+id/nav_game"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="Sugar Throw" />
+        <item
+            android:id="@+id/nav_progress"
+            android:icon="@drawable/ic_menu_share"
+            android:title="Progress" />
+        <item
+            android:id="@+id/nav_risk"
+            android:icon="@drawable/ic_menu_send"
+            android:title="Risk Foods" />
+        <item
+            android:id="@+id/nav_database"
+            android:icon="@drawable/ic_restaurant_menu_black"
+            android:title="Database" />
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings_black"
+            android:title="Settings" />
+        <item
+            android:id="@+id/nav_info"
+            android:icon="@drawable/ic_info_black"
+            android:title="Info" />
+        <item
+            android:id="@+id/nav_help"
+            android:icon="@drawable/ic_help_black"
+            android:title="Help" />
+    </group>
+
+</menu>
