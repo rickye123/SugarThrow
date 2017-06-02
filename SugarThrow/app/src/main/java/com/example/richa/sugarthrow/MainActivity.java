@@ -118,9 +118,11 @@ public class MainActivity extends AppCompatActivity
      */
     // TODO implement functionality for these image clicks
     public void clickImageView(final ImageView image) {
+
         image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("ID: ", Integer.toString(v.getId()));
                 switch (v.getId()) {
                     case R.id.search_icon:
                         Log.d("CLICK", "search clicked");
@@ -134,6 +136,9 @@ public class MainActivity extends AppCompatActivity
                     case R.id.play_sugar_image:
                         Log.d("CLICK", "play sugar throw clicked");
 
+                        break;
+                    case R.id.myMinus1:
+                        Log.d("CLICK", "Clicked Minus");
                         break;
                     default:
                         // If we got here, the user's action was not recognized.
@@ -190,9 +195,12 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_home) {
+        Class className = this.getClass();
+
+        if (id == R.id.nav_home && !(className.equals(MainActivity.class))) {
             // Handle the camera action
-        } else if (id == R.id.nav_diary) {
+            launchActivity(MainActivity.class);
+        } else if (id == R.id.nav_diary && !(className.equals(DiaryActivity.class))) {
             launchActivity(DiaryActivity.class);
         } else if (id == R.id.nav_game) {
 

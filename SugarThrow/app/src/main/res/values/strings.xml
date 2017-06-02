@@ -35,11 +35,19 @@
 
     <!-- Placeholders -->
     <string name="placeholder_regFoods_1">Avacado</string>
-    <string name="placeholder_regFoods_2">415g of Heinz Baked Beans</string>
+    <string name="placeholder_regFoods_2">Cheddar Cheese - 1 cup, diced</string>
     <string name="placeholder_regFoods_3">Jelly Babies</string>
-    <string name="placeholder_regFoods_4">Sugar Sugar Sugar Sugar</string>
-    <string name="placeholder_regFoods_5">Egg</string>
+    <string name="placeholder_regFoods_4">Cheddar Cheese - 1 slice (1 oz)</string>
+    <string name="placeholder_regFoods_5">What happens when the name is </string>
     <string name="placeholder_date">01-01-1970</string>
     <string name="placeholder_no_entries">No Entries</string>
+
+    <string name="dropdown_sugar">Sugar</string>
+    <string name="dropdown_calories">Calories</string>
+    <string name="dropdown_fat">Fat</string>
+    <string name="dropdown_saturates">Saturates</string>
+    <string name="dropdown_carbs">Carbs</string>
+    <string name="dropdown_salt">Salt</string>
+    <string name="dropdown_protein">Protein</string>
 
 </resources>

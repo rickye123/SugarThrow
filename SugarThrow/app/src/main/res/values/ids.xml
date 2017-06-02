@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="myMinus1" type="id">10</item>
+    <item name="foodText" type="id">20</item>
+</resources>

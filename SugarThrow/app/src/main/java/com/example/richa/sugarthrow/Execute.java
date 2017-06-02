@@ -51,13 +51,21 @@ public class Execute {
         SQLiteDatabase db = database.getWritableDatabase();
         Cursor c = null;
         try {
-            c = db.rawQuery(SQL, arguments);
+            String[] args = new String[arguments.length];
+            int i = 0;
+            while(i < arguments.length) {
+                args[i] = arguments[i];
+                i++;
+            }
+            c = db.rawQuery(SQL, args);
         } catch (SQLException sqlException) {
             throw new Error(sqlException);
         }
 
         if (!c.moveToFirst()) {
             List<List<String>> table = new ArrayList<List<String>>();
+            table.add(new ArrayList<String>());
+            System.out.println("EMPTY SET");
             table.get(0).add("Empty set");
             return table;
         }
@@ -98,6 +106,15 @@ public class Execute {
         SQLiteDatabase db = database.getWritableDatabase();
         try {
             db.insert(tableName, null, values);
+        } catch (SQLException sqlException) {
+            throw new Error(sqlException);
+        }
+    }
+
+    public void sqlDelete(String tableName, String whereClause, String... args) {
+        SQLiteDatabase db = database.getWritableDatabase();
+        try {
+            db.delete(tableName, whereClause, args);
         } catch (SQLException sqlException) {
             throw new Error(sqlException);
         }
