@@ -16,7 +16,7 @@
             android:title="Sugar Throw" />
         <item
             android:id="@+id/nav_progress"
-            android:icon="@drawable/ic_menu_share"
+            android:icon="@drawable/ic_equalizer_black"
             android:title="Progress" />
         <item
             android:id="@+id/nav_risk"

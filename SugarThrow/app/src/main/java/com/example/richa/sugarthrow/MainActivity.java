@@ -47,10 +47,6 @@ public class MainActivity extends AppCompatActivity
     private Cursor c = null;
     private Execute executeSQL;
     private Display display = new Display();
-/*    private final String SQL_REGULAR_FOOD = "SELECT User.userName AS uname, Diary.theDate as entryDate, Food.name " +
-            "AS foodName, Food.foodId as fid, COUNT(*) AS quantity FROM Diary INNER JOIN " +
-            "Food ON Diary.foodId = Food.foodId INNER JOIN User ON User.userID = Diary.userId " +
-            "WHERE User.userName = ? GROUP BY Diary.foodId ORDER BY quantity DESC LIMIT 5";*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -198,25 +194,23 @@ public class MainActivity extends AppCompatActivity
         Class className = this.getClass();
 
         if (id == R.id.nav_home && !(className.equals(MainActivity.class))) {
-            // Handle the camera action
             launchActivity(MainActivity.class);
         } else if (id == R.id.nav_diary && !(className.equals(DiaryActivity.class))) {
             launchActivity(DiaryActivity.class);
-        } else if (id == R.id.nav_game) {
-
-        } else if (id == R.id.nav_progress) {
-
-        } else if (id == R.id.nav_risk) {
-
-        } else if (id == R.id.nav_database) {
-
-        } else if (id == R.id.nav_settings) {
-
-        } else if (id == R.id.nav_info) {
-
-        }
-         else if (id == R.id.nav_help) {
-
+        } else if (id == R.id.nav_game && !(className.equals(GameActivity.class))) {
+            launchActivity(GameActivity.class);
+        } else if (id == R.id.nav_progress && !(className.equals(ProgressActivity.class))) {
+            launchActivity(ProgressActivity.class);
+        } else if (id == R.id.nav_risk && !(className.equals(RiskActivity.class))) {
+            launchActivity(RiskActivity.class);
+        } else if (id == R.id.nav_database && !(className.equals(FoodDatabaseActivity.class))) {
+            launchActivity(FoodDatabaseActivity.class);
+        } else if (id == R.id.nav_settings && !(className.equals(SettingsActivity.class))) {
+            launchActivity(SettingsActivity.class);
+        } else if (id == R.id.nav_info && !(className.equals(InfoActivity.class))) {
+            launchActivity(InfoActivity.class);
+        } else if (id == R.id.nav_help && !(className.equals(HelpActivity.class))) {
+            launchActivity(HelpActivity.class);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

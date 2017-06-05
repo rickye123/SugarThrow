@@ -67,6 +67,8 @@ public class TimeKeeper {
 
     public String getPrevDate(String currentDate) {
 
+        System.out.println("CURRENT DATE " + currentDate);
+
         Map<String, String> time = getDateVariables(currentDate);
 
         int theDay = Integer.parseInt(time.get("day"));

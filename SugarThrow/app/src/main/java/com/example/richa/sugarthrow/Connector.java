@@ -20,7 +20,7 @@ import android.util.Log;
 public class Connector extends SQLiteOpenHelper {
 
     private String DB_PATH = null;
-    private static String TAG = "DatabaseHelper";
+    private static String TAG = "Connector";
     private static String DB_NAME = "appdatabase.db";
     private SQLiteDatabase sqliteDatabase;
     private final Context context;

@@ -76,6 +76,36 @@ public class Execute {
 
     /**
      *
+     * @param SQL
+     * @param arguments
+     * @return
+     */
+    public String sqlGetSingleStringFromQuery(String SQL, String... arguments) {
+        SQLiteDatabase db = database.getWritableDatabase();
+        Cursor c = null;
+        try {
+            String[] args = new String[arguments.length];
+            int i = 0;
+            while(i < arguments.length) {
+                args[i] = arguments[i];
+                i++;
+            }
+            c = db.rawQuery(SQL, args);
+        } catch (SQLException sqlException) {
+            throw new Error(sqlException);
+        }
+
+        if (!c.moveToFirst()) {
+            String field = "Empty set";
+            return field;
+        }
+        String field = c.getString(0);
+        return field;
+
+    }
+
+    /**
+     *
      * @param tableName
      * @return
      */
@@ -111,6 +141,11 @@ public class Execute {
         }
     }
 
+    public void sqlExecuteSQL(String SQL, String ... args) {
+        SQLiteDatabase db = database.getWritableDatabase();
+        db.execSQL(SQL, args);
+    }
+
     public void sqlDelete(String tableName, String whereClause, String... args) {
         SQLiteDatabase db = database.getWritableDatabase();
         try {
@@ -118,6 +153,20 @@ public class Execute {
         } catch (SQLException sqlException) {
             throw new Error(sqlException);
         }
+    }
+
+    public void sqlUpdate(String tableName, ContentValues values,
+                          String whereClause, String ... args) {
+
+        SQLiteDatabase db = database.getWritableDatabase();
+
+        try {
+            db.update(tableName, values, whereClause, args);
+        } catch (SQLException sqlException) {
+            throw new Error(sqlException);
+        }
+
+
     }
 
 }

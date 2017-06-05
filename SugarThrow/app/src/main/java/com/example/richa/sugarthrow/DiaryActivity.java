@@ -213,7 +213,7 @@ public class DiaryActivity extends MainActivity {
         number = viewCreator.createTextInDiary(quantity, 20, 0, 0, 0, 0, 0);
         cross = viewCreator.createTextInDiary("x", 10, 0, 10, 0, 10, 0);
         food = viewCreator.createTextInDiary(foodName, 250, row);
-        minus = viewCreator.createImageInDiary(row, R.drawable.ic_remove_circle_black);
+        minus = viewCreator.createImageInDiary(row, R.drawable.ic_remove_circle_black, "minusTag");
 
         clickToAddOrRemove(minus);
         clickDropDown(food);
@@ -241,7 +241,6 @@ public class DiaryActivity extends MainActivity {
         group.add(quantity); // quantity
         group.add(measure); // measure is empty as calorie is a measurement
 
-        System.out.println("SUM AMOUNT "  + sumAmount);
 
         double num = Double.parseDouble(quantity);
         double percentage = ((sumAmount + num) / amount) * 100;
@@ -349,6 +348,11 @@ public class DiaryActivity extends MainActivity {
         }
     }
 
+    public void updatePoints(String userName, String SQL) {
+
+        executeSQL.sqlExecuteSQL(SQL, userName);
+    }
+
     public void insertFromRegularFoods(String date, String foodId, String userId) {
 
         ContentValues values = new ContentValues();
@@ -391,6 +395,13 @@ public class DiaryActivity extends MainActivity {
         populateRegularFoods(username);
 
         UpdateDiaryEntries(theDate, username);
+        System.out.println("CURRENT DATE " + date.convertDateFormat(date.getCurrentDate()));
+        System.out.println("theDate " + theDate);
+        if(date.convertDateFormat(date.getCurrentDate()).equals(theDate)) {
+            updatePoints(username, SqlQueries.SQL_INCREMENT_POINTS_1);
+        }
+
+
     }
 
     public void removeFromDiaryEntries(String theDate, String username, int id) {
@@ -405,6 +416,13 @@ public class DiaryActivity extends MainActivity {
 
         executeSQL.sqlDelete("Diary", "diaryId = ?", diaryId);
         populateRegularFoods(username);
+        String points = executeSQL.sqlGetSingleStringFromQuery(SqlQueries.SQL_POINTS, username);
+        System.out.println(points);
+        if(Integer.parseInt(points) <= 0) {
+            updatePoints(username, SqlQueries.SQL_SET_POINTS_0);
+        } else {
+            updatePoints(username, SqlQueries.SQL_DECREMENT_POINTS_1);
+        }
         UpdateDiaryEntries(theDate, username);
     }
 

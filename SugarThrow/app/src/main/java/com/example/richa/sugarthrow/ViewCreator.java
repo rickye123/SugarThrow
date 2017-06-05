@@ -39,20 +39,20 @@ public class ViewCreator extends MainActivity {
 
     }
 
-    public ImageView createImageInDiary(int row, int drawableResource) {
+    public ImageView createImageInDiary(int row, int drawableResource, String tag) {
 
         ImageView minus = new ImageView(context);
         int minusWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60 ,
                 context.getResources().getDisplayMetrics());
 
-        minus.setImageResource(R.drawable.ic_remove_circle_black);
+        minus.setImageResource(drawableResource);
         minus.setLayoutParams(new LinearLayoutCompat.LayoutParams(minusWidth,
                 LinearLayout.LayoutParams.MATCH_PARENT));
         minus.setForegroundGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
         minus.setClickable(true);
 
         minus.setId(row);
-        minus.setTag("minusTag");
+        minus.setTag(tag);
 
         return minus;
     }
