@@ -46,7 +46,7 @@ public class ProgressActivity extends MainActivity {
     private Connector database;
     private static String TAG = "ProgressActivityTag";
     private Execute executeSql;
-    private Display display = new Display();
+    private TableDisplay display = new TableDisplay();
     private TimeKeeper date = new TimeKeeper();
     private String[] names = {"Sugar", "Calories", "Fat", "Saturates", "Carbs", "Salt", "Protein"};
     private Integer[] ids = {R.id.pie_sugar, R.id.pie_calories, R.id.pie_fat, R.id.pie_saturates,
@@ -77,8 +77,9 @@ public class ProgressActivity extends MainActivity {
         pieChartCreator("re16621");
 
         points = (TextView)findViewById(R.id.progress_points);
-        String userPoints = executeSql.sqlGetSingleStringFromQuery(SqlQueries.SQL_POINTS, "re16621");
-        points.setText(userPoints);
+        List<List<String>> userPoints = executeSql.sqlGetFromQuery(SqlQueries.SQL_POINTS, "re16621");
+        display.printTable("Points", userPoints);
+        points.setText(userPoints.get(0).get(0));
 
     }
 
@@ -92,10 +93,6 @@ public class ProgressActivity extends MainActivity {
             String day = date.getPrevDate(prevDay);
             days[i] = day;
             prevDay = day;
-        }
-
-        for(String s : days) {
-            System.out.println(s);
         }
 
         reverseArray(days);
@@ -290,10 +287,6 @@ public class ProgressActivity extends MainActivity {
 
         // create pie entries from the dataset
         ArrayList<PieEntry> yEntries = new ArrayList<PieEntry>();
-
-        System.out.println("DATASET 0 + " + dataset.get(0));
-        System.out.println(dataset.get(1));
-
 
         if(dataset.get(0) > 100) {
             dataset.remove(1);

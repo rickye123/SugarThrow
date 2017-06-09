@@ -2,6 +2,7 @@ package com.example.richa.sugarthrow;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.media.Image;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -10,9 +11,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-/**
- * Created by richa on 02/06/2017.
- */
+import java.util.ArrayList;
+import java.util.List;
 
 public class ViewCreator extends MainActivity {
 
@@ -39,10 +39,32 @@ public class ViewCreator extends MainActivity {
 
     }
 
+    public ImageView createImage(int row, int drawableResource, int height,
+                                 int width, int gravity, String tag) {
+
+        ImageView image = new ImageView(context);
+        int imageWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, width ,
+                context.getResources().getDisplayMetrics());
+        int imageHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, height ,
+                context.getResources().getDisplayMetrics());
+
+        image.setImageResource(drawableResource);
+        image.setLayoutParams(new LinearLayoutCompat.LayoutParams(imageWidth,
+                imageHeight));
+        image.setForegroundGravity(gravity);
+        image.setClickable(true);
+
+        image.setId(row);
+        image.setTag(tag);
+
+        return image;
+
+    }
+
     public ImageView createImageInDiary(int row, int drawableResource, String tag) {
 
         ImageView minus = new ImageView(context);
-        int minusWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60 ,
+        int minusWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40 ,
                 context.getResources().getDisplayMetrics());
 
         minus.setImageResource(drawableResource);
@@ -65,7 +87,7 @@ public class ViewCreator extends MainActivity {
      * @param margins
      * @return
      */
-    public TextView createTextInDiary(String text, int width, int id, int... margins) {
+    public TextView createTextInDiary(String text, int width, int id, String tag, int... margins) {
 
         TextView textView = new TextView(context);
         int textWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, width ,
@@ -77,7 +99,7 @@ public class ViewCreator extends MainActivity {
         textView.setGravity(Gravity.CENTER_VERTICAL);
         textView.setClickable(true);
         textView.setId(id);
-        textView.setTag("diaryEntryTag");
+        textView.setTag(tag);
 
         LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(textWidth,
                 LinearLayout.LayoutParams.MATCH_PARENT);
@@ -104,5 +126,27 @@ public class ViewCreator extends MainActivity {
         }
         return true;
     }
+
+    public TextView createText(String text, int width, int height, int gravity, int background,
+                           int textSize, int textColor) {
+
+        int textWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, width ,
+                context.getResources().getDisplayMetrics());
+        int textHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, height ,
+                context.getResources().getDisplayMetrics());
+
+        TextView textView = new TextView(context);
+        textView.setLayoutParams(new ViewGroup.LayoutParams(textWidth, textHeight));
+        textView.setText(text);
+        textView.setTextSize(textSize);
+        textView.setGravity(gravity);
+        textView.setTextColor(textColor);
+        textView.setBackgroundResource(background);
+
+        return textView;
+
+    }
+
+
 
 }

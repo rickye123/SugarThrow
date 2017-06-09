@@ -27,7 +27,7 @@ public class LayoutCreator extends MainActivity {
 
     public LinearLayout createNoEntries() {
 
-        int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 232 ,
+        int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200 ,
                 context.getResources().getDisplayMetrics());
         int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 158 ,
                 context.getResources().getDisplayMetrics());
@@ -129,5 +129,28 @@ public class LayoutCreator extends MainActivity {
         return dropDown;
 
     }
+
+    public LinearLayout createNoResultsLayout() {
+
+        int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 232 ,
+                context.getResources().getDisplayMetrics());
+
+        int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 158 ,
+                context.getResources().getDisplayMetrics());
+
+        LinearLayout searchEntries = createBasicLinearLayout(LinearLayout.HORIZONTAL,
+                width, height, Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
+
+        TextView noResults = viewCreator.createText("No Results", 232, 52,
+                Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, R.drawable.dashed_border,
+                24, R.color.black);
+
+        searchEntries.addView(noResults);
+
+        return searchEntries;
+
+    }
+
+
 
 }

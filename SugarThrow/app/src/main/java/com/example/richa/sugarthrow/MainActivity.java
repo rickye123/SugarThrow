@@ -5,10 +5,13 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.database.*;
 import android.database.SQLException;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
+import android.view.Display;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -46,17 +49,28 @@ public class MainActivity extends AppCompatActivity
     private static Connector database;
     private Cursor c = null;
     private Execute executeSQL;
-    private Display display = new Display();
+    private TableDisplay display = new TableDisplay();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_activity);
+
+        Display screenDisplay = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        screenDisplay.getSize(size);
+        int width = size.x;
+        System.out.println("WIDTH " + width);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         createDrawer(toolbar);
         createNavigationView(R.id.nav_home);
+
+        ViewPager viewPager = (ViewPager)findViewById(R.id.viewPageAndroid);
+        AndroidImageAdapter adapterView = new AndroidImageAdapter(this);
+        viewPager.setAdapter(adapterView);
 
         searchIcon = (ImageView)findViewById(R.id.search_icon);
         clickImageView(searchIcon);
@@ -72,12 +86,6 @@ public class MainActivity extends AppCompatActivity
         database.openConnection();
 
         executeSQL = new Execute(database);
-
-        List<List<String>> users = executeSQL.sqlGetAll("User");
-        display.printTable("Users", users);
-
-        List<List<String>> food = executeSQL.sqlGetAll("Food");
-        display.printTable("Food", food);
 
     }
 
@@ -150,7 +158,7 @@ public class MainActivity extends AppCompatActivity
      * Launches the new activity
      * @param className - the activity class to launch
      */
-    private void launchActivity(Class className) {
+    public void launchActivity(Class className) {
         Intent intent = new Intent(this, className);
         startActivity(intent);
     }
@@ -197,8 +205,8 @@ public class MainActivity extends AppCompatActivity
             launchActivity(MainActivity.class);
         } else if (id == R.id.nav_diary && !(className.equals(DiaryActivity.class))) {
             launchActivity(DiaryActivity.class);
-        } else if (id == R.id.nav_game && !(className.equals(GameActivity.class))) {
-            launchActivity(GameActivity.class);
+        } else if (id == R.id.nav_game && !(className.equals(UnityPlayerActivity.class))) {
+            launchActivity(UnityPlayerActivity.class);
         } else if (id == R.id.nav_progress && !(className.equals(ProgressActivity.class))) {
             launchActivity(ProgressActivity.class);
         } else if (id == R.id.nav_risk && !(className.equals(RiskActivity.class))) {

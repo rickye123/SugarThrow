@@ -50,14 +50,14 @@
 
                 <LinearLayout
                     android:id="@+id/food_search_entries"
-                    android:layout_width="340dp"
+                    android:layout_width="310dp"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical|center_horizontal"
                     android:orientation="vertical">
 
                     <LinearLayout
                         android:id="@+id/search_entries"
-                        android:layout_width="232dp"
+                        android:layout_width="200dp"
                         android:layout_height="158dp"
                         android:gravity="center_vertical|center_horizontal"
                         android:orientation="horizontal">

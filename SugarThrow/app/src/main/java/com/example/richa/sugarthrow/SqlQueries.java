@@ -17,7 +17,7 @@ public class SqlQueries {
     public static final String SQL_INCREMENT_POINTS_10 = "UPDATE User SET points = points + 10 WHERE User.userName = ?";
     public static final String SQL_DECREMENT_POINTS_10 = "UPDATE User SET points = points - 10 WHERE User.userName = ?";
 
-    public static final String SQL_IN_DIARY= "SELECT Food.name as food, COUNT(*) AS quantity FROM Diary INNER JOIN " +
+    public static final String SQL_IN_DIARY= "SELECT Food.name as food, COUNT(*) AS quantity, Food.foodId FROM Diary INNER JOIN " +
             "User ON Diary.userId = User.userId INNER JOIN Food ON Diary.foodId = Food.foodId WHERE Diary.theDate = ? " +
             "AND User.userName = ? GROUP BY Diary.foodId";
 
@@ -37,6 +37,8 @@ public class SqlQueries {
     public static final String SQL_DELETE_FROM_DIARY = "DELETE FROM Diary WHERE diaryId = ?";
 
     public static final String SQL_SELECT_USER = "SELECT userId FROM User WHERE userName = ?";
+
+    public static final String SQL_SELECT_SPECIFIC_USER = "SELECT * FROM User WHERE userName = ?";
 
     public static final String SQL_SELECT_FOOD = "SELECT * FROM Food WHERE name = ?";
 

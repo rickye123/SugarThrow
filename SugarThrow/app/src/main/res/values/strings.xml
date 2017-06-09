@@ -8,6 +8,8 @@
     <string name="title_activity_nav_drawer">nav_drawer</string>
     <string name="search_text">Food Search</string>
     <string name="your_regular">Your Regular Foods</string>
+    <string name="space"> </string>
+    <string name="gram">g</string>
 
     <!-- Activity Titles -->
     <string name="home_title">Sugar Throw</string>
@@ -73,5 +75,20 @@
     <string name="placeholder_button">Button</string>
     <string name="search_no_results">No Results</string>
     <string name="search_for_foods">Search For Foods</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="colour">Colour</string>
+    <string name="notifications">Notifications</string>
+    <string name="profile">Profile</string>
+    <string name="name">Name</string>
+    <string name="name_placeholder">Richard Ellor</string>
+    <string name="username">Username</string>
+    <string name="username_placeholder">re16621</string>
+    <string name="blue">Blue</string>
+    <string name="turquoise">Turquoise</string>
+    <string name="points">Points</string>
+    <string name="height">Height</string>
+    <string name="weight">Weight</string>
+    <string name="notifications_on">Notifications On</string>
+    <string name="percent_sign">%</string>
 
 </resources>

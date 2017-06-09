@@ -65,7 +65,6 @@ public class Execute {
         if (!c.moveToFirst()) {
             List<List<String>> table = new ArrayList<List<String>>();
             table.add(new ArrayList<String>());
-            System.out.println("EMPTY SET");
             table.get(0).add("Empty set");
             return table;
         }
@@ -120,6 +119,7 @@ public class Execute {
 
         if (!c.moveToFirst()) {
             List<List<String>> table = new ArrayList<List<String>>();
+            table.add( new ArrayList<String>());
             table.get(0).add("Empty set");
             return table;
         }

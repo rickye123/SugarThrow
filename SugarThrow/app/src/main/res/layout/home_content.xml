@@ -26,100 +26,236 @@
             android:orientation="vertical"
             android:weightSum="1">
 
-            <ImageView
-                android:id="@+id/hero_image"
-                android:layout_width="match_parent"
-                android:layout_height="277dp"
-                app:srcCompat="@mipmap/ic_launcher"
-                android:contentDescription="@string/hero_image" />
-
             <LinearLayout
-                android:layout_width="375dp"
-                android:layout_height="66dp"
-                android:layout_gravity="center"
-                android:layout_weight="0.47"
-                android:background="@drawable/rectangle_border"
-                android:foregroundGravity="center"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:weightSum="1">
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center_vertical|center_horizontal"
+                android:orientation="horizontal">
 
-                <ImageView
-                    android:id="@+id/diary_image"
-                    android:layout_width="40dp"
+                <LinearLayout
+                    android:layout_width="150dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.11"
-                    android:clickable="true"
-                    android:background="@drawable/border_right"
-                    app:srcCompat="@mipmap/ic_launcher"
-                    android:contentDescription="@string/right_border"
-                    tools:ignore="NestedWeights" />
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/diary"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
-                    android:clickable="true"
-                    android:layout_weight="0.75"
-                    android:gravity="center_vertical"
-                    android:text="@string/food_diary_space"
-                    android:textSize="26sp" />
+                    <TextView
+                        android:id="@+id/daily_sugar_left"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:text="100%" />
+                </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/diary_chevron"
-                    android:clickable="true"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="150dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.11"
-                    app:srcCompat="@drawable/ic_chevron_right_black"
-                    android:contentDescription="@string/right_chevron"/>
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|end"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/total_points"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:text="0 pts" />
+                </LinearLayout>
 
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="375dp"
-                android:layout_height="66dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/viewPageAndroid"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
                 android:layout_gravity="center"
-                android:layout_margin="10dp"
+                android:layout_marginTop="10dp"
                 android:layout_weight="0.47"
-                android:background="@drawable/rectangle_border"
                 android:foregroundGravity="center"
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:weightSum="1">
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/diary_image"
+                        android:layout_width="40dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:contentDescription="@string/right_border"
+                        app:srcCompat="@mipmap/ic_launcher"
+                        tools:ignore="NestedWeights" />
+
+                    <TextView
+                        android:id="@+id/diary"
+                        android:layout_width="200dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:gravity="center_vertical"
+                        android:text="@string/food_diary_space"
+                        android:textColor="@color/black"
+                        android:textSize="26sp" />
+
+                    <ImageView
+                        android:id="@+id/diary_chevron"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:contentDescription="@string/right_chevron"
+                        app:srcCompat="@drawable/ic_chevron_right_black" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:layout_weight="0.47"
+                android:foregroundGravity="center"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/play_sugar_image"
+                        android:layout_width="40dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:contentDescription="@string/right_border"
+                        app:srcCompat="@mipmap/ic_launcher"
+                        tools:ignore="NestedWeights" />
+
+                    <TextView
+                        android:id="@+id/play_sugar"
+                        android:layout_width="200dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:gravity="center_vertical"
+                        android:text="@string/play_space"
+                        android:textColor="@color/black"
+                        android:textSize="26sp" />
+
+                    <ImageView
+                        android:id="@+id/play_sugar_chevron"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:contentDescription="@string/right_chevron"
+                        app:srcCompat="@drawable/ic_chevron_right_black" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
+
                 <ImageView
-                    android:id="@+id/play_sugar_image"
-                    android:layout_width="40dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.19"
-                    android:clickable="true"
-                    android:background="@drawable/border_right"
-                    app:srcCompat="@mipmap/ic_launcher"
-                    android:contentDescription="@string/right_border"
-                    tools:ignore="NestedWeights" />
+                    android:id="@+id/imageView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    app:srcCompat="@drawable/scenic" />
 
-                <TextView
-                    android:id="@+id/play_sugar"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="0.60"
-                    android:clickable="true"
-                    android:gravity="center_vertical"
-                    android:text="@string/play_space"
-                    android:textSize="26sp" />
+                    android:background="@drawable/border_bottom"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:orientation="vertical">
 
-                <ImageView
-                    android:id="@+id/play_sugar_chevron"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:clickable="true"
-                    android:layout_weight="0.18"
-                    app:srcCompat="@drawable/ic_chevron_right_black"
-                    android:contentDescription="@string/right_chevron"/>
+                    <LinearLayout
+                        android:layout_width="325dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:orientation="horizontal">
 
+                        <TextView
+                            android:id="@+id/textView3"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical|start"
+                            android:text="Article Title"
+                            android:textColor="@color/black"
+                            android:textSize="20sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="325dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical|start"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:id="@+id/clickable_layout_fact"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:clickable="true"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/textView4"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="10dp"
+                                android:layout_weight="1"
+                                android:text="An interesting fact..."
+                                android:textColor="@color/black"
+                                android:textSize="18sp" />
+
+                            <TextView
+                                android:id="@+id/interesting_fact_beans"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center_vertical|start"
+                                android:text="Did you know that there is hidden sugar in a lot of the food you eat? A tin of baked beans has as much as 20% of your daily amount"
+                                android:textColor="@color/black"
+                                android:textSize="18sp"
+                                android:visibility="gone" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
             </LinearLayout>
 
         </LinearLayout>

@@ -17,11 +17,14 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
+import android.text.Layout;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -49,10 +52,13 @@ public class DiaryActivity extends MainActivity {
     private LayoutCreator layoutCreator = new LayoutCreator(this, viewCreator);
     private LinearLayout diaryLayout;
     private Execute executeSQL;
-    private Display display = new Display();
+    private TableDisplay display = new TableDisplay();
     private TimeKeeper date = new TimeKeeper();
     private boolean isOpen = false;
+    String[] places = {"First", "Second", "Third", "Fourth", "Fifth"};
+    String[] placesLower = {"first", "second", "third", "fourth", "fifth"};
     List<List<String>> foodContents = new ArrayList<List<String>>();
+    private static String queryRequest;
 
     public void clearRegularFoodsTable() {
         while (!regularFoods.isEmpty()) {
@@ -63,6 +69,10 @@ public class DiaryActivity extends MainActivity {
                 i++;
             }
         }
+    }
+
+    public static String getRequest() {
+        return queryRequest;
     }
 
     public void clearTableContents(List<List<String>> table) {
@@ -112,9 +122,9 @@ public class DiaryActivity extends MainActivity {
 
         this.database = MainActivity.getDatabaseConnection();
         SQLiteDatabase db = database.getWritableDatabase();
-        if(db.isOpen()) {
+/*        if(db.isOpen()) {
             Toast.makeText(this, "Database is open", Toast.LENGTH_SHORT).show();
-        }
+        }*/
 
         createClickableAddButtons();
 
@@ -130,13 +140,36 @@ public class DiaryActivity extends MainActivity {
 
         searchView = (SearchView)findViewById(R.id.diary_search);
         searchView.setQueryHint("Food Search");
+        clickSearch(searchView);
+        // perform set on query text listener event
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                queryRequest = query;
+                launchActivity(FoodDatabaseActivity.class);
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
 
-        populateRegularFoods("re16621");
+        populateRegularFoods("re16621", false);
 
         diaryLayout = (LinearLayout)findViewById(R.id.diary_entries);
 
         createDiaryEntries(date.convertDateFormat(dateText.getText().toString()), "re16621");
 
+    }
+
+    public void clickSearch(final SearchView view) {
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                view.setIconified(false);
+            }
+        });
     }
 
 
@@ -180,10 +213,9 @@ public class DiaryActivity extends MainActivity {
     }
 
     private void createDiaryEntries(String date, String username) {
+
         clearDiaryEntriesTable();
-        System.out.println("DATE IN SQL QUERY " + date);
         diary = executeSQL.sqlGetFromQuery(SqlQueries.SQL_IN_DIARY, date, username);
-        display.printTable("Diary Entries", diary);
 
         if(!diary.get(0).get(0).equals("Empty set")) {
             LinearLayout diaryEntries = (LinearLayout)findViewById(R.id.no_entry_wrapper);
@@ -198,34 +230,66 @@ public class DiaryActivity extends MainActivity {
 
     public void populateDiary(String quantity, String foodName, int row, boolean dropDownOpen) {
 
-        int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 42 ,
+        int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50 ,
+                getResources().getDisplayMetrics());
+
+        int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20 ,
                 getResources().getDisplayMetrics());
 
         LinearLayout mainWrapper = layoutCreator.createBasicLinearLayout(LinearLayout.VERTICAL,
                 LinearLayout.LayoutParams.MATCH_PARENT,  LinearLayout.LayoutParams.WRAP_CONTENT,
                 Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
 
-        LinearLayout wrapper = layoutCreator.createBasicLinearLayout(LinearLayout.HORIZONTAL,
-                LinearLayout.LayoutParams.MATCH_PARENT, height, Gravity.NO_GRAVITY, 0, 0, 0, 10);
+        LinearLayout wrapper =  layoutCreator.createBasicLinearLayout(LinearLayout.HORIZONTAL,
+                LinearLayout.LayoutParams.MATCH_PARENT,  LinearLayout.LayoutParams.WRAP_CONTENT,
+                Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
+
+        LinearLayout rightWrapper = layoutCreator.createBasicLinearLayout(LinearLayout.HORIZONTAL,
+                LinearLayout.LayoutParams.WRAP_CONTENT, height, Gravity.NO_GRAVITY, 0, 10, 0, 10);
+
+        LinearLayout leftWrapper = layoutCreator.createBasicLinearLayout(LinearLayout.VERTICAL,
+                LinearLayout.LayoutParams.WRAP_CONTENT, height, Gravity.NO_GRAVITY, 0, 10, 0, 10);
+
+        wrapper.addView(leftWrapper);
+        wrapper.addView(rightWrapper);
 
         mainWrapper.addView(wrapper);
 
-        number = viewCreator.createTextInDiary(quantity, 20, 0, 0, 0, 0, 0);
-        cross = viewCreator.createTextInDiary("x", 10, 0, 10, 0, 10, 0);
-        food = viewCreator.createTextInDiary(foodName, 250, row);
-        minus = viewCreator.createImageInDiary(row, R.drawable.ic_remove_circle_black, "minusTag");
+        ImageView arrowUp = viewCreator.createImage(row, R.drawable.ic_keyboard_arrow_up_black,
+                25, 40, Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, "arrowUp");
+        ImageView arrowDown = viewCreator.createImage(row, R.drawable.ic_keyboard_arrow_down_black,
+                25, 40, Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, "arrowDown");
 
+        leftWrapper.addView(arrowUp);
+        leftWrapper.addView(arrowDown);
+
+        number = viewCreator.createTextInDiary(quantity, 20, 0, "diaryEntryTag", 0, 0, 0, 0);
+        cross = viewCreator.createTextInDiary("x", 10, 0, "diaryEntryTag", 10, 0, 10, 0);
+        food = viewCreator.createTextInDiary(foodName, 220, row, "diaryEntryTag");
+        food.setSingleLine(true);
+        food.setEllipsize(TextUtils.TruncateAt.END);
+        minus = viewCreator.createImageInDiary(row, R.drawable.ic_remove_circle_black, "minusTag");
+        minus.setColorFilter(getColor(R.color.removeRed));
+
+        clickToAddOrRemove(arrowDown);
+        clickToAddOrRemove(arrowUp);
         clickToAddOrRemove(minus);
         clickDropDown(food);
 
-        wrapper.addView(number);
-        wrapper.addView(cross);
-        wrapper.addView(food);
-        wrapper.addView(minus);
 
-        if(dropDownOpen == true) {
+        rightWrapper.addView(number);
+        rightWrapper.addView(cross);
+        rightWrapper.addView(food);
+        rightWrapper.addView(minus);
+
+        if(dropDownOpen) {
             LinearLayout dropDownWrapper = createDropDownWrapper(row, foodName);
             mainWrapper.addView(dropDownWrapper);
+            food.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+            food.setMarqueeRepeatLimit(3);
+            food.isFocusable();
+            food.setSelected(true);
+            food.canScrollHorizontally(View.SCROLL_INDICATOR_RIGHT);
         }
 
         diaryLayout.addView(mainWrapper);
@@ -233,16 +297,49 @@ public class DiaryActivity extends MainActivity {
     }
 
     public List<String> findFoodContents(String foodGroup, String quantity, String measure,
-                                         double amount, double sumAmount) {
+                                         double amount) {
 
         List<String> group = new ArrayList<String>();
+        double num;
 
         group.add(foodGroup);
         group.add(quantity); // quantity
         group.add(measure); // measure is empty as calorie is a measurement
 
+        if(!quantity.equals("null")) {
+            num = Double.parseDouble(quantity);
+        }
+        else {
+            num = 0;
+        }
+        double percentage = ((num) / amount) * 100;
+        String s = String.format("%.2f", percentage);
+        group.add(s);
 
-        double num = Double.parseDouble(quantity);
+        return group;
+    }
+
+    public List<String> findContentsPlusSumAmount(String foodGroup, String quantity, String measure,
+                                         double amount, double sumAmount) {
+
+        List<String> group = new ArrayList<String>();
+
+        // find the sum for that foodGroup
+        List<List<String>> sumOfFood = executeSQL.sqlGetFromQuery(SqlQueries.SQL_SUM_OF_FOODS,
+                "re16621", date.convertDateFormat(dateText.getText().toString()));
+
+        double num;
+
+        group.add(foodGroup);
+        group.add(quantity); // quantity
+        group.add(measure); // measure is empty as calorie is a measurement
+
+        if(!quantity.equals("null")) {
+            num = Double.parseDouble(quantity);
+        }
+        else {
+            num = 0;
+        }
         double percentage = ((sumAmount + num) / amount) * 100;
         String s = String.format("%.2f", percentage);
         Log.d("PERCENTAGE", s);
@@ -257,24 +354,13 @@ public class DiaryActivity extends MainActivity {
         clearTableContents(foodContents);
         foodContents = executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_FOOD, foodName);
 
-        // find the sum for that foodGroup
-        List<List<String>> sumOfFood = executeSQL.sqlGetFromQuery(SqlQueries.SQL_SUM_OF_FOODS,
-                "re16621", date.convertDateFormat(dateText.getText().toString()));
-
-        List<String> calories = findFoodContents("Calories", foodContents.get(0).get(2), " ", 2000,
-                Double.parseDouble(sumOfFood.get(0).get(0)));
-        List<String> sugar = findFoodContents("Sugar", foodContents.get(0).get(3), "g", 90,
-                Double.parseDouble(sumOfFood.get(0).get(1)));
-        List<String> fat = findFoodContents("Fat", foodContents.get(0).get(4), "g", 70,
-                Double.parseDouble(sumOfFood.get(0).get(2)));
-        List<String> saturates = findFoodContents("Saturates", foodContents.get(0).get(5), "g", 20,
-                Double.parseDouble(sumOfFood.get(0).get(3)));
-        List<String> carbs = findFoodContents("Carbs", foodContents.get(0).get(6), "g", 260,
-                Double.parseDouble(sumOfFood.get(0).get(4)));
-        List<String> salt = findFoodContents("Salt", foodContents.get(0).get(7), "g", 6,
-                Double.parseDouble(sumOfFood.get(0).get(5)));
-        List<String> protein = findFoodContents("Protein", foodContents.get(0).get(8), "g", 50,
-                Double.parseDouble(sumOfFood.get(0).get(6)));
+        List<String> calories = findFoodContents("Calories", foodContents.get(0).get(2), " ", 2000);
+        List<String> sugar = findFoodContents("Sugar", foodContents.get(0).get(3), "g", 90);
+        List<String> fat = findFoodContents("Fat", foodContents.get(0).get(4), "g", 70);
+        List<String> saturates = findFoodContents("Saturates", foodContents.get(0).get(5), "g", 20);
+        List<String> carbs = findFoodContents("Carbs", foodContents.get(0).get(6), "g", 260);
+        List<String> salt = findFoodContents("Salt", foodContents.get(0).get(7), "g", 6);
+        List<String> protein = findFoodContents("Protein", foodContents.get(0).get(8), "g", 50);
 
         List<List<String>> groupedContents = new ArrayList<List<String>>();
         groupedContents.add(calories);
@@ -298,7 +384,6 @@ public class DiaryActivity extends MainActivity {
         for(int i = 0; i < 7; i++) {
             List<Integer> color = new ArrayList<Integer>();
             if(Double.parseDouble(groupedContents.get(i).get(3)) > 100) {
-                System.out.println("THIS ONE IS " + i);
                 for(int j = 0; j < 5; j++) {
                     color.add(Color.RED);
                 }
@@ -331,11 +416,13 @@ public class DiaryActivity extends MainActivity {
      *
      * @param username
      */
-    public void populateRegularFoods(String username) {
+    public boolean populateRegularFoods(String username, boolean open, int ... row) {
 
         clearRegularFoodsTable();
         regularFoods = executeSQL.sqlGetFromQuery(SqlQueries.SQL_REGULAR_FOOD, username);
         List<TextView> items = new ArrayList<TextView>();
+        List<ImageView> images = getRegularImages();
+        List<LinearLayout> layouts = getRegularLayouts();
 
         items.add((firstReg = (TextView)findViewById(R.id.firstRegItem)));
         items.add((secondReg = (TextView)findViewById(R.id.secondRegItem)));
@@ -343,24 +430,140 @@ public class DiaryActivity extends MainActivity {
         items.add((fourthReg = (TextView)findViewById(R.id.fourthRegItem)));
         items.add((fifthReg = (TextView)findViewById(R.id.fifthRegItem)));
 
-        for(int i = 0; i < 5; i++) {
-            items.get(i).setText(regularFoods.get(i).get(2));
+        int size =  regularFoods.size();
+        int sizeLeft =  5 - size;
+
+        if(!regularFoods.get(0).get(0).equals("Empty set")) {
+            for(int i = 0; i < regularFoods.size(); i++) {
+                items.get(i).setText(regularFoods.get(i).get(2));
+                images.get(i).setVisibility(View.VISIBLE);
+                clickDropDownRegular(items.get(i), layouts.get(i));
+                if(row.length > 0 && i == row[0] && open) {
+                    LinearLayout dropDownWrapper = createDropDownWrapper(i, regularFoods.get(i).get(2));
+                    layouts.get(i).addView(dropDownWrapper);
+                    items.get(i).setEllipsize(TextUtils.TruncateAt.MARQUEE);
+                    items.get(i).setMarqueeRepeatLimit(3);
+                    items.get(i).isFocusable();
+                    items.get(i).setSelected(true);
+                    items.get(i).canScrollHorizontally(View.SCROLL_INDICATOR_RIGHT);
+                    return true;
+                }
+                else {
+                    if(layouts.get(i).getChildCount() > 1) {
+                        layouts.get(i).removeViewAt(1);
+                        items.get(i).setEllipsize(TextUtils.TruncateAt.END);
+                    }
+                }
+            }
+            if(size < 5) {
+                for(int i = 4; i >= size; i--) {
+                    items.get(i).setText(" ");
+                    images.get(i).setVisibility(View.INVISIBLE);
+                }
+            }
+
+
         }
+        else {
+            for(int i = 0; i < regularFoods.size(); i++) {
+                items.get(i).setText(" ");
+                images.get(i).setVisibility(View.INVISIBLE);
+            }
+        }
+        return false;
+
     }
+
+    public List<LinearLayout> getRegularLayouts() {
+
+        List<LinearLayout> layouts = new ArrayList<>();
+
+        layouts.add((LinearLayout)findViewById(R.id.first_reg_layout));
+        layouts.add((LinearLayout)findViewById(R.id.second_reg_layout));
+        layouts.add((LinearLayout)findViewById(R.id.third_reg_layout));
+        layouts.add((LinearLayout)findViewById(R.id.fourth_reg_layout));
+        layouts.add((LinearLayout)findViewById(R.id.fifth_reg_layout));
+
+        return layouts;
+
+    }
+
+    public List<ImageView> getRegularImages() {
+
+        List<ImageView> images = new ArrayList<>();
+
+        ImageView firstImage = (ImageView)findViewById(R.id.addFirstReg);
+
+        images.add(((ImageView) findViewById(R.id.addFirstReg)));
+        images.add(((ImageView) findViewById(R.id.addSecondReg)));
+        images.add(((ImageView) findViewById(R.id.addThirdReg)));
+        images.add(((ImageView) findViewById(R.id.addFourthReg)));
+        images.add(((ImageView) findViewById(R.id.addFifthReg)));
+
+        return images;
+
+    }
+
+
 
     public void updatePoints(String userName, String SQL) {
 
         executeSQL.sqlExecuteSQL(SQL, userName);
     }
 
-    public void insertFromRegularFoods(String date, String foodId, String userId) {
+    public ContentValues findDiaryValues(String date, String foodId, String userId) {
 
         ContentValues values = new ContentValues();
         values.put("theDate", date);
         values.put("foodId", foodId);
         values.put("userId", userId);
+
+        return values;
+    }
+
+    public void insertFromRegularFoods(String date, String foodId, String userId) {
+
+        ContentValues values = findDiaryValues(date, foodId, userId);
         executeSQL.sqlInsert("Diary", values);
     }
+
+    public void clickDropDownRegular(final TextView text, final LinearLayout layout) {
+        text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(v.getId() == R.id.firstRegItem) {
+                    if(layout.getChildCount() == 1) populateRegularFoods("re16621", true, 0);
+                    else if (layout.getChildCount() > 1) populateRegularFoods("re16621", false, 0);
+                }
+                else if(v.getId() == R.id.secondRegItem) {
+                    if(layout.getChildCount() == 1) populateRegularFoods("re16621", true, 1);
+                    else if (layout.getChildCount() > 1) populateRegularFoods("re16621", false, 1);
+                }
+                else if(v.getId() == R.id.thirdRegItem) {
+                    if(layout.getChildCount() == 1) populateRegularFoods("re16621", true, 2);
+                    else if (layout.getChildCount() > 1) populateRegularFoods("re16621", false, 2);
+                }
+                else if(v.getId() == R.id.fourthRegItem) {
+                    if(layout.getChildCount() == 1) populateRegularFoods("re16621", true, 3);
+                    else if (layout.getChildCount() > 1) populateRegularFoods("re16621", false, 3);
+                }
+                else {
+                    if(layout.getChildCount() == 1) populateRegularFoods("re16621", true, 4);
+                    else if (layout.getChildCount() > 1) populateRegularFoods("re16621", false, 4);
+                }
+            }
+        });
+    }
+
+    public void setVisibilityOnClick(LinearLayout layout) {
+        if(layout.getVisibility() == View.GONE) {
+            layout.setVisibility(View.VISIBLE);
+        }
+        else {
+            layout.setVisibility(View.GONE);
+        }
+    }
+
 
     public void clickDropDown(final TextView text) {
         text.setOnClickListener(new View.OnClickListener() {
@@ -392,17 +595,24 @@ public class DiaryActivity extends MainActivity {
                 username);
 
         insertFromRegularFoods(theDate, foodId, userName.get(0).get(0));
-        populateRegularFoods(username);
+        populateRegularFoods(username, false);
 
         UpdateDiaryEntries(theDate, username);
-        System.out.println("CURRENT DATE " + date.convertDateFormat(date.getCurrentDate()));
-        System.out.println("theDate " + theDate);
+
         if(date.convertDateFormat(date.getCurrentDate()).equals(theDate)) {
             updatePoints(username, SqlQueries.SQL_INCREMENT_POINTS_1);
+            addStreakPoints(username);
         }
 
-
     }
+
+    public void addStreakPoints(String username) {
+        String points = executeSQL.sqlGetSingleStringFromQuery(SqlQueries.SQL_STREAK, date.convertDateFormat(date.getCurrentDate()), username);
+        if(Integer.parseInt(points) % 10 == 0) {
+            updatePoints(username, SqlQueries.SQL_INCREMENT_POINTS_10);
+        }
+    }
+
 
     public void removeFromDiaryEntries(String theDate, String username, int id) {
 
@@ -415,12 +625,15 @@ public class DiaryActivity extends MainActivity {
         String diaryId = diaryEntries.get(0).get(0);
 
         executeSQL.sqlDelete("Diary", "diaryId = ?", diaryId);
-        populateRegularFoods(username);
+        populateRegularFoods(username, false);
         String points = executeSQL.sqlGetSingleStringFromQuery(SqlQueries.SQL_POINTS, username);
-        System.out.println(points);
+
         if(Integer.parseInt(points) <= 0) {
             updatePoints(username, SqlQueries.SQL_SET_POINTS_0);
         } else {
+            if(Integer.parseInt(points) % 10 == 0) {
+                updatePoints(username, SqlQueries.SQL_DECREMENT_POINTS_10);
+            }
             updatePoints(username, SqlQueries.SQL_DECREMENT_POINTS_1);
         }
         UpdateDiaryEntries(theDate, username);
@@ -428,14 +641,51 @@ public class DiaryActivity extends MainActivity {
 
     // TODO implement functionality for these image clicks
     public void changeDate(final ImageView image) {
+
+        image.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(v.getId()) {
+                    case R.id.date_left:
+                        if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                            image.setColorFilter(getColor(R.color.cyan));
+                            String prevDay = date.getPrevDate(dateText.getText().toString());
+                            dateText.setText(prevDay);
+                            UpdateDiaryEntries(date.convertDateFormat(dateText.getText().toString()), "re16621");
+                        }
+                        else {
+                            image.setColorFilter(getColor(R.color.black));
+                        }
+                        break;
+                    case R.id.date_right:
+                        if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                            image.setColorFilter(getColor(R.color.cyan));
+                            String nextDay = date.getNextDate(dateText.getText().toString());
+                            dateText.setText(nextDay);
+                            UpdateDiaryEntries(date.convertDateFormat(dateText.getText().toString()), "re16621");
+                        }
+                        else {
+                            image.setColorFilter(getColor(R.color.black));
+                        }
+                        break;
+                    default:
+                        Log.d("CLICK", "nothing clicked");
+                        break;
+                }
+                return true;
+            }
+        });
+
         image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 switch(v.getId()) {
                     case R.id.date_left:
+                        image.setImageResource(R.drawable.chevron_list);
                         String prevDay = date.getPrevDate(dateText.getText().toString());
                         dateText.setText(prevDay);
                         UpdateDiaryEntries(date.convertDateFormat(dateText.getText().toString()), "re16621");
+
                         break;
                     case R.id.date_right:
                         String nextDay = date.getNextDate(dateText.getText().toString());
@@ -451,16 +701,76 @@ public class DiaryActivity extends MainActivity {
     }
 
     public void clickToAddOrRemove(final ImageView image) {
-        image.setOnClickListener(new View.OnClickListener() {
+        image.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
+            public boolean onTouch(View v, MotionEvent event) {
                 if (v.getTag() != null && v.getTag().equals("minusTag")) {
-                    removeFromDiaryEntries(date.convertDateFormat(dateText.getText().toString()), "re16621", v.getId());
-                } else {
-                    actionImageClick(v);
+                    if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                        image.setColorFilter(getColor(R.color.cyan));
+                        removeFromDiaryEntries(date.convertDateFormat(dateText.getText().toString()), "re16621", v.getId());
+                    }
+                    else if(event.getAction() == MotionEvent.ACTION_UP) {
+                        image.setColorFilter(getColor(R.color.removeRed));
+                    }
                 }
+                else if(v.getTag() != null && v.getTag().equals("arrowUp")) {
+                    if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                        image.setColorFilter(getColor(R.color.cyan));
+                        System.out.println("DATE SHOWING IS " + date.convertDateFormat(dateText.getText().toString()));
+                        insertIntoDiaryFromDiary(v.getId(),
+                                date.convertDateFormat(dateText.getText().toString()), "re16621");
+                        UpdateDiaryEntries(date.convertDateFormat(dateText.getText().toString()), "re16621");
+                    }
+                    else if(event.getAction() == MotionEvent.ACTION_UP) {
+                        image.setColorFilter(getColor(R.color.black));
+                    }
+                }
+                else if(v.getTag() != null && v.getTag().equals("arrowDown")) {
+                    if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                        image.setColorFilter(getColor(R.color.cyan));
+                        removeFromDiaryEntries(date.convertDateFormat(dateText.getText().toString()),
+                                "re16621", v.getId());
+                    }
+                    else if(event.getAction() == MotionEvent.ACTION_UP) {
+                        image.setColorFilter(getColor(R.color.black));
+                    }
+                }
+                else {
+                    if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                        image.setColorFilter(getColor(R.color.cyan));
+                        actionImageClick(v);
+                    }
+                    else {
+                        image.setColorFilter(getColor(R.color.correctGreen));
+                        image.setImageResource(R.drawable.ic_add_circle_black);
+                    }
+                }
+                return true;
             }
         });
+    }
+
+    public void insertIntoDiaryFromDiary(int id, String theDate, String username) {
+
+        List<List<String>> userName = executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_USER,
+                username);
+
+        List<List<String>> diaryContents = executeSQL.sqlGetFromQuery(SqlQueries.SQL_IN_DIARY,
+                theDate, username);
+
+        display.printTable("Diary contents", diaryContents);
+
+        String userId = userName.get(0).get(0);
+        String foodId = diaryContents.get(id).get(2);
+
+        ContentValues values = findDiaryValues(theDate, foodId, userId);
+
+        executeSQL.sqlInsert("Diary", values);
+        populateRegularFoods(username, false);
+        updatePoints(username, SqlQueries.SQL_INCREMENT_POINTS_1);
+
+        addStreakPoints(username);
+
     }
 
     private void actionImageClick(View v){
