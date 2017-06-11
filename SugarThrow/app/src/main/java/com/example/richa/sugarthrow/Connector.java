@@ -1,9 +1,7 @@
 package com.example.richa.sugarthrow;
 
 /*
-
 Connector class is used to establish connection with an SQLite database
-
 */
 
 import android.database.Cursor;
@@ -25,14 +23,12 @@ public class Connector extends SQLiteOpenHelper {
     private SQLiteDatabase sqliteDatabase;
     private final Context context;
 /*    private static Connector database;
-
     public static Connector getConnection(Context context) {
         if(database == null) {
             database = new Connector(context);
             SQLiteDatabase db = database.getWritableDatabase();
         }
         if(!db.isopen()) {
-
         }
         return database;
     }*/

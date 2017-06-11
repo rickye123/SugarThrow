@@ -2,9 +2,9 @@ package com.example.richa.sugarthrow;
 
 import java.util.*;
 
-public class TableDisplay {
+class TableDisplay {
 
-    public void printTable(String tableName, List<List<String>> table) {
+    void printTable(String tableName, List<List<String>> table) {
 
         int j = 0;
 

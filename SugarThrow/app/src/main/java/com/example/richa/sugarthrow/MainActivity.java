@@ -1,17 +1,14 @@
 package com.example.richa.sugarthrow;
 
-import android.content.ContentValues;
+/*
+This is the main activity class, which is called when the app is launched
+ */
+
 import android.content.Intent;
-import android.content.res.AssetManager;
-import android.database.*;
-import android.database.SQLException;
-import android.graphics.Point;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
 import android.support.v4.view.ViewPager;
-import android.view.Display;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -23,89 +20,126 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.util.Log;
 import android.widget.ImageView;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.sql.*;
-import android.content.Context;
-import android.content.res.AssetManager;
-import android.database.sqlite.*;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import org.w3c.dom.Text;
-
-import java.util.logging.Logger;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements OnNavigationItemSelectedListener {
 
-    private ImageView searchIcon, diaryImage, playSugar;
-    private Context context;
+    //TODO solve the static connector issue
     private static Connector database;
-    private Cursor c = null;
     private Execute executeSQL;
     private TableDisplay display = new TableDisplay();
+    private FoodContentsHandler foodContentsHandler;
 
+    // invoked when activity starts
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // set the layout to the home_activity.xml file
         setContentView(R.layout.home_activity);
+        startContent();
+    }
 
-        Display screenDisplay = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        screenDisplay.getSize(size);
-        int width = size.x;
-        System.out.println("WIDTH " + width);
-
+    private void startContent() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
         createDrawer(toolbar);
         createNavigationView(R.id.nav_home);
 
+        // creates the image carousel on the home page
         ViewPager viewPager = (ViewPager)findViewById(R.id.viewPageAndroid);
-        AndroidImageAdapter adapterView = new AndroidImageAdapter(this);
+        ImageSlider adapterView = new ImageSlider(this);
         viewPager.setAdapter(adapterView);
-
-        searchIcon = (ImageView)findViewById(R.id.search_icon);
-        clickImageView(searchIcon);
-
-        diaryImage = (ImageView)findViewById(R.id.diary_image);
-        clickImageView(diaryImage);
-
-        playSugar = (ImageView)findViewById(R.id.play_sugar_image);
-        clickImageView(playSugar);
 
         database = new Connector(MainActivity.this);
         database.attemptCreate();
         database.openConnection();
-
         executeSQL = new Execute(database);
+        foodContentsHandler = new FoodContentsHandler(database);
+
+        // handle the links to the diary, search, and game on the homapage
+        handleLinks();
+
+        // the HUD contains the percentage intake of sugar the user has left and their total points
+        populateHUD();
 
     }
 
+    /**
+     *
+     */
+    private void handleLinks() {
+
+        ImageView diaryImage = (ImageView)findViewById(R.id.diary_image);
+        ImageView playSugar = (ImageView)findViewById(R.id.play_sugar_image);
+
+        //
+        clickImageView(diaryImage);
+
+        //
+        clickImageView(playSugar);
+    }
+
+    /**
+     * Create the HUD (Heads Up Display) which contains the amount of sugar
+     * the user has left (daily amount) and the number of points they have
+     */
+    private void populateHUD() {
+
+        TextView globalPoints = (TextView)findViewById(R.id.total_points);
+        TextView globalSugar = (TextView)findViewById(R.id.daily_sugar_left);
+
+        // update the points in the HUD with the user's points
+        String points = executeSQL.sqlGetSingleStringFromQuery(SqlQueries.SQL_POINTS, "re16621");
+        globalPoints.setText(getString(R.string.hud_points, points));
+
+        // find the total amount of each food group the user has had
+        List<List<String>> sumOfFoods =
+                executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_CURRENT_DIARY, "re16621");
+
+        // return the amount of sugar the user has left
+        Map<String, BigDecimal> sugarPercentage =
+                foodContentsHandler.findFoodPercentages(sumOfFoods.get(0).get(0), 0);
+        globalSugar.setText(getString(R.string.hud_percent,
+                sugarPercentage.get("amountLeft").toString(), "%"));
+
+        // change the text color to red if the user has had over 100% of their daily sugar intake
+        if(sugarPercentage.get("amountLeft").compareTo(BigDecimal.ZERO) < 0) {
+            globalSugar.setTextColor(getColor(R.color.removeRed));
+        }
+    }
+
+    /**
+     * Getter method returning the initialised database connection
+     * @return Connector object - the database connection
+     */
     public static Connector getDatabaseConnection() {
         return database;
     }
 
     /**
-     *
-     * @param menuId
+     * Create the navigation drawer (side menu) and change the menu
+     * item selected
+     * @param menuId - the id referring to the drawabale image in the menu
      */
     public void createNavigationView(int menuId) {
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
         navigationView.setNavigationItemSelectedListener(this);
+        // set which menu item is selected
         navigationView.getMenu().findItem(menuId).setChecked(true);
     }
 
     /**
-     *
-     * @param toolbar
+     * Create the toolbar containing the burger nav icon (which can be toggled)
+     * @param toolbar - the Toolbar object within the corresponding layout
      */
     public void createDrawer(Toolbar toolbar) {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -115,10 +149,9 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
     }
 
-
     /**
-     *
-     * @param image
+     * Event listener that looks for ImageView clicks in the Activity
+     * @param image - the ImageView that will be clicked
      */
     // TODO implement functionality for these image clicks
     public void clickImageView(final ImageView image) {
@@ -139,10 +172,6 @@ public class MainActivity extends AppCompatActivity
                         break;
                     case R.id.play_sugar_image:
                         Log.d("CLICK", "play sugar throw clicked");
-
-                        break;
-                    case R.id.myMinus1:
-                        Log.d("CLICK", "Clicked Minus");
                         break;
                     default:
                         // If we got here, the user's action was not recognized.
@@ -161,6 +190,47 @@ public class MainActivity extends AppCompatActivity
     public void launchActivity(Class className) {
         Intent intent = new Intent(this, className);
         startActivity(intent);
+    }
+
+    /**
+     * Method to control the links in the navigation drawer
+     * @param item - the MenuItem used to determine which item has been clicked
+     *             in the navigation drawer
+     * @return true
+     */
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+        int id = item.getItemId();
+
+        Class className = this.getClass();
+
+        // handles navigation item view clicks here
+        if (id == R.id.nav_home && !(className.equals(MainActivity.class))) {
+            launchActivity(MainActivity.class);
+        } else if (id == R.id.nav_diary && !(className.equals(DiaryActivity.class))) {
+            launchActivity(DiaryActivity.class);
+        } else if (id == R.id.nav_game && !(className.equals(UnityPlayerActivity.class))) {
+            launchActivity(UnityPlayerActivity.class);
+        } else if (id == R.id.nav_progress && !(className.equals(ProgressActivity.class))) {
+            launchActivity(ProgressActivity.class);
+        } else if (id == R.id.nav_risk && !(className.equals(RiskActivity.class))) {
+            launchActivity(RiskActivity.class);
+        } else if (id == R.id.nav_database && !(className.equals(FoodDatabaseActivity.class))) {
+            launchActivity(FoodDatabaseActivity.class);
+        } else if (id == R.id.nav_settings && !(className.equals(SettingsActivity.class))) {
+            launchActivity(SettingsActivity.class);
+        } else if (id == R.id.nav_info && !(className.equals(InfoActivity.class))) {
+            launchActivity(InfoActivity.class);
+        } else if (id == R.id.nav_help && !(className.equals(HelpActivity.class))) {
+            launchActivity(HelpActivity.class);
+        }
+
+        // close drawer on selection of item
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 
     @Override
@@ -193,36 +263,4 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        Class className = this.getClass();
-
-        if (id == R.id.nav_home && !(className.equals(MainActivity.class))) {
-            launchActivity(MainActivity.class);
-        } else if (id == R.id.nav_diary && !(className.equals(DiaryActivity.class))) {
-            launchActivity(DiaryActivity.class);
-        } else if (id == R.id.nav_game && !(className.equals(UnityPlayerActivity.class))) {
-            launchActivity(UnityPlayerActivity.class);
-        } else if (id == R.id.nav_progress && !(className.equals(ProgressActivity.class))) {
-            launchActivity(ProgressActivity.class);
-        } else if (id == R.id.nav_risk && !(className.equals(RiskActivity.class))) {
-            launchActivity(RiskActivity.class);
-        } else if (id == R.id.nav_database && !(className.equals(FoodDatabaseActivity.class))) {
-            launchActivity(FoodDatabaseActivity.class);
-        } else if (id == R.id.nav_settings && !(className.equals(SettingsActivity.class))) {
-            launchActivity(SettingsActivity.class);
-        } else if (id == R.id.nav_info && !(className.equals(InfoActivity.class))) {
-            launchActivity(InfoActivity.class);
-        } else if (id == R.id.nav_help && !(className.equals(HelpActivity.class))) {
-            launchActivity(HelpActivity.class);
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
 }

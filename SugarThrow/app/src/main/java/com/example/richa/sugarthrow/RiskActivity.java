@@ -6,7 +6,6 @@ import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
 public class RiskActivity extends MainActivity {
-    private Connector database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,12 +14,14 @@ public class RiskActivity extends MainActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
 
         createDrawer(toolbar);
         createNavigationView(R.id.nav_risk);
 
-        this.database = MainActivity.getDatabaseConnection();
+        Connector database = MainActivity.getDatabaseConnection();
         SQLiteDatabase db = database.getWritableDatabase();
         if (db.isOpen()) {
             Toast.makeText(this, "Database is open", Toast.LENGTH_SHORT).show();

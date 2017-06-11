@@ -8,13 +8,10 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import java.util.List;
-
 public class SettingsActivity extends MainActivity {
 
-    private Connector database;
-    private Execute executeSQL;
-    private List<List<String>> users;
+/*    private Execute executeSQL;
+    private List<List<String>> users;*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,20 +20,22 @@ public class SettingsActivity extends MainActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
 
         createDrawer(toolbar);
         createNavigationView(R.id.nav_settings);
 
-        this.database = MainActivity.getDatabaseConnection();
+        Connector database = MainActivity.getDatabaseConnection();
         SQLiteDatabase db = database.getWritableDatabase();
         if (db.isOpen()) {
             Toast.makeText(this, "Database is open", Toast.LENGTH_SHORT).show();
         }
 
-        executeSQL = new Execute(database);
+      //  Execute executeSQL = new Execute(database);
 
-        users = executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_SPECIFIC_USER, "re16621");
+      //  List<List<String>> users = executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_SPECIFIC_USER, "re16621");
 
         final LinearLayout profile = (LinearLayout)findViewById(R.id.profile_layout);
         clickLayout(profile);
@@ -44,7 +43,7 @@ public class SettingsActivity extends MainActivity {
         clickLayout(notifications);
         final LinearLayout colour = (LinearLayout)findViewById(R.id.colour_layout);
         clickLayout(colour);
-        final LinearLayout signOut = (LinearLayout)findViewById(R.id.sign_out_layout);
+       // final LinearLayout signOut = (LinearLayout)findViewById(R.id.sign_out_layout);
         //clickLayout(signOut);
 
     }

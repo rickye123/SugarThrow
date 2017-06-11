@@ -1,31 +1,13 @@
 package com.example.richa.sugarthrow;
 
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
-
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.widget.LinearLayoutCompat;
-import android.util.Log;
-import android.view.View;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
-
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -35,23 +17,21 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.github.mikephil.charting.utils.ColorTemplate;
-
-import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class ProgressActivity extends MainActivity {
 
-    private Connector database;
-    private static String TAG = "ProgressActivityTag";
+    //private static String TAG = "ProgressActivityTag";
     private Execute executeSql;
     private TableDisplay display = new TableDisplay();
     private TimeKeeper date = new TimeKeeper();
     private String[] names = {"Sugar", "Calories", "Fat", "Saturates", "Carbs", "Salt", "Protein"};
     private Integer[] ids = {R.id.pie_sugar, R.id.pie_calories, R.id.pie_fat, R.id.pie_saturates,
     R.id.pie_carbs, R.id.pie_salt, R.id.pie_protein};
-    private TextView points;
+    private FoodContentsHandler foodContentsHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,23 +40,21 @@ public class ProgressActivity extends MainActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
 
         createDrawer(toolbar);
         createNavigationView(R.id.nav_progress);
 
-        this.database = MainActivity.getDatabaseConnection();
-        SQLiteDatabase db = database.getWritableDatabase();
-        if(db.isOpen()) {
-            Toast.makeText(this, "Database is open", Toast.LENGTH_SHORT).show();
-        }
-
+        Connector database = MainActivity.getDatabaseConnection();
         executeSql = new Execute(database);
+        foodContentsHandler = new FoodContentsHandler(database);
 
         lineChartCreator("re16621");
         pieChartCreator("re16621");
 
-        points = (TextView)findViewById(R.id.progress_points);
+        TextView points = (TextView)findViewById(R.id.progress_points);
         List<List<String>> userPoints = executeSql.sqlGetFromQuery(SqlQueries.SQL_POINTS, "re16621");
         display.printTable("Points", userPoints);
         points.setText(userPoints.get(0).get(0));
@@ -153,27 +131,23 @@ public class ProgressActivity extends MainActivity {
             }
         }
 
-        List<List<BigDecimal>> listOfPercentages = new ArrayList<>();
+        List<Map<String, BigDecimal>> listOfPercentages = new ArrayList<>();
         List<String> foodGroups = new ArrayList<>();
-        for(String name : names) {
-            foodGroups.add(name);
-        }
+        Collections.addAll(foodGroups, names);
 
         List<Integer> foodIds = new ArrayList<>();
-        for(Integer id : ids) {
-            foodIds.add(id);
-        }
+        Collections.addAll(foodIds, ids);
 
-        List<BigDecimal> sugarPercentage = findFoodPercentages(sumOfFoods.get(0).get(0), 0);
+        Map<String, BigDecimal> sugarPercentage = foodContentsHandler.findFoodPercentages(sumOfFoods.get(0).get(0), 0);
         listOfPercentages.add(sugarPercentage);
-        createPieChart(foodIds.get(0), foodGroups.get(0), listOfPercentages.get(0).get(0).floatValue(),
-                listOfPercentages.get(0).get(1).floatValue(), 24);
+        createPieChart(foodIds.get(0), foodGroups.get(0), listOfPercentages.get(0).get("intake").floatValue(),
+                listOfPercentages.get(0).get("amountLeft").floatValue(), 24);
 
         for(int i = 1; i < sumOfFoods.get(0).size(); i++) {
-            List<BigDecimal> percentages = findFoodPercentages(sumOfFoods.get(0).get(i), i);
+            Map<String, BigDecimal> percentages = foodContentsHandler.findFoodPercentages(sumOfFoods.get(0).get(i), i);
             listOfPercentages.add(percentages);
-            createPieChart(foodIds.get(i), foodGroups.get(i), listOfPercentages.get(i).get(0).floatValue(),
-                    listOfPercentages.get(i).get(1).floatValue(), 16);
+            createPieChart(foodIds.get(i), foodGroups.get(i), listOfPercentages.get(i).get("intake").floatValue(),
+                    listOfPercentages.get(i).get("amountLeft").floatValue(), 16);
         }
 
     }
@@ -187,68 +161,15 @@ public class ProgressActivity extends MainActivity {
                 textSize);
     }
 
-    private List<BigDecimal> findFoodPercentages(String itemTotal, int col) {
-
-        List<BigDecimal> bdList = new ArrayList<BigDecimal>();
-        Float quantity = findQuantity(col);
-
-        Float intake = (Float.parseFloat(itemTotal) / quantity) * 100;
-        Float amountLeft = 100 - intake;
-
-        if(amountLeft < 0) {
-            amountLeft = 0.0f;
-        }
-
-        bdList = addBigDecimalArrayList(intake.toString(), amountLeft.toString());
-
-        return bdList;
-
-    }
-
-    private Float findQuantity(int col) {
-
-        if(col == 0) return 90.0f;
-        if(col == 1) return 2000.0f;
-        if(col == 2) return 70.0f;
-        if(col == 3) return 20.0f;
-        if(col == 4) return 260.0f;
-        if(col == 5) return 6.0f;
-        else return 50.0f;
-
-    }
-
-    private List<BigDecimal> addBigDecimalArrayList(String intake, String amountLeft) {
-        List<BigDecimal> bdList = new ArrayList<BigDecimal>();
-
-        BigDecimal bdIntake = new BigDecimal(intake);
-        bdIntake = bdIntake.setScale(2, BigDecimal.ROUND_HALF_EVEN);
-
-        BigDecimal bdLeft = new BigDecimal(amountLeft);
-        bdLeft = bdLeft.setScale(2, BigDecimal.ROUND_HALF_EVEN);
-
-        bdList.add(bdIntake);
-        bdList.add(bdLeft);
-
-        return bdList;
-    }
-
     private void createPieChartVariables(PieChart pieChart, final String name, String[] content,
                                          Integer[] colorIntegers, Float[] percentage, int textSize) {
-        final List<String> xEntries = new ArrayList<String>();
-        final List<Float> dataset = new ArrayList<Float>();
-        List<Integer> colors = new ArrayList<Integer>();
+        final List<String> xEntries = new ArrayList<>();
+        final List<Float> dataset = new ArrayList<>();
+        List<Integer> colors = new ArrayList<>();
 
-        for(int i = 0; i < content.length; i++) {
-            xEntries.add(content[i]);
-        }
-
-        for(int i = 0; i < colorIntegers.length; i++) {
-            colors.add(colorIntegers[i]);
-        }
-
-        for(int i = 0; i < percentage.length; i++) {
-            dataset.add(percentage[i]);
-        }
+        Collections.addAll(xEntries, content);
+        Collections.addAll(colors, colorIntegers);
+        Collections.addAll(dataset, percentage);
 
         addPieChart(pieChart, name, xEntries, dataset, colors, textSize);
         pieChartListener(pieChart, dataset, xEntries, name);
@@ -286,7 +207,7 @@ public class ProgressActivity extends MainActivity {
                              List<Float> dataset, List<Integer> colors, int textSize) {
 
         // create pie entries from the dataset
-        ArrayList<PieEntry> yEntries = new ArrayList<PieEntry>();
+        ArrayList<PieEntry> yEntries = new ArrayList<>();
 
         if(dataset.get(0) > 100) {
             dataset.remove(1);
@@ -300,8 +221,6 @@ public class ProgressActivity extends MainActivity {
             colors.remove(0);
             xEntries.remove(0);
         }
-
-
 
         for (int i = 0; i < dataset.size(); i++) {
             yEntries.add(new PieEntry(dataset.get(i), i));
@@ -323,7 +242,6 @@ public class ProgressActivity extends MainActivity {
         PieData pieData = new PieData(pieDataset);
         pieChart.setData(pieData);
         pieChart.invalidate();
-
 
     }
 

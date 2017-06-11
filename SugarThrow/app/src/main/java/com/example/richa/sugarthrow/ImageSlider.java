@@ -1,17 +1,24 @@
 package com.example.richa.sugarthrow;
 
+/*
+This class is responsible for any image sliders that appear in the app
+ */
+
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-public class AndroidImageAdapter extends PagerAdapter {
+class ImageSlider extends PagerAdapter {
 
-    Context context;
+    private Context context;
 
-    AndroidImageAdapter(Context context) {
+    /**
+     * Constructor referring to the particular activity's context
+     * @param context - the context of an activity
+     */
+    ImageSlider(Context context) {
         this.context = context;
     }
 
@@ -20,6 +27,9 @@ public class AndroidImageAdapter extends PagerAdapter {
         return sliderImagesId.length;
     }
 
+    /**
+     * The slider images created
+     */
     private int[] sliderImagesId = new int[] {
             R.drawable.scenic, R.drawable.app_banner, R.drawable.sugar_cube,
             R.drawable.scenic, R.drawable.app_banner, R.drawable.sugar_cube,
@@ -27,7 +37,7 @@ public class AndroidImageAdapter extends PagerAdapter {
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
-        return view == ((ImageView)object);
+        return view == (object);
     }
 
     @Override
@@ -35,13 +45,13 @@ public class AndroidImageAdapter extends PagerAdapter {
         ImageView imageView = new ImageView(context);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView.setImageResource(sliderImagesId[i]);
-        ((ViewPager)container).addView(imageView, 0);
+        (container).addView(imageView, 0);
         return imageView;
     }
 
     @Override
     public void destroyItem(ViewGroup container, int i, Object object) {
-        ((ViewPager)container).removeView((ImageView)object);
+        (container).removeView((ImageView)object);
     }
 
 }

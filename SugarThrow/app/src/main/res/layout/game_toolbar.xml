@@ -35,6 +35,16 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/game_content" />
+    <include layout="@layout/game_content"
+        android:id="@+id/include" />
+
+    <Button
+        android:id="@+id/exit_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:text="@string/exit_text"
+        app:layout_anchor="@+id/include"
+        app:layout_anchorGravity="top|right" />
 
 </android.support.design.widget.CoordinatorLayout>

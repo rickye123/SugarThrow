@@ -1,19 +1,15 @@
 package com.example.richa.sugarthrow;
 
 import com.unity3d.player.*;
-import android.app.Activity;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
 
 public class UnityPlayerActivity extends MainActivity
@@ -26,20 +22,27 @@ public class UnityPlayerActivity extends MainActivity
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_activity);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
+		if(getSupportActionBar() != null) {
+			getSupportActionBar().setDisplayShowTitleEnabled(false);
+		}
         createDrawer(toolbar);
         createNavigationView(R.id.nav_game);
 
         getWindow().setFormat(PixelFormat.RGBX_8888); // <--- This makes xperia play happy
 
+		Button button = (Button)findViewById(R.id.exit_button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mUnityPlayer.quit();
+                launchActivity(GameActivity.class);
+            }
+        });
 
-		// TODO framelayout appearing above drawer on phone
         mUnityPlayer = new UnityPlayer(this);
         FrameLayout layout = (FrameLayout)findViewById(R.id.game_frame);
-        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.MATCH_PARENT);
         layout.addView(mUnityPlayer);
         mUnityPlayer.requestFocus();
 	}
@@ -47,6 +50,7 @@ public class UnityPlayerActivity extends MainActivity
 	// Quit Unity
 	@Override protected void onDestroy ()
 	{
+		//TODO stop the game but don't kill the app...
 		mUnityPlayer.quit();
 		System.out.println("APP QUIT");
 		super.onDestroy();

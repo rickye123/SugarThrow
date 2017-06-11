@@ -8,8 +8,6 @@ import android.widget.Toast;
 
 public class GameActivity extends MainActivity {
 
-    private Connector database;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -17,12 +15,14 @@ public class GameActivity extends MainActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
 
         createDrawer(toolbar);
         createNavigationView(R.id.nav_game);
 
-        this.database = MainActivity.getDatabaseConnection();
+        Connector database = MainActivity.getDatabaseConnection();
         SQLiteDatabase db = database.getWritableDatabase();
         if (db.isOpen()) {
             Toast.makeText(this, "Database is open", Toast.LENGTH_SHORT).show();

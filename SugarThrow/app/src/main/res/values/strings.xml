@@ -11,6 +11,10 @@
     <string name="space"> </string>
     <string name="gram">g</string>
 
+    <!--HUD-->
+    <string name="hud_points">%1$s pts</string>
+    <string name="hud_percent">%1$s%2$s</string>
+
     <!-- Activity Titles -->
     <string name="home_title">Sugar Throw</string>
     <string name="diary_title">Diary</string>
@@ -90,5 +94,8 @@
     <string name="weight">Weight</string>
     <string name="notifications_on">Notifications On</string>
     <string name="percent_sign">%</string>
+    <string name="exit_text">EXIT</string>
+    <string name="the_account_circle_image">The account circle image</string>
+    <string name="placeholder_username">Username</string>
 
 </resources>
