@@ -31,8 +31,7 @@ class ImageSlider extends PagerAdapter {
      * The slider images created
      */
     private int[] sliderImagesId = new int[] {
-            R.drawable.scenic, R.drawable.app_banner, R.drawable.sugar_cube,
-            R.drawable.scenic, R.drawable.app_banner, R.drawable.sugar_cube,
+        R.mipmap.ic_launcher
     };
 
     @Override
@@ -43,7 +42,7 @@ class ImageSlider extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int i) {
         ImageView imageView = new ImageView(context);
-        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+       // imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView.setImageResource(sliderImagesId[i]);
         (container).addView(imageView, 0);
         return imageView;

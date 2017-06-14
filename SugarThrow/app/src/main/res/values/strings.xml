@@ -97,5 +97,115 @@
     <string name="exit_text">EXIT</string>
     <string name="the_account_circle_image">The account circle image</string>
     <string name="placeholder_username">Username</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="login_password">Password</string>
+    <string name="sign_in">SIGN IN</string>
+    <string name="new_user">New User?</string>
+    <string name="create_account">Create Account</string>
+    <string name="welcome">Welcome!</string>
+    <string name="sugar_throw_logo">Sugar Throw Logo</string>
+    <string name="error_invalid_username">This username is invalid</string>
+    <string name="create_your_account">Create Your Account</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="dob">DOB(DD-MM-YYYY)</string>
+    <string name="first_name">First Name</string>
+    <string name="height_in_feet_and_inches">Height (in feet and inches)</string>
+    <string name="last_name">Last Name</string>
+    <string name="password">Password</string>
+    <string name="weight_in_stone_and_pounds">Weight (in stone and pounds)</string>
+    <string name="stone">st</string>
+    <string name="goals">Goals</string>
+    <string name="sugar">Sugar</string>
+    <string name="set_quantities">Set Quantities</string>
+    <string name="calories">Calories</string>
+    <string name="carbs">Carbs</string>
+    <string name="fat">Fat</string>
+    <string name="protein">Protein</string>
+    <string name="salt">Salt</string>
+    <string name="saturates">Saturates</string>
+    <string name="kcal">kcal</string>
+    <string name="no_goals">No Goals</string>
+    <string name="update_quantities">update Quantities</string>
+    <string name="reduce_sugar">Reduce Sugar</string>
+    <string name="set_weekly_goals">Set Weekly Goals</string>
+    <string name="sugar_allowance">Sugar Allowance</string>
+    <string name="update_weekly_goals">Update Weekly Goals</string>
+    <string name="api">API</string>
+    <string name="attribution_to_nutritionix">Attribution to Nutritionix</string>
+    <string name="clear">CLEAR</string>
+    <string name="_20g">20g</string>
+    <string name="_2000kcal">2000kcal</string>
+    <string name="_260g">260g</string>
+    <string name="_50g">50g</string>
+    <string name="_6g">6g</string>
+    <string name="_70g">70g</string>
+    <string name="_90g">90g</string>
+    <string name="daily_amounts">Daily Amounts</string>
+
+    <string-array name="gender_array">
+        <item>Gender</item>
+        <item>M</item>
+        <item>F</item>
+        <item>X</item>
+    </string-array>
+
+    <string-array name="feet_array">
+        <item>ft</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+    </string-array>
+
+    <string-array name="inches_array">
+        <item>in</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+    </string-array>
+
+    <string-array name="pounds_array">
+        <item>lbs</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>9</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+    </string-array>
 
 </resources>

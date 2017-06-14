@@ -14,4 +14,8 @@
     <color name="correctGreen">#20CF00</color>
     <color name="darkGreen">#20CF00</color>
     <color name="blue">#0000FF</color>
+    <color name="orange">#FFA726</color>
+    <color name="yellow">#EEF27E</color>
+    <color name="actualDefault">#FAFAFA</color>
+    <color name="defaultColor">#EEEEEE</color>
 </resources>

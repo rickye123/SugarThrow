@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS Sugar; 
+DROP TABLE IF EXISTS Goals; 
 DROP TABLE IF EXISTS Diary; 
 DROP TABLE IF EXISTS Food; 
 DROP TABLE IF EXISTS User; 
@@ -37,15 +39,26 @@ CREATE TABLE Diary (
     CONSTRAINT fk_foodId FOREIGN KEY (foodId) REFERENCES Food(foodId)
 ); 
 
-INSERT INTO User (userName, name, gender, dob, height, weight, password, points) VALUES ('re16621', 'Rich Ellor', 'M', '18-09-1993', '5.8', '10.0', 'password', 0);
-INSERT INTO User (userName, name, gender, dob, height, weight, password, points) VALUES ('bb16622', 'Becca Brown', 'F', '15-11-1993', '5.8', '12.0', 'password', 0);
+CREATE TABLE Goals (
+    goalId INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+    userId INTEGER NOT NULL,
+    targetSugar DECIMAL (5, 2), 
+    targetCalories DECIMAL(5, 2), 
+    targetFat DECIMAL(5, 2), 
+    targetSaturates DECIMAL(5, 2), 
+    targetCarbs DECIMAL(5, 2), 
+    targetSalt DECIMAL(5, 2), 
+    targetProtein DECIMAL(5, 2),
+    CONSTRAINT unique_userId UNIQUE (userId),
+    CONSTRAINT fk_userId FOREIGN KEY (userId) REFERENCES User(userId)
+);
 
-INSERT INTO Food (name, calories, sugar, fat, saturates, carbs, salt, protein) VALUES ('Test Heinz Baked Beans', '239', '20.2', '0.9', '0.2', '53.7', '0.8712', '12.1'); 
-INSERT INTO Food (name, calories, sugar, fat, saturates, carbs, salt, protein) VALUES ('Test Apple', '95', '18.9', '0.3', '0.1', '25.1', '0.18', '0.5');
-INSERT INTO Food (name, calories, sugar, fat, saturates, carbs, salt, protein) VALUES ('Test Slice of Pizza', '285', '3.8', '10.4', '4.8', '35.7', '0.6399', '12.2');
 
-INSERT INTO Diary(theDate, userId, foodId) VALUES (DATE('now'), 1, 1);
-INSERT INTO Diary(theDate, userId, foodId) VALUES (DATE('now'), 1, 1);
-INSERT INTO Diary(theDate, userId, foodId) VALUES (DATE('now'), 1, 2);
-INSERT INTO Diary(theDate, userId, foodId) VALUES (DATE('now'), 1, 3);
-
+CREATE TABLE Sugar (
+    goalId INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+    userId INTEGER NOT NULL,
+    allowance DECIMAL(5, 2), 
+    reduction DECIMAL(5, 2),
+    CONSTRAINT unique_userId UNIQUE (userId),
+    CONSTRAINT fk_userId FOREIGN KEY (userId) REFERENCES User(userId)
+);

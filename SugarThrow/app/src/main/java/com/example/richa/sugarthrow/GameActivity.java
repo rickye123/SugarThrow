@@ -22,7 +22,7 @@ public class GameActivity extends MainActivity {
         createDrawer(toolbar);
         createNavigationView(R.id.nav_game);
 
-        Connector database = MainActivity.getDatabaseConnection();
+        Connector database = LoginActivity.getDatabaseConnection();
         SQLiteDatabase db = database.getWritableDatabase();
         if (db.isOpen()) {
             Toast.makeText(this, "Database is open", Toast.LENGTH_SHORT).show();

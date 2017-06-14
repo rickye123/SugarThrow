@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,13 +16,29 @@ import android.widget.FrameLayout;
 public class UnityPlayerActivity extends MainActivity
 {
 	protected UnityPlayer mUnityPlayer; // don't change the name of this variable; referenced from native code
+    private String username;
 
 	// Setup activity layout
-	@Override protected void onCreate (Bundle savedInstanceState)
-	{
+	@Override protected void onCreate (Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.game_activity);
+
+		if(savedInstanceState == null) {
+			Bundle extras = getIntent().getExtras();
+			if(extras == null) {
+				username = "Username";
+			}
+			else {
+				username = extras.getString("username");
+			}
+		}
+		else {
+			username = (String)savedInstanceState.getSerializable("username");
+		}
+
+		setContentView(R.layout.game_activity);
+		setNavigationUsername(username);
+
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		if(getSupportActionBar() != null) {
@@ -37,7 +54,7 @@ public class UnityPlayerActivity extends MainActivity
             @Override
             public void onClick(View v) {
                 mUnityPlayer.quit();
-                launchActivity(GameActivity.class);
+                launchActivity(MainActivity.class);
             }
         });
 
@@ -50,9 +67,7 @@ public class UnityPlayerActivity extends MainActivity
 	// Quit Unity
 	@Override protected void onDestroy ()
 	{
-		//TODO stop the game but don't kill the app...
 		mUnityPlayer.quit();
-		System.out.println("APP QUIT");
 		super.onDestroy();
 	}
 

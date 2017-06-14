@@ -7,6 +7,7 @@ app
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.ViewGroup;
@@ -34,7 +35,7 @@ public class LayoutCreator extends MainActivity {
      * Create no entries layout that appears when there are no diary entries
      * @return the linear layout which displays "No Entries"
      */
-    public LinearLayout createNoEntries() {
+    public LinearLayout createNoEntries(String text) {
 
         // width, height, and textHeight measurements
         int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200 ,
@@ -55,7 +56,7 @@ public class LayoutCreator extends MainActivity {
         TextView entryText = new TextView(context);
         entryText.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 textHeight));
-        entryText.setText(context.getString(R.string.placeholder_no_entries));
+        entryText.setText(text);
         entryText.setTextSize(24);
         entryText.setTextColor(Color.BLACK);
         entryText.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
@@ -107,7 +108,7 @@ public class LayoutCreator extends MainActivity {
         basicLayout.setGravity(gravity);
 
         // check that if margins are specified, there are exactly 4 of them
-        if(viewCreator.checkMarginsValid(margins)) {
+        if(!viewCreator.checkMarginsValid(margins)) {
             layoutParams.setMargins(0, 0, 0, 0);
         }
         else {
@@ -154,10 +155,16 @@ public class LayoutCreator extends MainActivity {
      */
     public LinearLayout createNoResultsLayout() {
 
-        int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 232 ,
+        int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200 ,
                 context.getResources().getDisplayMetrics());
 
         int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 158 ,
+                context.getResources().getDisplayMetrics());
+
+        int layoutWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 232 ,
+                context.getResources().getDisplayMetrics());
+
+        int layoutHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 52 ,
                 context.getResources().getDisplayMetrics());
 
         LinearLayout searchEntries = createBasicLinearLayout(LinearLayout.HORIZONTAL,
@@ -165,7 +172,9 @@ public class LayoutCreator extends MainActivity {
 
         TextView noResults = viewCreator.createText(0, "No Results", 232, 52,
                 Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, R.drawable.dashed_border,
-                24, R.color.black, "noResultsTag");
+                24, R.color.black, "noResultsTag", 0, 0, 0, 0);
+        noResults.setLayoutParams(new LinearLayoutCompat.LayoutParams(layoutWidth, layoutHeight));
+        noResults.setBackgroundResource(R.drawable.dashed_border);
 
         searchEntries.addView(noResults);
 

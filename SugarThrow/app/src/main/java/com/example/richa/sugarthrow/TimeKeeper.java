@@ -64,7 +64,7 @@ class TimeKeeper {
      *                    are split into day, month, and year
      * @return a hashmap containing the day, month, and year of a String
      */
-    private Map<String, String> getDateVariables(String currentDate) {
+    public Map<String, String> getDateVariables(String currentDate) {
 
         // day is the first 2 characters
         String day = "" + currentDate.charAt(0) + currentDate.charAt(1);

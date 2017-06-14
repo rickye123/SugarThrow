@@ -95,7 +95,7 @@ public class ViewCreator extends MainActivity {
      * @return boolean representing whether the margins entered are valid
      */
     public boolean checkMarginsValid(int ... margins) {
-        return margins.length != 4;
+        return margins.length == 4;
     }
 
     /**

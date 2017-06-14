@@ -20,6 +20,7 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class ProgressActivity extends MainActivity {
@@ -31,12 +32,29 @@ public class ProgressActivity extends MainActivity {
     private String[] names = {"Sugar", "Calories", "Fat", "Saturates", "Carbs", "Salt", "Protein"};
     private Integer[] ids = {R.id.pie_sugar, R.id.pie_calories, R.id.pie_fat, R.id.pie_saturates,
     R.id.pie_carbs, R.id.pie_salt, R.id.pie_protein};
+    private TextView sugar, calories, salt, fat, carbs, protein, saturates;
     private FoodContentsHandler foodContentsHandler;
+    private String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras == null) {
+                username = "Username";
+            }
+            else {
+                username = extras.getString("username");
+            }
+        }
+        else {
+            username = (String)savedInstanceState.getSerializable("username");
+        }
+
         setContentView(R.layout.progress_activity);
+        setNavigationUsername(username);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -47,17 +65,53 @@ public class ProgressActivity extends MainActivity {
         createDrawer(toolbar);
         createNavigationView(R.id.nav_progress);
 
-        Connector database = MainActivity.getDatabaseConnection();
+        Connector database = LoginActivity.getDatabaseConnection();
         executeSql = new Execute(database);
-        foodContentsHandler = new FoodContentsHandler(database);
+        foodContentsHandler = new FoodContentsHandler(database, username);
 
-        lineChartCreator("re16621");
-        pieChartCreator("re16621");
+        getDailyAmounts();
+        setDailyAmounts();
+
+        lineChartCreator(username);
+        pieChartCreator(username);
+
+        setPoints();
+
+    }
+
+    private void setPoints() {
 
         TextView points = (TextView)findViewById(R.id.progress_points);
-        List<List<String>> userPoints = executeSql.sqlGetFromQuery(SqlQueries.SQL_POINTS, "re16621");
+        List<List<String>> userPoints = executeSql.sqlGetFromQuery(SqlQueries.SQL_POINTS, username);
         display.printTable("Points", userPoints);
         points.setText(userPoints.get(0).get(0));
+
+
+    }
+
+    private void getDailyAmounts() {
+
+        sugar = (TextView)findViewById(R.id.progress_sugar_amount);
+        calories = (TextView)findViewById(R.id.progress_calories_amount);
+        salt = (TextView)findViewById(R.id.progress_salt_amount);
+        fat = (TextView)findViewById(R.id.progress_fat_amount);
+        carbs = (TextView)findViewById(R.id.progress_carbs_amount);
+        protein = (TextView)findViewById(R.id.progress_protein_amount);
+        saturates = (TextView)findViewById(R.id.progress_saturates_amount);
+
+    }
+
+    private void setDailyAmounts() {
+
+        List<Float> quantities = foodContentsHandler.getQuantitiesList();
+
+        sugar.setText(String.format(Locale.ENGLISH, "%.2f g", quantities.get(0)));
+        calories.setText(String.format(Locale.ENGLISH, "%.2f kcal", quantities.get(1)));
+        saturates.setText(String.format(Locale.ENGLISH, "%.2f g", quantities.get(2)));
+        fat.setText(String.format(Locale.ENGLISH, "%.2f g", quantities.get(3)));
+        carbs.setText(String.format(Locale.ENGLISH, "%.2f g", quantities.get(4)));
+        protein.setText(String.format(Locale.ENGLISH, "%.2f g", quantities.get(5)));
+        salt.setText(String.format(Locale.ENGLISH, "%.2f g", quantities.get(6)));
 
     }
 

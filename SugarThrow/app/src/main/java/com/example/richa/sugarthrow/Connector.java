@@ -4,7 +4,6 @@ package com.example.richa.sugarthrow;
 Connector class is used to establish connection with an SQLite database
 */
 
-import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.*;
 import java.io.File;
@@ -18,24 +17,13 @@ import android.util.Log;
 public class Connector extends SQLiteOpenHelper {
 
     private String DB_PATH = null;
-    private static String TAG = "Connector";
-    private static String DB_NAME = "appdatabase.db";
+    private static String DB_NAME = "mydatabase.db";
     private SQLiteDatabase sqliteDatabase;
     private final Context context;
-/*    private static Connector database;
-    public static Connector getConnection(Context context) {
-        if(database == null) {
-            database = new Connector(context);
-            SQLiteDatabase db = database.getWritableDatabase();
-        }
-        if(!db.isopen()) {
-        }
-        return database;
-    }*/
 
     /**
-     *
-     * @param context
+     * Constructor to find the path of the database
+     * @param context - the content in which the Connection started
      */
     public Connector(Context context) {
         super(context, DB_NAME, null, 1);
@@ -47,10 +35,13 @@ public class Connector extends SQLiteOpenHelper {
             DB_PATH = "/data/data/" + context.getPackageName() + "/databases/";
         }
         this.context = context;
-        Log.e("Path 1", DB_PATH);
+        Log.d("Path 1", DB_PATH);
     }
 
-    public void attemptCreate() {
+    /**
+     * Attempt to create database
+     */
+    void attemptCreate() {
         try {
             createDataBase();
         } catch (IOException e) {
@@ -58,19 +49,18 @@ public class Connector extends SQLiteOpenHelper {
         }
     }
 
-    public void openConnection() {
-        try {
-            openDataBase();
-        } catch (SQLException sqlException) {
-            throw sqlException;
-        }
+    /**
+     * Open database connection
+     */
+    void openConnection() {
+        openDataBase();
     }
 
     /**
-     *
-     * @throws IOException
+     * Try create database connectio
+     * @throws IOException - exception if the database is not copied
      */
-    public void createDataBase() throws IOException {
+    private void createDataBase() throws IOException {
         //If the database does not exist, copy it from the assets.
 
         boolean databaseExists = checkDataBase();
@@ -80,7 +70,6 @@ public class Connector extends SQLiteOpenHelper {
             try {
                 //Copy the database from assests
                 copyDataBase();
-                Log.e(TAG, "createDatabase database created");
             }
             catch (IOException mIOException) {
                 throw new Error("ErrorCopyingDataBase");
@@ -89,18 +78,17 @@ public class Connector extends SQLiteOpenHelper {
     }
 
     /**
-     *
-     * @return
+     * Check whether the database exists at the specified path
+     * @return - whether the database exists
      */
     private boolean checkDataBase() {
         File dbFile = new File(DB_PATH + DB_NAME);
-        Log.v("dbFile", dbFile + "   "+ dbFile.exists());
         return dbFile.exists();
     }
 
     /**
-     *
-     * @throws IOException
+     * Copy the database if one already exists
+     * @throws IOException - input exception if not copied successfully
      */
     private void copyDataBase() throws IOException {
         InputStream myInput = context.getAssets().open(DB_NAME);
@@ -118,11 +106,11 @@ public class Connector extends SQLiteOpenHelper {
     }
 
     /**
-     *
-     * @return
-     * @throws SQLException
+     * Open the database at the specified location
+     * @return boolean indicating whether the database was returned successfully
+     * @throws SQLException - exception thrown if database not found
      */
-    public boolean openDataBase() throws SQLException {
+    private boolean openDataBase() throws SQLException {
         String myPath = DB_PATH + DB_NAME;
         sqliteDatabase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.CREATE_IF_NECESSARY);
         return sqliteDatabase != null;
@@ -152,7 +140,4 @@ public class Connector extends SQLiteOpenHelper {
             }
     }
 
-    public Cursor query(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy) {
-        return sqliteDatabase.query(table, columns, selection, selectionArgs, groupBy, having, orderBy);
-    }
 }

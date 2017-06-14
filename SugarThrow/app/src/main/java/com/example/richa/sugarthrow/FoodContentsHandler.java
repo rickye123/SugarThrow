@@ -15,6 +15,10 @@ import java.util.Map;
 
 public class FoodContentsHandler extends MainActivity {
 
+    private float sugarQuantity, caloriesQuantity, saturatesQuantity,
+    fatQuantity, carbsQuantity, proteinQuantity, saltQuantity;
+    private List<Float> quantities = new ArrayList<>();
+
     private Execute executeSQL;
 
     /**
@@ -22,8 +26,75 @@ public class FoodContentsHandler extends MainActivity {
      * so that SQL statements can be executed
      * @param database - the initialised database
      */
-    public FoodContentsHandler(Connector database) {
+    public FoodContentsHandler(Connector database, String username) {
         executeSQL = new Execute(database);
+
+        List<List<String>> hasGoals = executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_GOAL, username);
+
+        if(!hasGoals.get(0).get(0).equals("Empty set")) {
+            List<List<String>> goals = executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_GOALS, username);
+            setQuantitiesFromGoals(goals);
+        }
+        else {
+            sugarQuantity = 90.0f;
+            caloriesQuantity = 2000.0f;
+            saturatesQuantity = 20.0f;
+            fatQuantity = 70.0f;
+            carbsQuantity = 260.0f;
+            proteinQuantity = 50.0f;
+            saltQuantity = 6.0f;
+        }
+
+        setQuantitiesList();
+
+    }
+
+    private void setQuantitiesList() {
+
+        quantities.add(sugarQuantity);
+        quantities.add(caloriesQuantity);
+        quantities.add(saturatesQuantity);
+        quantities.add(fatQuantity);
+        quantities.add(carbsQuantity);
+        quantities.add(proteinQuantity);
+        quantities.add(saltQuantity);
+
+    }
+
+    public List<Float> getQuantitiesList() {
+        return quantities;
+    }
+
+    private void setQuantitiesFromGoals(List<List<String>> goals ) {
+
+        // set sugar
+        if(!(goals.get(0).get(0).equals(""))) sugarQuantity = Float.parseFloat(goals.get(0).get(0));
+        else sugarQuantity = 90.0f;
+
+        // set calories
+        if(!(goals.get(0).get(1).equals(""))) caloriesQuantity = Float.parseFloat(goals.get(0).get(1));
+        else caloriesQuantity = 2000.0f;
+
+        // set saturates
+        if(!(goals.get(0).get(2).equals(""))) saturatesQuantity = Float.parseFloat(goals.get(0).get(2));
+        else saturatesQuantity = 20.0f;
+
+        // set fat
+        if(!(goals.get(0).get(3).equals(""))) fatQuantity = Float.parseFloat(goals.get(0).get(3));
+        else fatQuantity = 70.0f;
+
+        // set salt
+        if(!(goals.get(0).get(4).equals(""))) saltQuantity = Float.parseFloat(goals.get(0).get(4));
+        else saltQuantity = 6.0f;
+
+        // set protein
+        if(!(goals.get(0).get(5).equals(""))) proteinQuantity = Float.parseFloat(goals.get(0).get(5));
+        else proteinQuantity = 50.0f;
+
+        // set carbs
+        if(!(goals.get(0).get(6).equals(""))) carbsQuantity = Float.parseFloat(goals.get(0).get(6));
+        else carbsQuantity = 260.0f;
+
     }
 
     /**
@@ -89,6 +160,26 @@ public class FoodContentsHandler extends MainActivity {
 
     }
 
+    public List<Map<String, BigDecimal>> findDailyTotal(String username) {
+
+        List<Map<String, BigDecimal>> dailyTotals = new ArrayList<>();
+
+        List<List<String>> sumOfFoods =
+                executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_CURRENT_DIARY, username);
+        int size = sumOfFoods.get(0).size();
+
+/*        TableDisplay display = new TableDisplay();
+
+        display.printTable("Sum of food", sumOfFoods);*/
+
+        for(int i = 0; i < size; i++) {
+            dailyTotals.add(findFoodPercentages(sumOfFoods.get(0).get(i), i));
+        }
+
+        return dailyTotals;
+
+    }
+
     /**
      * Create the hashamp corresponding to the intake and amountLeft of a particular food
      * @param intake - the percentage intake of a food as a string
@@ -119,13 +210,13 @@ public class FoodContentsHandler extends MainActivity {
      */
     private Float findQuantity(int col) {
 
-        if(col == 0) return 90.0f; // sugar
-        if(col == 1) return 2000.0f; // calories
-        if(col == 2) return 70.0f; // fat
-        if(col == 3) return 20.0f; // saturates
-        if(col == 4) return 260.0f; // carbs
-        if(col == 5) return 6.0f; // salt
-        else return 50.0f; // protein
+        if(col == 0) return sugarQuantity; // sugar
+        if(col == 1) return caloriesQuantity; // calories
+        if(col == 2) return fatQuantity; // fat
+        if(col == 3) return saturatesQuantity; // saturates
+        if(col == 4) return carbsQuantity; // carbs
+        if(col == 5) return saltQuantity; // salt
+        else return proteinQuantity; // protein
 
     }
 
@@ -144,13 +235,20 @@ public class FoodContentsHandler extends MainActivity {
 
         // Create ArrayList of Strings containing the data for each food group
         List<List<String>> groupedContents = new ArrayList<>();
-        groupedContents.add(findFoodContents("Calories", foodContents.get(0).get(2), " ", 2000));
-        groupedContents.add(findFoodContents("Sugar", foodContents.get(0).get(3), "g", 90));
-        groupedContents.add(findFoodContents("Fat", foodContents.get(0).get(4), "g", 70));
-        groupedContents.add(findFoodContents("Saturates", foodContents.get(0).get(5), "g", 20));
-        groupedContents.add(findFoodContents("Carbs", foodContents.get(0).get(6), "g", 260));
-        groupedContents.add(findFoodContents("Salt", foodContents.get(0).get(7), "g", 6));
-        groupedContents.add(findFoodContents("Protein", foodContents.get(0).get(8), "g", 50));
+        groupedContents.add(findFoodContents("Calories", foodContents.get(0).get(2), " ",
+                caloriesQuantity));
+        groupedContents.add(findFoodContents("Sugar", foodContents.get(0).get(3), "g",
+                sugarQuantity));
+        groupedContents.add(findFoodContents("Fat", foodContents.get(0).get(4), "g",
+                fatQuantity));
+        groupedContents.add(findFoodContents("Saturates", foodContents.get(0).get(5), "g",
+                saturatesQuantity));
+        groupedContents.add(findFoodContents("Carbs", foodContents.get(0).get(6), "g",
+                carbsQuantity));
+        groupedContents.add(findFoodContents("Salt", foodContents.get(0).get(7), "g",
+                saltQuantity));
+        groupedContents.add(findFoodContents("Protein", foodContents.get(0).get(8), "g",
+                proteinQuantity));
 
         return groupedContents;
 
@@ -193,29 +291,63 @@ public class FoodContentsHandler extends MainActivity {
     }
 
     // TODO findContentsPlusSumAmount
-/*    public HashMap<String, String> findContentsPlusSumAmount(String foodGroup, String quantity,
-                                                             double amount, double sumAmount) {
+    public HashMap<String, String> findContentsPlusSumAmount(String foodGroup, String quantity,
+                                                             double amount, String sumAmount) {
 
         HashMap<String, String> group = new HashMap<>();
 
         double num;
+        double sum;
 
         group.put("Food group", foodGroup);
 
-        if(!quantity.equals("null")) {
-            num = Double.parseDouble(quantity);
-        }
-        else {
+        if(quantity == null || quantity.equals("null")) {
             num = 0;
         }
-        double percentage = ((sumAmount + num) / amount) * 100;
-        String s = String.format("%.2f", percentage);
+        else {
+            num = Double.parseDouble(quantity);
+        }
+
+        if(sumAmount == null || sumAmount.equals("null")) {
+            sum = 0;
+        }
+        else {
+            sum = Double.parseDouble(sumAmount);
+        }
+
+        double percentage = ((sum + num) / amount) * 100;
+        String s = String.format(Locale.ENGLISH, "%.2f", percentage);
 
         group.put("percentage", s);
 
         return group;
-    }*/
+    }
 
+    public List<HashMap<String, String>> findGroupedContentsPlusSum(String foodName, String username) {
 
+        List<List<String>> foodContents = executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_FOOD,
+                foodName);
+        List<List<String>> sumOfFood = executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_CURRENT_DIARY,
+                username);
+
+        List<HashMap<String, String>> groupedContents = new ArrayList<>();
+        groupedContents.add(findContentsPlusSumAmount("Sugar", foodContents.get(0).get(3),
+                sugarQuantity, sumOfFood.get(0).get(0)));
+        groupedContents.add(findContentsPlusSumAmount("Calories", foodContents.get(0).get(2),
+                caloriesQuantity, sumOfFood.get(0).get(1)));
+        groupedContents.add(findContentsPlusSumAmount("Fat", foodContents.get(0).get(4),
+                fatQuantity, sumOfFood.get(0).get(2)));
+        groupedContents.add(findContentsPlusSumAmount("Saturates", foodContents.get(0).get(5),
+                saturatesQuantity, sumOfFood.get(0).get(3)));
+        groupedContents.add(findContentsPlusSumAmount("Carbs", foodContents.get(0).get(6),
+                carbsQuantity, sumOfFood.get(0).get(4)));
+        groupedContents.add(findContentsPlusSumAmount("Salt", foodContents.get(0).get(7),
+                saltQuantity, sumOfFood.get(0).get(5)));
+        groupedContents.add(findContentsPlusSumAmount("Protein", foodContents.get(0).get(8),
+                proteinQuantity, sumOfFood.get(0).get(6)));
+
+        return groupedContents;
+
+    }
 
 }

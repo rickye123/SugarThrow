@@ -5,6 +5,7 @@ This is the main activity class, which is called when the app is launched
  */
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
@@ -33,15 +34,40 @@ public class MainActivity extends AppCompatActivity
     private Execute executeSQL;
     private TableDisplay display = new TableDisplay();
     private FoodContentsHandler foodContentsHandler;
+    private String username;
 
     // invoked when activity starts
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras == null) {
+                username = "Username";
+            }
+            else {
+                username = extras.getString("username");
+            }
+        }
+        else {
+            username = (String)savedInstanceState.getSerializable("username");
+        }
+
         // set the layout to the home_activity.xml file
         setContentView(R.layout.home_activity);
+        setNavigationUsername(username);
+
         startContent();
     }
+
+    public void setNavigationUsername(String username) {
+        NavigationView navView= (NavigationView)findViewById(R.id.nav_view);
+        View view = navView.getHeaderView(0);
+        TextView text = (TextView)view.findViewById(R.id.navigation_username);
+        text.setText(username);
+    }
+
 
     private void startContent() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -57,11 +83,11 @@ public class MainActivity extends AppCompatActivity
         ImageSlider adapterView = new ImageSlider(this);
         viewPager.setAdapter(adapterView);
 
-        database = new Connector(MainActivity.this);
+        Connector database = new Connector(this);
         database.attemptCreate();
         database.openConnection();
         executeSQL = new Execute(database);
-        foodContentsHandler = new FoodContentsHandler(database);
+        foodContentsHandler = new FoodContentsHandler(database, username);
 
         // handle the links to the diary, search, and game on the homapage
         handleLinks();
@@ -71,6 +97,10 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    public String getUsername() {
+        return username;
+    }
+
     /**
      *
      */
@@ -78,9 +108,13 @@ public class MainActivity extends AppCompatActivity
 
         ImageView diaryImage = (ImageView)findViewById(R.id.diary_image);
         ImageView playSugar = (ImageView)findViewById(R.id.play_sugar_image);
+        ImageView searchFoods = (ImageView)findViewById(R.id.search_database_image);
 
         //
         clickImageView(diaryImage);
+
+        //
+        clickImageView(searchFoods);
 
         //
         clickImageView(playSugar);
@@ -96,12 +130,12 @@ public class MainActivity extends AppCompatActivity
         TextView globalSugar = (TextView)findViewById(R.id.daily_sugar_left);
 
         // update the points in the HUD with the user's points
-        String points = executeSQL.sqlGetSingleStringFromQuery(SqlQueries.SQL_POINTS, "re16621");
+        String points = executeSQL.sqlGetSingleStringFromQuery(SqlQueries.SQL_POINTS, username);
         globalPoints.setText(getString(R.string.hud_points, points));
 
         // find the total amount of each food group the user has had
         List<List<String>> sumOfFoods =
-                executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_CURRENT_DIARY, "re16621");
+                executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_CURRENT_DIARY, username);
 
         // return the amount of sugar the user has left
         Map<String, BigDecimal> sugarPercentage =
@@ -161,17 +195,17 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View v) {
                 Log.d("ID: ", Integer.toString(v.getId()));
                 switch (v.getId()) {
-                    case R.id.search_icon:
+                    case R.id.search_database_image:
                         Log.d("CLICK", "search clicked");
-                        executeSQL.sqlGetAll("User");
+                        launchActivity(FoodDatabaseActivity.class);
                         break;
                     case R.id.diary_image:
                         Log.d("CLICK", "diary image clicked");
-                        List<List<String>> regFood = executeSQL.sqlGetFromQuery(SqlQueries.SQL_REGULAR_FOOD, "re16621");
-                        display.printTable("Regular Foods", regFood);
+                        launchActivity(DiaryActivity.class);
                         break;
                     case R.id.play_sugar_image:
                         Log.d("CLICK", "play sugar throw clicked");
+                        launchActivity(UnityPlayerActivity.class);
                         break;
                     default:
                         // If we got here, the user's action was not recognized.
@@ -189,6 +223,7 @@ public class MainActivity extends AppCompatActivity
      */
     public void launchActivity(Class className) {
         Intent intent = new Intent(this, className);
+        intent.putExtra("username", username);
         startActivity(intent);
     }
 

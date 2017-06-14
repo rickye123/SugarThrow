@@ -14,6 +14,7 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.support.v7.widget.Toolbar;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
@@ -51,6 +52,7 @@ public class FoodDatabaseActivity extends DiaryActivity {
     private static int counter = 0;
     private DiaryHandler diaryHandler;
     private PointsHandler pointsHandler;
+    private String username;
 
     /**
      * Clear searchTerms table
@@ -70,7 +72,22 @@ public class FoodDatabaseActivity extends DiaryActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras == null) {
+                username = "Username";
+            }
+            else {
+                username = extras.getString("username");
+            }
+        }
+        else {
+            username = (String)savedInstanceState.getSerializable("username");
+        }
+
         setContentView(R.layout.food_database_activity);
+        setNavigationUsername(username);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -81,10 +98,10 @@ public class FoodDatabaseActivity extends DiaryActivity {
         createDrawer(toolbar);
         createNavigationView(R.id.nav_database);
 
-        Connector database = MainActivity.getDatabaseConnection();
+        Connector database = LoginActivity.getDatabaseConnection();
         executeSQL = new Execute(database);
         diaryHandler = new DiaryHandler(database);
-        pointsHandler = new PointsHandler(database);
+        pointsHandler = new PointsHandler(database, username);
 
         queue = Volley.newRequestQueue(this);
 
@@ -100,6 +117,25 @@ public class FoodDatabaseActivity extends DiaryActivity {
         searchForFood();
 
         searchEntries = (LinearLayout)findViewById(R.id.food_search_entries);
+
+        clearResults();
+
+    }
+
+    /**
+     * Clears the results of the search on click of the "CLEAR" button
+     */
+    private void clearResults() {
+
+        Button clearResults = (Button)findViewById(R.id.clear_results);
+        clearResults.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchEntries.removeAllViews();
+                LinearLayout noEntries = layoutCreator.createNoResultsLayout();
+                searchEntries.addView(noEntries);
+            }
+        });
 
     }
 
@@ -508,10 +544,16 @@ public class FoodDatabaseActivity extends DiaryActivity {
      */
     public void insert(View view) {
         String pointsBefore = executeSQL.sqlGetSingleStringFromQuery(SqlQueries.SQL_STREAK,
-                date.convertDateFormat(date.getCurrentDate()), "re16621");
-        diaryHandler.insertIntoDiary(view.getId(), date.convertDateFormat(date.getCurrentDate()),"re16621",
+                date.convertDateFormat(date.getCurrentDate()), username);
+        diaryHandler.insertIntoDiary(view.getId(), date.convertDateFormat(date.getCurrentDate()),username,
                 searchTerms, true);
-        pointsHandler.checkForPointsUpdate(pointsBefore, date.convertDateFormat(date.getCurrentDate()), "re16621", true);
+        pointsHandler.checkForPointsUpdate(pointsBefore, date.convertDateFormat(date.getCurrentDate()), username, true);
+
+        System.out.println("FOOD NAME ADDED " + searchTerms.get(view.getId()).get(1));
+
+        pointsHandler.pointsReduction(pointsBefore,
+                date.convertDateFormat(date.getCurrentDate()), username, searchTerms.get(view.getId()).get(1));
+
     }
 
 }

@@ -17,6 +17,8 @@ class SqlQueries {
     static final String SQL_DECREMENT_POINTS_1 = "UPDATE User SET points = points - 1 WHERE User.userName = ?";
     static final String SQL_INCREMENT_POINTS_10 = "UPDATE User SET points = points + 10 WHERE User.userName = ?";
     static final String SQL_DECREMENT_POINTS_10 = "UPDATE User SET points = points - 10 WHERE User.userName = ?";
+    static final String SQL_INCREMENT_POINTS_5 = "UPDATE User SET points = points + 5 WHERE User.userName = ?";
+    static final String SQL_DECREMENT_POINTS_5 = "UPDATE User SET points = points - 5 WHERE User.userName = ?";
 
     static final String SQL_IN_DIARY= "SELECT Food.name as food, COUNT(*) AS quantity, Food.foodId FROM Diary INNER JOIN " +
             "User ON Diary.userId = User.userId INNER JOIN Food ON Diary.foodId = Food.foodId WHERE Diary.theDate = ? " +
@@ -34,6 +36,8 @@ class SqlQueries {
 
     static final String SQL_SELECT_USER = "SELECT userId FROM User WHERE userName = ?";
 
+    static final String SQL_USER = "SELECT * FROM User WHERE userName = ?";
+
     static final String SQL_SELECT_SPECIFIC_USER = "SELECT * FROM User WHERE userName = ?";
 
     static final String SQL_SELECT_FOOD = "SELECT * FROM Food WHERE name = ?";
@@ -41,5 +45,31 @@ class SqlQueries {
     static final String SQL_SELECT_CURRENT_DIARY = "SELECT SUM(Food.sugar), SUM(Food.calories), SUM(Food.fat), SUM(Food.saturates), " +
             "SUM(Food.carbs), SUM(Food.salt), SUM(Food.protein) FROM Food INNER JOIN Diary ON Diary.foodId = Food.foodId INNER JOIN " +
             "User ON User.userId = Diary.userId WHERE theDate = date('now') AND User.userName = ?";
+
+    static final String SQL_SELECT_GOAL = "SELECT User.userName FROM Goals INNER JOIN User ON User.userId = Goals.userId WHERE User.userName = " +
+            "?";
+
+    static final String SQL_SELECT_SUGAR = "SELECT User.userName FROM Sugar INNER JOIN User ON User.userId = Sugar.userId WHERE User.userName = " +
+            "?";
+
+    static final String SQL_UPDATE_ALLOWANCE = "UPDATE Sugar SET allowance = ? WHERE userId = ?";
+    static final String SQL_UPDATE_REDUCTION = "UPDATE Sugar SET reduction = ? WHERE userId = ?";
+
+    static final String SQL_SELECT_GOALS = "SELECT Goals.targetSugar, Goals.targetCalories, Goals.targetSaturates, Goals.targetFat, " +
+            "Goals.targetSalt, Goals.targetProtein, Goals.targetCarbs FROM Goals INNER JOIN User ON User.userId = Goals.userId WHERE " +
+            "User.userName = ?";
+
+    static final String SQL_SELECT_WEEKLY_SUGAR = "SELECT Sugar.allowance, Sugar.reduction FROM Sugar INNER JOIN User ON User.userId = " +
+            "Sugar.userId WHERE User.userName = ?";
+
+    static final String SQL_UPDATE_GOAL = "UPDATE Goals SET ? WHERE userId = ?";
+    static final String SQL_UPDATE_SUGAR_GOAL = "UPDATE Goals SET targetSugar = ? WHERE userId = ?";
+    static final String SQL_UPDATE_CALORIES_GOAL = "UPDATE Goals SET targetCalories = ? WHERE userId = ?";
+    static final String SQL_UPDATE_SATURATES_GOAL = "UPDATE Goals SET targetSaturates = ? WHERE userId = ?";
+    static final String SQL_UPDATE_FAT_GOAL = "UPDATE Goals SET targetFat = ? WHERE userId = ?";
+    static final String SQL_UPDATE_PROTEIN_GOAL = "UPDATE Goals SET targetProtein = ? WHERE userId = ?";
+    static final String SQL_UPDATE_CARBS_GOAL = "UPDATE Goals SET targetCarbs = ? WHERE userId = ?";
+    static final String SQL_UPDATE_SALT_GOAL = "UPDATE Goals SET targetSalt = ? WHERE userId = ?";
+
 
 }
