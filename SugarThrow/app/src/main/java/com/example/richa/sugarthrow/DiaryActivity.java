@@ -1,8 +1,6 @@
 package com.example.richa.sugarthrow;
 
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -18,7 +16,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.SearchView;
 import android.widget.Toast;
-
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -32,7 +29,6 @@ public class DiaryActivity extends MainActivity {
     private LayoutCreator layoutCreator = new LayoutCreator(this, viewCreator);
     private LinearLayout diaryLayout;
     private Execute executeSQL;
-    private TableDisplay display = new TableDisplay();
     private TimeKeeper date = new TimeKeeper();
     private boolean isOpen = false;
     private static String queryRequest;
@@ -40,6 +36,7 @@ public class DiaryActivity extends MainActivity {
     private PointsHandler pointsHandler;
     private FoodContentsHandler foodContentsHandler;
     private String username;
+    private boolean acknowledgeStreak = false;
 
     /**
      * Getter method invoked in the FoodDatabaseActivity to obtain the
@@ -119,8 +116,7 @@ public class DiaryActivity extends MainActivity {
         createNavigationView(R.id.nav_diary); // diary item is highligthed
 
         // create database and instantiate objects
-        Connector database = LoginActivity.getDatabaseConnection();
-
+        Connector database = Connector.getInstance(this);
 
         executeSQL = new Execute(database);
         diaryHandler = new DiaryHandler(database);
@@ -139,7 +135,40 @@ public class DiaryActivity extends MainActivity {
         // create diary entries (if any) for the corresponding userName
         createDiaryEntries(date.convertDateFormat(dateText.getText().toString()), username);
 
+        if(!diary.isEmpty()) {
+            acknowledgeStreak = true;
+        }
+
+        checkQuantities();
+
     }
+
+    private void checkQuantities() {
+
+        HashMap<String, Integer> map = foodContentsHandler.getLastFiveDays(username);
+
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+
+            if(entry.getValue() >= 3) {
+                // is this food a risk food? i.e. contains over 50% of something?
+                List<List<String>> foodContents = foodContentsHandler.createGroupedContents(entry.getKey());
+                if(foodContentsHandler.riskFood(foodContents)) {
+                    // in what way is it a risk food?
+                    String message = "You have been eating a lot of \"" + entry.getKey() + "\"";
+                    message = message.concat("\nIt contains: \n");
+                    for(int i = 0; i < 7; i++) {
+                        if (Double.parseDouble(foodContents.get(i).get(3)) > 50) {
+                            message = message.concat("Over 50% of your daily " + foodContents.get(i).get(0) + "\n");
+                        }
+                    }
+                    message = message.concat("\nConsider a healthier option");
+                    launchFeedbackActivity(DiaryActivity.this, message, false);
+                }
+            }
+        }
+
+    }
+
 
     /**
      * Method invoked which creates the add buttons for the regular foods
@@ -264,6 +293,7 @@ public class DiaryActivity extends MainActivity {
         else {
             // create no entries layout if the table "diary" is in fact empty
             LinearLayout noEntryWrapper = layoutCreator.createNoEntries("No Entries");
+            acknowledgeStreak = false;
             diaryLayout.addView(noEntryWrapper);
         }
 
@@ -605,23 +635,28 @@ public class DiaryActivity extends MainActivity {
         clearRegularFoodsTable();
         regularFoods = executeSQL.sqlGetFromQuery(SqlQueries.SQL_REGULAR_FOOD, username);
 
-        display.printTable("Reg Foods", regularFoods);
-
         // insert into the diary based on the regular foods table
         diaryHandler.insertIntoDiary(row, theDate, username, regularFoods, false);
-
-        display.printTable("Reg Foods", regularFoods);
 
         // update regular foods
         populateRegularFoods(username, false);
         // update diary
         UpdateDiaryEntries(theDate, username);
 
+        int streak = diaryHandler.findLogStreak(date, username);
+        if(streak > 0 && !acknowledgeStreak) {
+            String feedback = "You have logged foods for " + Integer.toString(streak) +
+                    "\n days now. \nWell Done!";
+            acknowledgeStreak = true;
+            launchFeedbackActivity(DiaryActivity.this, feedback, true);
+        }
+
+
         // calculate points increase
         pointsHandler.checkForPointsUpdate(pointsBefore, theDate, username, true);
 
         // reduce points if over a daily amount of something
-        pointsHandler.pointsReduction(pointsBefore, theDate, username, regularFoods.get(0).get(3));
+/*        pointsHandler.pointsReduction(pointsBefore, theDate, username, regularFoods.get(0).get(3));*/
 
     }
 
@@ -671,35 +706,59 @@ public class DiaryActivity extends MainActivity {
      * box the food will be added, otherwise it will not be added
      * @param view - the view representing the view clicked on
      */
-    private void checkForInsert(View view) {
+    private void checkForInsert(View view, int ...row) {
 
-        String foodName = diary.get(view.getId()).get(0);
+        if(!date.getCurrentDate().equals(dateText.getText().toString())){
+            return;
+        }
+
+        String foodName;
+        if (row.length > 0) {
+            foodName = regularFoods.get(row[0]).get(3);
+        }
+        else {
+            foodName = diary.get(view.getId()).get(0);
+        }
+
         String message = generateMessage(foodName);
 
-        if(message == "") {
-            insert(view);
+        if(message.equals("")) {
+            if(row.length > 0) {
+                addFromRegularFoods(date.convertDateFormat(dateText.getText().toString()),
+                        username, row[0]);
+            }
+            else {
+                insert(view);
+            }
         }
         else {
             String dialog = "You are about to go over your daily limit of : ";
             dialog = dialog.concat(message);
-            openInsertDialog(dialog, view);
+            if(row.length > 0) {
+                openInsertDialog(dialog, view, row[0]);
+            }
+            else {
+                openInsertDialog(dialog, view);
+            }
         }
 
     }
 
-    private String generateMessage(String foodName) {
+    public String generateMessage(String foodName) {
 
         // work out the daily total after food contents have been added
         List<HashMap<String, String>> contents =
                 foodContentsHandler.findGroupedContentsPlusSum(foodName, username);
 
-        System.out.println("CARBS " + contents.get(4).get("percentage"));
+        List<Map<String, BigDecimal>> today = foodContentsHandler.findDailyTotal(username);
 
         String message = "";
 
         for(int i = 0; i < contents.size(); i++) {
-            if(Double.parseDouble(contents.get(i).get("percentage")) > 100) {
-                message = message.concat("\n" + contents.get(i).get("Food group"));
+            if(today.get(i).get("intake").floatValue() < 100) {
+                if (Double.parseDouble(contents.get(i).get("percentage")) > 100) {
+                    message = message.concat(contents.get(i).get("Food group") + "; ");
+                }
             }
         }
 
@@ -716,7 +775,6 @@ public class DiaryActivity extends MainActivity {
     private void insert(View view) {
 
         String pointsBefore = pointsHandler.getPointsBefore(username);
-        System.out.println("POINTS BEFORE " + pointsHandler.getPoints());
 
         diaryHandler.insertIntoDiary(view.getId(),
                 date.convertDateFormat(dateText.getText().toString()), username, diary, false);
@@ -725,24 +783,36 @@ public class DiaryActivity extends MainActivity {
         // update diary entries
         UpdateDiaryEntries(date.convertDateFormat(dateText.getText().toString()), username);
 
-        pointsHandler.checkForPointsUpdate(pointsBefore,  date.convertDateFormat(dateText.getText().toString()), username, true);
-
-        // check for points reductions
-        pointsHandler.pointsReduction(pointsBefore,
-                date.convertDateFormat(dateText.getText().toString()), username, diary.get(0).get(0));
-
-        System.out.println("POINTS AFTER " + pointsHandler.getPoints());
+        pointsHandler.checkForPointsUpdate(pointsBefore,
+                date.convertDateFormat(dateText.getText().toString()), username, true);
 
     }
 
-    public void openInsertDialog(String message, final View view) {
+    private void openInsertDialog(String message, final View view, final int ... row) {
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setMessage(message);
         alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
-                insert(view);
+                String foodName, message;
+                if(row.length > 0) {
+                    foodName = regularFoods.get(row[0]).get(3);
+                    message = generateMessage(foodName);
+                    addFromRegularFoods(date.convertDateFormat(dateText.getText().toString()),
+                            username, row[0]);
+
+                }
+                else {
+                    foodName = diary.get(view.getId()).get(0);
+                    message = generateMessage(foodName);
+                    insert(view);
+                }
+                String feedback = "You have exceeded your daily allowance of : ".concat(message);
+                launchFeedbackActivity(DiaryActivity.this, feedback, false);
+                // reduce points here
+                pointsHandler.decreasePoints(username);
+
             }
         });
         alertDialogBuilder.setNegativeButton("No",new DialogInterface.OnClickListener() {
@@ -765,10 +835,7 @@ public class DiaryActivity extends MainActivity {
     private void remove(View view) {
 
         // determine points before update
-        String pointsBefore = executeSQL.sqlGetSingleStringFromQuery(SqlQueries.SQL_STREAK,
-                date.convertDateFormat(date.getCurrentDate()), username);
-
-        String foodName = diary.get(view.getId()).get(0);
+        String pointsBefore = pointsHandler.getPointsBefore(username);
 
         List<Map<String, BigDecimal>> totals = foodContentsHandler.findDailyTotal(username);
 
@@ -784,11 +851,9 @@ public class DiaryActivity extends MainActivity {
         pointsHandler.checkForPointsUpdate(pointsBefore,
                 date.convertDateFormat(dateText.getText().toString()), username, false);
 
-
-
         // return points?
-/*        pointsHandler.pointsReturn(pointsBefore, date.convertDateFormat(dateText.getText().toString()),
-                username, foodName, totals);*/
+        pointsHandler.pointsReturn(date.convertDateFormat(dateText.getText().toString()),
+                username, totals);
 
     }
 
@@ -840,19 +905,24 @@ public class DiaryActivity extends MainActivity {
     private void actionImageClick(View view){
         switch (view.getId()) {
             case R.id.addFirstReg:
-                addFromRegularFoods(date.convertDateFormat(dateText.getText().toString()), username, 0);
+                checkForInsert(view, 0);
+                /*addFromRegularFoods(date.convertDateFormat(dateText.getText().toString()), username, 0);*/
                 break;
             case R.id.addSecondReg:
-                addFromRegularFoods(date.convertDateFormat(dateText.getText().toString()), username, 1);
+                checkForInsert(view, 1);
+                //addFromRegularFoods(date.convertDateFormat(dateText.getText().toString()), username, 1);
                 break;
             case R.id.addThirdReg:
-                addFromRegularFoods(date.convertDateFormat(dateText.getText().toString()), username, 2);
+                checkForInsert(view, 2);
+               // addFromRegularFoods(date.convertDateFormat(dateText.getText().toString()), username, 2);
                 break;
             case R.id.addFourthReg:
-                addFromRegularFoods(date.convertDateFormat(dateText.getText().toString()), username, 3);
+                checkForInsert(view, 3);
+               // addFromRegularFoods(date.convertDateFormat(dateText.getText().toString()), username, 3);
                 break;
             case R.id.addFifthReg:
-                addFromRegularFoods(date.convertDateFormat(dateText.getText().toString()), username, 4);
+                checkForInsert(view, 4);
+               // addFromRegularFoods(date.convertDateFormat(dateText.getText().toString()), username, 4);
                 break;
             default:
                 break;

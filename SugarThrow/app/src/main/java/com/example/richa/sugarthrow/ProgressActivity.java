@@ -115,38 +115,10 @@ public class ProgressActivity extends MainActivity {
 
     }
 
-    private String[] findPreviousFiveDays() {
-
-        String prevDay = date.getCurrentDate();
-        String[] days = new String[5];
-        days[0] = prevDay;
-
-        for(int i = 1; i < 5; i++) {
-            String day = date.getPrevDate(prevDay);
-            days[i] = day;
-            prevDay = day;
-        }
-
-        reverseArray(days);
-
-        return days;
-    }
-
-    private void reverseArray(String inputArray[]) {
-        String temp;
-
-        for (int i = 0; i < inputArray.length/2; i++)
-        {
-            temp = inputArray[i];
-            inputArray[i] = inputArray[inputArray.length-1-i];
-            inputArray[inputArray.length-1-i] = temp;
-        }
-
-    }
 
     private void lineChartCreator(String userName) {
 
-        String[] days = findPreviousFiveDays();
+        String[] days = foodContentsHandler.findPreviousFiveDays();
         List<Entry> yValues = new ArrayList<>();
 
         for(int i = 0; i < 5; i++) {

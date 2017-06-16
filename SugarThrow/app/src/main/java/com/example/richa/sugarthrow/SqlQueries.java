@@ -14,15 +14,23 @@ class SqlQueries {
 
     static final String SQL_SET_POINTS_0 = "UPDATE User SET points = 0 WHERE User.userName = ?";
     static final String SQL_INCREMENT_POINTS_1 = "UPDATE User SET points = points + 1 WHERE User.userName = ?";
+    static final String SQL_INCREMENT_POINTS_2 = "UPDATE User SET points = points + 2 WHERE User.userName = ?";
     static final String SQL_DECREMENT_POINTS_1 = "UPDATE User SET points = points - 1 WHERE User.userName = ?";
     static final String SQL_INCREMENT_POINTS_10 = "UPDATE User SET points = points + 10 WHERE User.userName = ?";
     static final String SQL_DECREMENT_POINTS_10 = "UPDATE User SET points = points - 10 WHERE User.userName = ?";
     static final String SQL_INCREMENT_POINTS_5 = "UPDATE User SET points = points + 5 WHERE User.userName = ?";
     static final String SQL_DECREMENT_POINTS_5 = "UPDATE User SET points = points - 5 WHERE User.userName = ?";
 
+    static final String SQL_DAILY_POINTS = "SELECT points FROM User INNER JOIN Diary ON Diary.userId = User.userId WHERE " +
+            "Diary.theDate = ? AND User.userName = ? GROUP BY theDate";
+
     static final String SQL_IN_DIARY= "SELECT Food.name as food, COUNT(*) AS quantity, Food.foodId FROM Diary INNER JOIN " +
             "User ON Diary.userId = User.userId INNER JOIN Food ON Diary.foodId = Food.foodId WHERE Diary.theDate = ? " +
             "AND User.userName = ? GROUP BY Diary.foodId";
+
+    static final String SQL_SIZE_DIARY = "SELECT COUNT(*) FROM (SELECT Food.name as food, COUNT(*) AS quantity, Food.foodId FROM Diary " +
+            "INNER JOIN User ON Diary.userId = User.userId INNER JOIN Food ON Diary.foodId = Food.foodId WHERE Diary.theDate = ? " +
+            "AND User.userName = ? GROUP BY Diary.foodId) as count";
 
     static final String SQL_STREAK = "SELECT COUNT(*) FROM (SELECT Food.foodId FROM Diary INNER JOIN User ON User.userId = Diary.userId " +
             "INNER JOIN Food ON Food.foodId = Diary.foodID WHERE theDate = ? AND User.userName = ? GROUP BY Food.foodID) as points";
@@ -71,5 +79,12 @@ class SqlQueries {
     static final String SQL_UPDATE_CARBS_GOAL = "UPDATE Goals SET targetCarbs = ? WHERE userId = ?";
     static final String SQL_UPDATE_SALT_GOAL = "UPDATE Goals SET targetSalt = ? WHERE userId = ?";
 
+    static final String SQL_GROUP_SUM = "SELECT SUM(Food.sugar), SUM(Food.calories), SUM(Food.fat), SUM(Food.saturates)," +
+            " SUM(Food.carbs), SUM(Food.salt), SUM(Food.protein) FROM Food INNER JOIN Diary ON Diary.foodId = Food.foodId INNER JOIN " +
+            " User ON User.userId = Diary.userId WHERE theDate = ? AND User.userName = ?";
+
+    static final String SQL_GROUP_QUANTITY = "SELECT Food.name, Food.sugar, Food.calories, Food.fat, Food.salt, Food.saturates, Food.protein, " +
+    "Food.carbs, COUNT(*) as quantity FROM Food INNER JOIN Diary ON Food.foodId = Diary.foodId " +
+    "INNER JOIN User ON User.userId = Diary.userId WHERE theDate = ? AND User.userName = ? GROUP BY Food.foodId ORDER BY quantity";
 
 }

@@ -37,6 +37,19 @@ class TimeKeeper {
 
     }
 
+    String getCurrentTime() {
+
+        Calendar time = Calendar.getInstance();
+        time.getTime();
+        int minutes = time.get(Calendar.MINUTE);
+        int hours= time.get(Calendar.HOUR_OF_DAY);
+        int seconds = time.get(Calendar.SECOND);
+
+        return String.format(Locale.ENGLISH, "%02d:%02d:%02d",
+                hours, minutes, seconds);
+
+    }
+
     /**
      * Method which converts the date format from "DD-MM-YYYY"
      * to "YYYY-MM-DD", so that SQL queries will execute properly
@@ -64,7 +77,7 @@ class TimeKeeper {
      *                    are split into day, month, and year
      * @return a hashmap containing the day, month, and year of a String
      */
-    public Map<String, String> getDateVariables(String currentDate) {
+    Map<String, String> getDateVariables(String currentDate) {
 
         // day is the first 2 characters
         String day = "" + currentDate.charAt(0) + currentDate.charAt(1);

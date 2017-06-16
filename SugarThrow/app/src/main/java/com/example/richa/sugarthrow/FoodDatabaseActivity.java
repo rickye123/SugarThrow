@@ -6,8 +6,10 @@ for foods using the Nutritionix API
  */
 
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -19,6 +21,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -521,12 +525,14 @@ public class FoodDatabaseActivity extends DiaryActivity {
                                 public void onSuccess(String result) {
                                     executeSQL.sqlInsert("Food", contents);
                                     // insert into diary
-                                    insert(v);
+                                    checkForInsert(v);
+                                    //insert(v);
                                 }
                             });
                         } else {
                             // if in the database, simply insert into diary
-                            insert(v);
+                            //insert(v);
+                            checkForInsert(v);
                         }
                     }
                     else if(event.getAction() == MotionEvent.ACTION_UP) {
@@ -543,16 +549,66 @@ public class FoodDatabaseActivity extends DiaryActivity {
      * @param view - the view whose id is being referenced
      */
     public void insert(View view) {
-        String pointsBefore = executeSQL.sqlGetSingleStringFromQuery(SqlQueries.SQL_STREAK,
-                date.convertDateFormat(date.getCurrentDate()), username);
-        diaryHandler.insertIntoDiary(view.getId(), date.convertDateFormat(date.getCurrentDate()),username,
-                searchTerms, true);
-        pointsHandler.checkForPointsUpdate(pointsBefore, date.convertDateFormat(date.getCurrentDate()), username, true);
+        String pointsBefore = pointsHandler.getPointsBefore(username);
+        String foodName = searchTerms.get(view.getId()).get(1);
 
-        System.out.println("FOOD NAME ADDED " + searchTerms.get(view.getId()).get(1));
+        diaryHandler.insertIntoDiary(view.getId(),
+                date.convertDateFormat(date.getCurrentDate()),username, searchTerms, true);
 
-        pointsHandler.pointsReduction(pointsBefore,
-                date.convertDateFormat(date.getCurrentDate()), username, searchTerms.get(view.getId()).get(1));
+        pointsHandler.checkForPointsUpdate(pointsBefore,
+                date.convertDateFormat(date.getCurrentDate()), username, true);
+
+        Toast.makeText(FoodDatabaseActivity.this, foodName + " added to diary",
+                Toast.LENGTH_SHORT).show();
+
+    }
+
+    /**
+     * Check to see whether inserting will result in food being over the
+     * daily allowance, and prompt the user. If they respond yes to the dialog
+     * box the food will be added, otherwise it will not be added
+     * @param view - the view representing the view clicked on
+     */
+    private void checkForInsert(View view) {
+
+        String foodName = searchTerms.get(view.getId()).get(1);
+
+        String message = generateMessage(foodName);
+
+        if(message.equals("")) {
+            insert(view);
+        }
+        else {
+            String dialog = "You are about to go over your daily limit of : ";
+            dialog = dialog.concat(message);
+            openInsertDialog(dialog, view);
+        }
+
+    }
+
+    public void openInsertDialog(String message, final View view) {
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setMessage(message);
+        alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                String message = generateMessage(searchTerms.get(view.getId()).get(1));
+                insert(view);
+                String feedback = "You have exceeded your daily allowance of : ".concat(message);
+                launchFeedbackActivity(FoodDatabaseActivity.this, feedback, false);
+                pointsHandler.decreasePoints(username);
+            }
+        });
+        alertDialogBuilder.setNegativeButton("No",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(FoodDatabaseActivity.this, "Cancelled Insertion", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
 
     }
 

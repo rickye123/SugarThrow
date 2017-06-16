@@ -4,8 +4,8 @@ package com.example.richa.sugarthrow;
 This is the main activity class, which is called when the app is launched
  */
 
+import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
@@ -22,19 +22,23 @@ import android.view.MenuItem;
 import android.util.Log;
 import android.widget.ImageView;
 import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import android.widget.TextView;
+
 
 public class MainActivity extends AppCompatActivity
         implements OnNavigationItemSelectedListener {
 
-    //TODO solve the static connector issue
-    private static Connector database;
     private Execute executeSQL;
-    private TableDisplay display = new TableDisplay();
     private FoodContentsHandler foodContentsHandler;
     private String username;
+    private TimeKeeper date = new TimeKeeper();
+    private PointsHandler pointsHandler;
+    private boolean acknowledgeOnTrack, acknowledgeAchieved = false;
 
     // invoked when activity starts
     @Override
@@ -68,6 +72,15 @@ public class MainActivity extends AppCompatActivity
         text.setText(username);
     }
 
+    public void launchFeedbackActivity(Context className, String message, boolean positive) {
+
+        Intent intent = new Intent(className, FeedbackActivityPopup.class);
+        intent.putExtra("message", message);
+        intent.putExtra("positive", positive);
+        startActivity(intent);
+
+    }
+
 
     private void startContent() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -83,17 +96,27 @@ public class MainActivity extends AppCompatActivity
         ImageSlider adapterView = new ImageSlider(this);
         viewPager.setAdapter(adapterView);
 
-        Connector database = new Connector(this);
+        Connector database = Connector.getInstance(this);
         database.attemptCreate();
         database.openConnection();
         executeSQL = new Execute(database);
         foodContentsHandler = new FoodContentsHandler(database, username);
+        pointsHandler = new PointsHandler(database, username);
 
         // handle the links to the diary, search, and game on the homapage
         handleLinks();
 
         // the HUD contains the percentage intake of sugar the user has left and their total points
         populateHUD();
+
+        // check to see if daily goals on track
+        if(!acknowledgeOnTrack) {
+            dailyGoalsOnTrack();
+        }
+        // check to see if daily goals achieved
+        if(!acknowledgeAchieved) {
+            dailyGoalsAchieved();
+        }
 
     }
 
@@ -150,14 +173,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * Getter method returning the initialised database connection
-     * @return Connector object - the database connection
-     */
-    public static Connector getDatabaseConnection() {
-        return database;
-    }
-
-    /**
      * Create the navigation drawer (side menu) and change the menu
      * item selected
      * @param menuId - the id referring to the drawabale image in the menu
@@ -205,7 +220,7 @@ public class MainActivity extends AppCompatActivity
                         break;
                     case R.id.play_sugar_image:
                         Log.d("CLICK", "play sugar throw clicked");
-                        launchActivity(UnityPlayerActivity.class);
+                        launchActivity(UnityGame.class);
                         break;
                     default:
                         // If we got here, the user's action was not recognized.
@@ -215,6 +230,92 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+    }
+
+    private void dailyGoalsOnTrack() {
+
+        if(checkTime("20:00:00", "21:59:59")) {
+            // if any of your goals are under, looks like you're on track to reach that goal
+            String hasGoals = executeSQL.sqlGetSingleStringFromQuery(SqlQueries.SQL_SELECT_GOAL,
+                    username);
+            if(!hasGoals.equals("Empty set")) {
+                List<List<String>> goals = executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_GOALS,
+                        username);
+                List<List<String>> quantities = foodContentsHandler.createQuantities(goals);
+                List<Map<String, BigDecimal>> total = foodContentsHandler.findDailyTotal(username);
+
+                for(int i = 0; i < quantities.size(); i++) {
+                    if(!(goals.get(0).get(i).equals("") || goals.get(0).get(i) == null)) {
+                        if (total.get(i).get("intake").floatValue() < 100) {
+                            String message = "Looks like you're on track to reach a goal!\n";
+                            message = message.concat(quantities.get(i).get(0) + " " + quantities.get(i).get(1) +
+                                    " " + quantities.get(i).get(2));
+                            launchFeedbackActivity(MainActivity.this, message, true);
+                            acknowledgeOnTrack = true;
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    private void dailyGoalsAchieved() {
+
+        if(checkTime("22:00:00", "23:59:59")) {
+            String hasGoals = executeSQL.sqlGetSingleStringFromQuery(SqlQueries.SQL_SELECT_GOAL,
+                    username);
+            if(!hasGoals.equals("Empty set")) {
+                List<List<String>> goals = executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_GOALS,
+                        username);
+                List<List<String>> quantities = foodContentsHandler.createQuantities(goals);
+                List<Map<String, BigDecimal>> total = foodContentsHandler.findDailyTotal(username);
+
+                for(int i = 0; i < quantities.size(); i++) {
+                    if(!(goals.get(0).get(i).equals("") || goals.get(0).get(i) == null)) {
+                        if (total.get(i).get("intake").floatValue() < 100) {
+                            String message = "You reached your daily goal!\n";
+                            message = message.concat(quantities.get(i).get(0) + " " + quantities.get(i).get(1) +
+                                    " " + quantities.get(i).get(2));
+                            message = message.concat("\nYou've earned an extra 2 points");
+                            pointsHandler.updatePoints(username, SqlQueries.SQL_INCREMENT_POINTS_2);
+                            launchFeedbackActivity(MainActivity.this, message, true);
+                            acknowledgeAchieved = true;
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    private boolean checkTime(String timeAfter, String timeBefore) {
+
+        try {
+            Date time1 = new java.text.SimpleDateFormat("HH:mm:ss", Locale.ENGLISH).parse(timeAfter);
+            Calendar calendar1 = Calendar.getInstance();
+            calendar1.setTime(time1);
+            calendar1.add(Calendar.DATE, 1);
+
+            Date time2 = new java.text.SimpleDateFormat("HH:mm:ss", Locale.ENGLISH).parse(timeBefore);
+            Calendar calendar2 = Calendar.getInstance();
+            calendar2.setTime(time2);
+            calendar2.add(Calendar.DATE, 1);
+
+            Date d = new java.text.SimpleDateFormat("HH:mm:ss", Locale.ENGLISH).parse(date.getCurrentTime());
+            Calendar calendar3 = Calendar.getInstance();
+            calendar3.setTime(d);
+            calendar3.add(Calendar.DATE, 1);
+
+            Date currentTime = calendar3.getTime();
+            if (currentTime.after(calendar1.getTime()) && currentTime.before(calendar2.getTime())) {
+                return true;
+            }
+        } catch (java.text.ParseException e) {
+            e.printStackTrace();
+        }
+        return false;
+
     }
 
     /**
@@ -246,8 +347,8 @@ public class MainActivity extends AppCompatActivity
             launchActivity(MainActivity.class);
         } else if (id == R.id.nav_diary && !(className.equals(DiaryActivity.class))) {
             launchActivity(DiaryActivity.class);
-        } else if (id == R.id.nav_game && !(className.equals(UnityPlayerActivity.class))) {
-            launchActivity(UnityPlayerActivity.class);
+        } else if (id == R.id.nav_game && !(className.equals(UnityGame.class))) {
+            launchActivity(UnityGame.class);
         } else if (id == R.id.nav_progress && !(className.equals(ProgressActivity.class))) {
             launchActivity(ProgressActivity.class);
         } else if (id == R.id.nav_risk && !(className.equals(RiskActivity.class))) {

@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import android.content.Context;
-import android.util.Log;
 
 public class Connector extends SQLiteOpenHelper {
 
@@ -20,6 +19,7 @@ public class Connector extends SQLiteOpenHelper {
     private static String DB_NAME = "mydatabase.db";
     private SQLiteDatabase sqliteDatabase;
     private final Context context;
+    private static Connector instance;
 
     /**
      * Constructor to find the path of the database
@@ -28,14 +28,22 @@ public class Connector extends SQLiteOpenHelper {
     public Connector(Context context) {
         super(context, DB_NAME, null, 1);
 
-        if(android.os.Build.VERSION.SDK_INT >= 17){
-            DB_PATH = context.getApplicationInfo().dataDir + "/databases/";
-        }
-        else {
-            DB_PATH = "/data/data/" + context.getPackageName() + "/databases/";
-        }
+        DB_PATH = "/data/data/" + context.getPackageName() + "/databases/";
         this.context = context;
-        Log.d("Path 1", DB_PATH);
+
+    }
+
+
+    /**
+     * Get instance of database connection
+     * @param context - the activity context
+     * @return instance of the database connection
+     */
+    static synchronized Connector getInstance(Context context) {
+        if(instance == null) {
+            instance = new Connector(context.getApplicationContext());
+        }
+        return instance;
     }
 
     /**

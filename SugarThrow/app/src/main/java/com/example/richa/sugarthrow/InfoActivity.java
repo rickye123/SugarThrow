@@ -40,18 +40,7 @@ public class InfoActivity extends MainActivity {
         createDrawer(toolbar);
         createNavigationView(R.id.nav_info);
 
-        //TODO powered by Nutritionix
-        ImageView nutritionix = (ImageView)findViewById(R.id.nutritionix);
-        nutritionix.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent redirect = new Intent();
-                redirect.setAction(Intent.ACTION_VIEW);
-                redirect.addCategory(Intent.CATEGORY_BROWSABLE);
-                redirect.setData(Uri.parse("https://www.nutritionix.com/business/api"));
-                startActivity(redirect);
-            }
-        });
+
 
     }
 }

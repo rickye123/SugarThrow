@@ -44,8 +44,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".UnityPlayerActivity"
-            android:process="com.example.richa.sugarthrow.UnityPlayerActivity"
+            android:name=".UnityGame"
+            android:process="com.example.richa.sugarthrow.UnityGame"
             android:banner="@drawable/app_banner"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale"
             android:isGame="true"

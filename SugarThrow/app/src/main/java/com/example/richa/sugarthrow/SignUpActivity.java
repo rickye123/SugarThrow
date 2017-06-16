@@ -1,18 +1,14 @@
 package com.example.richa.sugarthrow;
 
 /*
-Sign up activity
+Activity called when user attempts to sign up for an account
  */
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.text.TextUtilsCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.ButtonBarLayout;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -21,19 +17,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import java.util.List;
 import java.util.Map;
 
 public class SignUpActivity extends AppCompatActivity {
 
-    private String firstName, lastName, dob, theGender, heightFeet,
-    heightInches, weightStone, weightPounds, userName, password,
-    confirmPassword;
     private Spinner gender, feet, inches, pounds;
-    private String TAG = "SignUpActivity";
     private EditText firstNameView, lastNameView, dobView, stoneView, usernameView,
     passwordView, confirmView, genderView, inchesView, feetView, poundsView;
     private TimeKeeper date = new TimeKeeper();
@@ -60,6 +49,16 @@ public class SignUpActivity extends AppCompatActivity {
         // create spinners (drop downs) for gender, height (ft and inches), and weight (pounds)
         createSpinners();
 
+        // click sign up button authenticates all the fields
+        clickSignUpButton();
+
+
+    }
+
+    /**
+     * Clicking the sign up button results in the form being authenticated
+     */
+    private void clickSignUpButton() {
         final Button createAccount = (Button)findViewById(R.id.sign_up_create_account);
         createAccount.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -74,20 +73,11 @@ public class SignUpActivity extends AppCompatActivity {
                 return false;
             }
         });
-
-
     }
 
-    public boolean notEmpty(String field, TextView view) {
-
-        if(TextUtils.isEmpty(field)) {
-            view.setError("This field is required");
-            return false;
-        }
-
-        return true;
-    }
-
+    /**
+     * Authenticate the form - checks for errors
+     */
     public void authenticate() {
 
         View focusView = null;
@@ -258,7 +248,6 @@ public class SignUpActivity extends AppCompatActivity {
             focusView.requestFocus();
         }
         else {
-            Log.d(TAG, "All fields are valid");
             // insert person into database
             ContentValues values = getUserValues();
             executeSQL.sqlInsert("User", values);
@@ -296,11 +285,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         String expression = "^[a-zA-Z]+";
 
-        if(name.matches(expression)) {
-            return true;
-        }
-
-        return false;
+        return name.matches(expression);
 
     }
 
@@ -310,7 +295,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         System.out.println("DOB " + dob);
 
-        if(dob.isEmpty() || dob == null || dob.equals("")) {
+        if(dob.isEmpty() || dob.equals("")) {
             return false;
         }
 
@@ -351,8 +336,6 @@ public class SignUpActivity extends AppCompatActivity {
 
     private boolean isGenderValid(String gender) {
 
-        System.out.println("GENDER IS " + gender);
-
         if(gender.equals("Gender")) {
             System.out.println("FALSE");
             return false;
@@ -361,17 +344,11 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private boolean isFeetValid(String feet) {
-        if(feet.equals("ft")) {
-            return false;
-        }
-        return true;
+        return !feet.equals("ft");
     }
 
     private boolean isInchesValid(String inches) {
-        if(inches.equals("in")) {
-            return false;
-        }
-        return true;
+        return !inches.equals("in");
     }
 
     private boolean isStoneValid(String stone) {
@@ -382,29 +359,19 @@ public class SignUpActivity extends AppCompatActivity {
             }
         }
 
-        if(Integer.parseInt(stone) > 50) {
-            return false;
-        }
-
-        return true;
+        return Integer.parseInt(stone) <= 50;
 
     }
 
     private boolean isPoundsValid(String pounds) {
-        if(pounds.equals("lbs")) {
-            return false;
-        }
-        return true;
+        return !pounds.equals("lbs");
     }
 
     private boolean isUsernameValid(String username) {
 
-        String regex = "[a-zA-Z0-9\\._\\-]{3,}";
+        String regex = "[a-zA-Z0-9._\\-]{3,}";
 
-        if(username.matches(regex)) {
-            return true;
-        }
-        return false;
+        return username.matches(regex);
 
     }
 
@@ -416,10 +383,7 @@ public class SignUpActivity extends AppCompatActivity {
         System.out.println("PASSWORD " + password);
         System.out.println("CONFIRM " + confirm);
 
-        if(password.equals(confirm)) {
-            return true;
-        }
-        return false;
+        return password.equals(confirm);
     }
 
 /*    public boolean authenticate() {
@@ -489,22 +453,18 @@ public class SignUpActivity extends AppCompatActivity {
                     case R.id.spinner_gender:
                         genderView.setText(selected.toString());
                         gender.setBackgroundResource(R.drawable.login_rounded);
-                        theGender = selected.toString();
                         break;
                     case R.id.spinner_height_feet:
                         feetView.setText(selected.toString());
                         feet.setBackgroundResource(R.drawable.login_rounded);
-                        heightFeet = selected.toString();
                         break;
                     case R.id.spinner_height_inches:
                         inchesView.setText(selected.toString());
                         inches.setBackgroundResource(R.drawable.login_rounded);
-                        heightInches = selected.toString();
                         break;
                     case R.id.spinner_weight_pounds:
                         poundsView.setText(selected.toString());
                         pounds.setBackgroundResource(R.drawable.login_rounded);
-                        weightPounds = selected.toString();
                         break;
                 }
             }

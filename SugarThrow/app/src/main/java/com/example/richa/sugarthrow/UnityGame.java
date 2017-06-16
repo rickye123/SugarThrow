@@ -1,6 +1,8 @@
 package com.example.richa.sugarthrow;
 
 import com.unity3d.player.*;
+import com.unity3d.player.UnityPlayer;
+import com.unity3d.player.UnityPlayerActivity;
 import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
@@ -13,7 +15,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
-public class UnityPlayerActivity extends MainActivity
+public class UnityGame extends MainActivity
 {
 	protected UnityPlayer mUnityPlayer; // don't change the name of this variable; referenced from native code
     private String username;
@@ -26,7 +28,7 @@ public class UnityPlayerActivity extends MainActivity
 		if(savedInstanceState == null) {
 			Bundle extras = getIntent().getExtras();
 			if(extras == null) {
-				username = "Username";
+				username = "username";
 			}
 			else {
 				username = extras.getString("username");
@@ -62,6 +64,8 @@ public class UnityPlayerActivity extends MainActivity
         FrameLayout layout = (FrameLayout)findViewById(R.id.game_frame);
         layout.addView(mUnityPlayer);
         mUnityPlayer.requestFocus();
+
+
 	}
 
 	// Quit Unity

@@ -154,6 +154,57 @@
     <string name="_90g">90g</string>
     <string name="daily_amounts">Daily Amounts</string>
 
+    <!-- Info strings -->
+    <string name="info_intro">The purpose of this app is to encourage you to eat healthy and to
+    cut down on your sugar consumption.</string>
+    <string name="info_points">Points</string>
+    <string name="info_points_text">A key facet of this app is its use of gamification. Points are used to
+    allow you to play the \"Sugar Throw\" game. If you do not have any points, you cannot play the game. You
+    will be rewarded or deducted points based on a number of criteria:</string>
+    <string name="points_awarded">Points awarded for:</string>
+    <string name="points_awarded_point1">- Logging foods (1 pt)"</string>
+    <string name="points_awarded_point2">- Logging foods for days in a row (2 pts)"</string>
+    <string name="points_awarded_point3">- Reaching a goal (1 pt)"</string>
+    <string name="points_awarded_point4">- Logging 10 different food items (10 pts)"</string>
+    <string name="points_deducted">Points deducted for:</string>
+    <string name="points_deducted_point1">- Removing foods (-1 pt)"</string>
+    <string name="points_deducted_point2">- Going over daily allowance (-2 pts)"</string>
+    <string name="points_deducted_point3">- Failing a goal (-5 pts)"</string>
+    <string name="points_explained">When playing the \"Sugar Throw\" game, your points for that day
+    will correspond to the number of shots you have available. The more points you have, the more chances
+    you have to get a high score.</string>
+    <string name="feedback">Feedback</string>
+    <string name="feedback_text">One of the key gamification techniques used in this app is \"Feedback\".
+    You will be given personalised feedback based upon your goals, usage, and daily allowance of food.</string>
+    <string name="feedback_popup">This is an example of positive feedback, in which points are being rewarded.</string>
+    <string name="feedback_dialog">If you are about to exceed a daily allowance of food (thereby exceeding a goal - if one is set),
+    you will first be prompted by a dialog box. If you confirm, you will then be given feedback as follows:</string>
+    <string name="feedback_deduction">Here, you will be deducted points</string>
+    <string name="goals_title">Goals</string>
+    <string name="goals_intro">Another key component of this app is the ability to set goals. You are given the opportunity
+        to set daily and weekly goals, based on food consumption.</string>
+    <string name="goals_explain">Daily goals can be set for each nutritional group, i.e. sugar, calories, carbs, etc.
+        Weekly goals can only be set for sugar.</string>
+    <string name="goals_howto">To set goals, go to Settings > Goals</string>
+    <string name="goals_setting">Setting goals is as simple as entering your goal amount and then pressing to the \"UPDATE\" button</string>
+    <string name="help_diary">Diary</string>
+    <string name="diary_intro">This section outlines how to use the food Diary.</string>
+    <string name="diary_consists">The Diary consists of a search bar (which will lead to the food database),
+        arrows to change the date (so as to look at previous diaries), a regular foods section, and the diary itself.
+        The above image shows that there are no diary entries for this date.</string>
+    <string name="diary_filled">A filled diary looks like this. The user can increase or decrease the quantity of that food
+        (using the arrows located to the left of the food item). They can also remove a food by using the red circles</string>
+    <string name="diary_nutrition">The nutritional content of the food can be seen by clicking on the food item.
+        The percentage corresponds to the daily amount that user has (based on default values or goals set by the user).</string>
+    <string name="diary_toolong">In some cases, the food names are too long, so clicking on them (and making the drop down appear)
+        will also result in the food name scrolling from right to left. </string>
+    <string name="help_fooddb">Food Database</string>
+    <string name="help_api">This app encompasses an online food database, powered by the Nutritionix API</string>
+    <string name="database_howto">To use the database, simply click on the search bar at the top of the page and enter
+        the food you are looking for</string>
+    <string name="database_dropdown">As with the diary, food can be clicked on to show its nutritional contents and
+        its full name (if too long)</string>
+
     <string-array name="gender_array">
         <item>Gender</item>
         <item>M</item>
@@ -200,7 +251,7 @@
         <item>5</item>
         <item>6</item>
         <item>7</item>
-        <item>9</item>
+        <item>8</item>
         <item>9</item>
         <item>10</item>
         <item>11</item>

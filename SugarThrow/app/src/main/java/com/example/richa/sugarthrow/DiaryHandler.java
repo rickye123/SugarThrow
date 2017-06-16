@@ -53,6 +53,34 @@ public class DiaryHandler extends DiaryActivity {
         // insert values into "Diary" table
         executeSQL.sqlInsert("Diary", values);
 
+    }
+
+    /**
+     *
+     * @return
+     */
+    public int findLogStreak(TimeKeeper date, String username) {
+
+        String current = date.getCurrentDate();
+        int streak = 1;
+        boolean logged = true;
+
+        while(logged) {
+
+            String log = executeSQL.sqlGetSingleStringFromQuery(SqlQueries.SQL_STREAK,
+                    date.convertDateFormat(current), username);
+
+            current = date.getPrevDate(current);
+
+            if(Integer.parseInt(log) == 0) {
+                logged = false;
+            }
+            else {
+                streak++;
+            }
+
+        }
+        return streak;
 
     }
 

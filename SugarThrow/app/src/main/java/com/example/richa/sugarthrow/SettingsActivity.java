@@ -82,7 +82,6 @@ public class SettingsActivity extends MainActivity {
         text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("LAUNCH");
                 startActivity(new Intent(SettingsActivity.this, SignOutPopup.class));
             }
         });

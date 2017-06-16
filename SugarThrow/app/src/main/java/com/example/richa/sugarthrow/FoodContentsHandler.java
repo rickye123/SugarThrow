@@ -18,6 +18,7 @@ public class FoodContentsHandler extends MainActivity {
     private float sugarQuantity, caloriesQuantity, saturatesQuantity,
     fatQuantity, carbsQuantity, proteinQuantity, saltQuantity;
     private List<Float> quantities = new ArrayList<>();
+    private TimeKeeper date = new TimeKeeper();
 
     private Execute executeSQL;
 
@@ -46,6 +47,36 @@ public class FoodContentsHandler extends MainActivity {
         }
 
         setQuantitiesList();
+
+    }
+
+    public String[] findPreviousFiveDays() {
+
+        String prevDay = date.getCurrentDate();
+        String[] days = new String[5];
+        days[0] = prevDay;
+
+        for(int i = 1; i < 5; i++) {
+            String day = date.getPrevDate(prevDay);
+            days[i] = day;
+            prevDay = day;
+        }
+
+        reverseArray(days);
+
+        return days;
+    }
+
+
+    private void reverseArray(String inputArray[]) {
+        String temp;
+
+        for (int i = 0; i < inputArray.length/2; i++)
+        {
+            temp = inputArray[i];
+            inputArray[i] = inputArray[inputArray.length-1-i];
+            inputArray[inputArray.length-1-i] = temp;
+        }
 
     }
 
@@ -168,9 +199,6 @@ public class FoodContentsHandler extends MainActivity {
                 executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_CURRENT_DIARY, username);
         int size = sumOfFoods.get(0).size();
 
-/*        TableDisplay display = new TableDisplay();
-
-        display.printTable("Sum of food", sumOfFoods);*/
 
         for(int i = 0; i < size; i++) {
             dailyTotals.add(findFoodPercentages(sumOfFoods.get(0).get(i), i));
@@ -179,6 +207,45 @@ public class FoodContentsHandler extends MainActivity {
         return dailyTotals;
 
     }
+
+
+    public List<List<String>> createQuantities(List<List<String>> goals) {
+
+        List<List<String>> quantities = new ArrayList<>();
+
+        quantities.add(new ArrayList<String>());
+        quantities.get(0).add("Sugar - ");
+        quantities.get(0).add(goals.get(0).get(0));
+        quantities.get(0).add("g");
+        quantities.add(new ArrayList<String>());
+        quantities.get(1).add("Calories - ");
+        quantities.get(1).add(goals.get(0).get(1));
+        quantities.get(1).add("kcal");
+        quantities.add(new ArrayList<String>());
+        quantities.get(2).add("Fat - ");
+        quantities.get(2).add(goals.get(0).get(3));
+        quantities.get(2).add("g");
+        quantities.add(new ArrayList<String>());
+        quantities.get(3).add("Saturates - ");
+        quantities.get(3).add(goals.get(0).get(2));
+        quantities.get(3).add("g");
+        quantities.add(new ArrayList<String>());
+        quantities.get(4).add("Carbs - ");
+        quantities.get(4).add(goals.get(0).get(6));
+        quantities.get(4).add("g");
+        quantities.add(new ArrayList<String>());
+        quantities.get(5).add("Salt - ");
+        quantities.get(5).add(goals.get(0).get(4));
+        quantities.get(5).add("g");
+        quantities.add(new ArrayList<String>());
+        quantities.get(6).add("Protein - ");
+        quantities.get(6).add(goals.get(0).get(5));
+        quantities.get(6).add("g");
+
+        return quantities;
+
+    }
+
 
     /**
      * Create the hashamp corresponding to the intake and amountLeft of a particular food
@@ -288,6 +355,45 @@ public class FoodContentsHandler extends MainActivity {
         group.add(String.format(Locale.ENGLISH, "%.2f", percentage));
 
         return group;
+    }
+
+    public boolean riskFood(List<List<String>> foodContents) {
+        for(int i = 0; i < 7; i++) {
+            if (Double.parseDouble(foodContents.get(i).get(3)) > 50) {
+                // this is a risk food
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public HashMap<String, Integer> getLastFiveDays(String username) {
+
+        String[] days = findPreviousFiveDays();
+        HashMap<String, Integer> map = new HashMap<>();
+
+        for(int i = 0; i < 5; i++) {
+            List<List<String>> groups = executeSQL.sqlGetFromQuery(SqlQueries.SQL_GROUP_QUANTITY,
+                    date.convertDateFormat(days[i]), username);
+            if(!groups.get(0).get(0).equals("Empty set")) {
+                for (int j = 0; j < groups.size(); j++) {
+                    int count;
+                    if(map.containsKey(groups.get(j).get(0))) {
+                        count = map.get(groups.get(j).get(0));
+                        count = count + Integer.parseInt(groups.get(j).get(8));
+                    }
+                    else {
+                        count = Integer.parseInt(groups.get(j).get(8));
+                    }
+                    map.put(groups.get(j).get(0), count);
+                }
+            }
+
+        }
+
+        return map;
+
+
     }
 
     // TODO findContentsPlusSumAmount
