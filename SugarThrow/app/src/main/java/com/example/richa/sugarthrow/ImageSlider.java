@@ -31,7 +31,7 @@ class ImageSlider extends PagerAdapter {
      * The slider images created
      */
     private int[] sliderImagesId = new int[] {
-        R.mipmap.ic_launcher
+        R.mipmap.ic_launcher, R.drawable.avacado_b_farias, R.drawable.watermelon_b_farias
     };
 
     @Override

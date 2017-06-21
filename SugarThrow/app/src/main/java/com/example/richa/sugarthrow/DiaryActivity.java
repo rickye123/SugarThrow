@@ -620,7 +620,6 @@ public class DiaryActivity extends MainActivity {
         });
     }
 
-    // TODO points when foods are added
     /**
      * Add food item from the regular foods button
      * @param theDate - the date in which the regular foods was added on
@@ -699,7 +698,6 @@ public class DiaryActivity extends MainActivity {
         });
     }
 
-    // TODO points
     /**
      * Check to see whether inserting will result in food being over the
      * daily allowance, and prompt the user. If they respond yes to the dialog

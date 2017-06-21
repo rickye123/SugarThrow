@@ -170,9 +170,8 @@
     <string name="points_deducted_point1">- Removing foods (-1 pt)"</string>
     <string name="points_deducted_point2">- Going over daily allowance (-2 pts)"</string>
     <string name="points_deducted_point3">- Failing a goal (-5 pts)"</string>
-    <string name="points_explained">When playing the \"Sugar Throw\" game, your points for that day
-    will correspond to the number of shots you have available. The more points you have, the more chances
-    you have to get a high score.</string>
+    <string name="points_explained">You will only be allowed to play the \"Sugar Throw\" game, if you have logged
+        at least 5 foods for that day.</string>
     <string name="feedback">Feedback</string>
     <string name="feedback_text">One of the key gamification techniques used in this app is \"Feedback\".
     You will be given personalised feedback based upon your goals, usage, and daily allowance of food.</string>
@@ -204,6 +203,26 @@
         the food you are looking for</string>
     <string name="database_dropdown">As with the diary, food can be clicked on to show its nutritional contents and
         its full name (if too long)</string>
+    <string name="sync">Sync</string>
+    <string name="dob_profile">DOB</string>
+    <string name="ft">ft</string>
+    <string name="in">in</string>
+    <string name="lb">lb</string>
+    <string name="st">st</string>
+    <string name="coming_soon">Coming Soon</string>
+    <string name="diary_screenshot">Diary screenshot</string>
+    <string name="filled_diary_screenshot">Filled diary screenshot</string>
+    <string name="database_screenshot">Database screenshot</string>
+    <string name="dropdown_functionality_screenshot">Dropdown functionality screenshot</string>
+    <string name="searching_for_food_screenshot">Searching for food screenshot</string>
+    <string name="dialog_goal_screenshot">Dialog goal screenshot</string>
+    <string name="feedback_screenshot">Feedback screenshot</string>
+    <string name="popup_goal_screenshot">Popup goal screenshot</string>
+    <string name="settings_screenshot">Settings screenshot</string>
+    <string name="updating_goals_screenshot">Updating goals screenshot</string>
+    <string name="close_the_game">Close the game</string>
+    <string name="_0_pts">0 pts</string>
+    <string name="_100">100%</string>
 
     <string-array name="gender_array">
         <item>Gender</item>

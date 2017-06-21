@@ -44,7 +44,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="center_vertical|center_horizontal"
-                        android:text="100%" />
+                        android:text="@string/_100" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -60,7 +60,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="center_vertical|center_horizontal"
-                        android:text="0 pts" />
+                        android:text="@string/_0_pts" />
                 </LinearLayout>
 
             </LinearLayout>

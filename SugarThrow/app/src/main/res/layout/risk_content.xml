@@ -9,4 +9,93 @@
     tools:context="com.example.richa.sugarthrow.RiskActivity"
     tools:showIn="@layout/risk_toolbar">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:ignore="UselessParent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|center_horizontal"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="211dp"
+                android:layout_height="235dp"
+                android:gravity="center_vertical|center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView18"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/dashed_border"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:text="@string/coming_soon"
+                    android:textColor="@color/black"
+                    android:textSize="24sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/sync_button"
+                android:layout_width="106dp"
+                android:layout_height="87dp"
+                android:background="@drawable/account_rounded"
+                android:orientation="vertical"
+                android:weightSum="1">
+
+                <ImageView
+                    android:id="@+id/imageView14"
+                    android:layout_width="match_parent"
+                    android:layout_height="39dp"
+                    android:layout_marginTop="10dp"
+                    android:contentDescription="@string/sync"
+                    android:tint="@color/blue"
+                    app:srcCompat="@android:drawable/ic_popup_sync" />
+
+                <TextView
+                    android:id="@+id/sync_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:text="@string/sync"
+                    android:textColor="@color/black"
+                    android:textSize="24sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/sync_button_2"
+                android:layout_width="106dp"
+                android:layout_height="87dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/account_rounded"
+                android:orientation="vertical"
+                android:weightSum="1">
+
+                <ImageView
+                    android:id="@+id/imageView14"
+                    android:layout_width="match_parent"
+                    android:layout_height="39dp"
+                    android:layout_marginTop="10dp"
+                    android:contentDescription="@string/sync"
+                    android:tint="@color/blue"
+                    app:srcCompat="@android:drawable/ic_popup_sync" />
+
+                <TextView
+                    android:id="@+id/sync_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:text="@string/sync"
+                    android:textColor="@color/black"
+                    android:textSize="24sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
 </RelativeLayout>

@@ -1,17 +1,13 @@
 package com.example.richa.sugarthrow;
 
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
+
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import org.w3c.dom.Text;
-
 import java.util.HashMap;
 import java.util.List;
 
@@ -69,13 +65,11 @@ public class SettingsActivity extends MainActivity {
             }
         });
 
-        final LinearLayout colour = (LinearLayout)findViewById(R.id.colour_layout);
-        colour.setOnClickListener(new View.OnClickListener() {
+        final LinearLayout sync = (LinearLayout)findViewById(R.id.sync_layout);
+        sync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SettingsActivity.this, FeedbackActivityPopup.class);
-                intent.putExtra("message", "Test Feedback Message");
-                startActivity(intent);
+                launchFeedbackActivity(SettingsActivity.this, "Cannot Sync at this time", false);
             }
         });
         TextView text = (TextView)findViewById(R.id.settings_sign_out_text);
@@ -158,9 +152,9 @@ public class SettingsActivity extends MainActivity {
         profileData.put("name", (TextView)findViewById(R.id.profile_name));
         profileData.put("username", (TextView)findViewById(R.id.profile_username));
         profileData.put("heightFeet", (TextView)findViewById(R.id.height_feet));
-        profileData.put("heightInches", (TextView)findViewById(R.id.height_inches));
+        profileData.put("heightInches", (TextView)findViewById(R.id.height_inches_amount));
         profileData.put("weightStone", (TextView)findViewById(R.id.weight_stone_measure));
-        profileData.put("weightPound", (TextView)findViewById(R.id.weight_pound_measure));
+        profileData.put("weightPound", (TextView)findViewById(R.id.weight_pound_amount));
         profileData.put("dob", (TextView)findViewById(R.id.dob_profile));
         profileData.put("points", (TextView)findViewById(R.id.profile_points));
 

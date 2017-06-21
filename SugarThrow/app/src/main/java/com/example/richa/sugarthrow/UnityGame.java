@@ -1,19 +1,22 @@
 package com.example.richa.sugarthrow;
 
-import com.unity3d.player.*;
+/*
+This is the class responsible for handling the Unity game. The Unity game is embedded
+into the app, and therefore no variables can be passed between the two.
+ */
+
 import com.unity3d.player.UnityPlayer;
-import com.unity3d.player.UnityPlayerActivity;
 import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import java.util.List;
 
 public class UnityGame extends MainActivity
 {
@@ -41,17 +44,16 @@ public class UnityGame extends MainActivity
 		setContentView(R.layout.game_activity);
 		setNavigationUsername(username);
 
-		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-		setSupportActionBar(toolbar);
-		if(getSupportActionBar() != null) {
-			getSupportActionBar().setDisplayShowTitleEnabled(false);
-		}
-        createDrawer(toolbar);
-        createNavigationView(R.id.nav_game);
+		startGame();
+
+	}
+
+    // start game if user has at least 7 foods logged
+	private void startGame() {
 
         getWindow().setFormat(PixelFormat.RGBX_8888); // <--- This makes xperia play happy
 
-		Button button = (Button)findViewById(R.id.exit_button);
+        ImageView button = (ImageView)findViewById(R.id.exit_button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,9 +66,7 @@ public class UnityGame extends MainActivity
         FrameLayout layout = (FrameLayout)findViewById(R.id.game_frame);
         layout.addView(mUnityPlayer);
         mUnityPlayer.requestFocus();
-
-
-	}
+    }
 
 	// Quit Unity
 	@Override protected void onDestroy ()

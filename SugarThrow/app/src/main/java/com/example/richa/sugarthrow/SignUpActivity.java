@@ -270,7 +270,7 @@ public class SignUpActivity extends AppCompatActivity {
         values.put("name", firstNameView.getText().toString()
                 + " " + lastNameView.getText().toString());
         values.put("gender", genderView.getText().toString());
-        values.put("dob", dobView.getText().toString());
+        values.put("dob", date.convertDateFormat(dobView.getText().toString()));
         values.put("height", feetView.getText().toString()
                 + "." + inchesView.getText().toString());
         values.put("weight", stoneView.getText().toString()

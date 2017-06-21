@@ -19,7 +19,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.util.Log;
 import android.widget.ImageView;
 import java.math.BigDecimal;
 import java.util.Calendar;
@@ -65,13 +64,29 @@ public class MainActivity extends AppCompatActivity
         startContent();
     }
 
+    /**
+     * Set the username in the navigation drawer
+     * @param username - the username of the user
+     */
     public void setNavigationUsername(String username) {
+
+        // get the navigation view
         NavigationView navView= (NavigationView)findViewById(R.id.nav_view);
+
+        // get the navigation view's first child
         View view = navView.getHeaderView(0);
+
+        // set the text for the username
         TextView text = (TextView)view.findViewById(R.id.navigation_username);
         text.setText(username);
     }
 
+    /**
+     * Method used to launch the feedback popups
+     * @param className - the class the popup is being called from
+     * @param message - the message that appears in the popup
+     * @param positive - boolean to determine whether the message is positive or negative
+     */
     public void launchFeedbackActivity(Context className, String message, boolean positive) {
 
         Intent intent = new Intent(className, FeedbackActivityPopup.class);
@@ -81,7 +96,9 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-
+    /**
+     * Start the content for the MainActivity
+     */
     private void startContent() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -96,6 +113,7 @@ public class MainActivity extends AppCompatActivity
         ImageSlider adapterView = new ImageSlider(this);
         viewPager.setAdapter(adapterView);
 
+        // get instance of database
         Connector database = Connector.getInstance(this);
         database.attemptCreate();
         database.openConnection();
@@ -120,27 +138,45 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    /**
+     * Return user's username
+     * @return - username as a string
+     */
     public String getUsername() {
         return username;
     }
 
     /**
-     *
+     * Handle the links on the home page
      */
     private void handleLinks() {
 
         ImageView diaryImage = (ImageView)findViewById(R.id.diary_image);
+        TextView diaryText = (TextView)findViewById(R.id.diary);
+        ImageView diaryChevron = (ImageView)findViewById(R.id.diary_chevron);
+
         ImageView playSugar = (ImageView)findViewById(R.id.play_sugar_image);
+        TextView playSugarText = (TextView)findViewById(R.id.play_sugar);
+        ImageView playSugarChevron = (ImageView)findViewById(R.id.play_sugar_chevron);
+
         ImageView searchFoods = (ImageView)findViewById(R.id.search_database_image);
+        TextView searchFoodsText = (TextView)findViewById(R.id.search_database);
+        ImageView searchFoodsChevron = (ImageView)findViewById(R.id.search_database_chevron);
 
-        //
-        clickImageView(diaryImage);
+        // click the links which will take you to the diary activity
+        clickLinks(diaryImage);
+        clickLinks(diaryText);
+        clickLinks(diaryChevron);
 
-        //
-        clickImageView(searchFoods);
+        // click the links which will take you to the Food database activity
+        clickLinks(searchFoods);
+        clickLinks(searchFoodsText);
+        clickLinks(searchFoodsChevron);
 
-        //
-        clickImageView(playSugar);
+        // click the links which will take you to the Sugar throw (UnityGame) activity
+        clickLinks(playSugar);
+        clickLinks(playSugarText);
+        clickLinks(playSugarChevron);
     }
 
     /**
@@ -200,38 +236,42 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * Event listener that looks for ImageView clicks in the Activity
-     * @param image - the ImageView that will be clicked
+     * @param view - the View that will be clicked
      */
-    // TODO implement functionality for these image clicks
-    public void clickImageView(final ImageView image) {
+    public void clickLinks(final View view) {
 
-        image.setOnClickListener(new View.OnClickListener() {
+        view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("ID: ", Integer.toString(v.getId()));
                 switch (v.getId()) {
                     case R.id.search_database_image:
-                        Log.d("CLICK", "search clicked");
+                    case R.id.search_database:
+                    case R.id.search_database_chevron:
                         launchActivity(FoodDatabaseActivity.class);
                         break;
+                    case R.id.diary_chevron:
                     case R.id.diary_image:
-                        Log.d("CLICK", "diary image clicked");
+                    case R.id.diary:
                         launchActivity(DiaryActivity.class);
                         break;
                     case R.id.play_sugar_image:
-                        Log.d("CLICK", "play sugar throw clicked");
+                    case R.id.play_sugar_chevron:
+                    case R.id.play_sugar:
                         launchActivity(UnityGame.class);
                         break;
                     default:
                         // If we got here, the user's action was not recognized.
                         // Invoke the superclass to handle it.
-                        Log.d("CLICK", "nothin clicked");
                         break;
                 }
             }
         });
     }
 
+    /**
+     * Feedback popup that appears after 8 and before 10 that says a user's
+     * goals are on track
+     */
     private void dailyGoalsOnTrack() {
 
         if(checkTime("20:00:00", "21:59:59")) {
@@ -260,6 +300,10 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    /**
+     * Feedback popup that appears after 10 and before midnight saying that the user has achieved
+     * their goal (if they have achieved them)
+     */
     private void dailyGoalsAchieved() {
 
         if(checkTime("22:00:00", "23:59:59")) {
@@ -289,15 +333,21 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private boolean checkTime(String timeAfter, String timeBefore) {
+    /**
+     * Check the time between two intervals
+     * @param timeAfter - the time after the current time
+     * @param timeBefore - the time before the current time
+     * @return - true if the current time is between the intervals
+     */
+    private boolean checkTime(String timeBefore, String timeAfter) {
 
         try {
-            Date time1 = new java.text.SimpleDateFormat("HH:mm:ss", Locale.ENGLISH).parse(timeAfter);
+            Date time1 = new java.text.SimpleDateFormat("HH:mm:ss", Locale.ENGLISH).parse(timeBefore);
             Calendar calendar1 = Calendar.getInstance();
             calendar1.setTime(time1);
             calendar1.add(Calendar.DATE, 1);
 
-            Date time2 = new java.text.SimpleDateFormat("HH:mm:ss", Locale.ENGLISH).parse(timeBefore);
+            Date time2 = new java.text.SimpleDateFormat("HH:mm:ss", Locale.ENGLISH).parse(timeAfter);
             Calendar calendar2 = Calendar.getInstance();
             calendar2.setTime(time2);
             calendar2.add(Calendar.DATE, 1);
@@ -347,8 +397,8 @@ public class MainActivity extends AppCompatActivity
             launchActivity(MainActivity.class);
         } else if (id == R.id.nav_diary && !(className.equals(DiaryActivity.class))) {
             launchActivity(DiaryActivity.class);
-        } else if (id == R.id.nav_game && !(className.equals(UnityGame.class))) {
-            launchActivity(UnityGame.class);
+        } else if (id == R.id.nav_game && !(className.equals(UnityGame.class) || className.equals(GameActivity.class))) {
+            launchActivity(GameActivity.class);
         } else if (id == R.id.nav_progress && !(className.equals(ProgressActivity.class))) {
             launchActivity(ProgressActivity.class);
         } else if (id == R.id.nav_risk && !(className.equals(RiskActivity.class))) {
@@ -391,8 +441,12 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
+        Class className = this.getClass();
+
         if (id == R.id.action_settings) {
-            Log.d("OPTIONS", "Settings clicked");
+            if (!(className.equals(SettingsActivity.class))) {
+                launchActivity(SettingsActivity.class);
+            }
             return true;
         }
 
