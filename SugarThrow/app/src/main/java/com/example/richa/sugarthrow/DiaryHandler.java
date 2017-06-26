@@ -56,13 +56,13 @@ public class DiaryHandler extends DiaryActivity {
     }
 
     /**
-     *
-     * @return
+     * Find the number of days the user has logged foods
+     * @return - the number of days the user has logged foods
      */
     public int findLogStreak(TimeKeeper date, String username) {
 
         String current = date.getCurrentDate();
-        int streak = 1;
+        int streak = 0;
         boolean logged = true;
 
         while(logged) {

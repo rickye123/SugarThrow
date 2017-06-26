@@ -139,10 +139,15 @@ public class DiaryActivity extends MainActivity {
             acknowledgeStreak = true;
         }
 
+        // see if any foods are at risk to the user
         checkQuantities();
 
     }
 
+    /**
+     * Cycle through quantities of food and if any are over 3, determine whether
+     * that food is unhealthy in terms of certain food groups
+     */
     private void checkQuantities() {
 
         HashMap<String, Integer> map = foodContentsHandler.getLastFiveDays(username);
@@ -226,7 +231,6 @@ public class DiaryActivity extends MainActivity {
 
     }
 
-    //TODO false or true?
     /**
      * QueryTextListener which listens for text change and query submission
      * @param view - the searchview object
@@ -322,7 +326,6 @@ public class DiaryActivity extends MainActivity {
         }
     }
 
-    //TODO somehow make this method shorter
     /**
      * Populates the diary every time an item is added or removed
      * @param quantity - the amount of that particular item in the diary
@@ -374,6 +377,7 @@ public class DiaryActivity extends MainActivity {
         clickToAddOrRemove(arrowDown);
         clickToAddOrRemove(arrowUp);
         clickToAddOrRemove(minus);
+
         clickDropDown(food);
 
         // add the quantity, cross, food, and minus to the right layout wrapper
@@ -633,6 +637,7 @@ public class DiaryActivity extends MainActivity {
 
         clearRegularFoodsTable();
         regularFoods = executeSQL.sqlGetFromQuery(SqlQueries.SQL_REGULAR_FOOD, username);
+        String foodName = regularFoods.get(row).get(3);
 
         // insert into the diary based on the regular foods table
         diaryHandler.insertIntoDiary(row, theDate, username, regularFoods, false);
@@ -642,20 +647,21 @@ public class DiaryActivity extends MainActivity {
         // update diary
         UpdateDiaryEntries(theDate, username);
 
+        // see if user has logged foods for more than 2 days
         int streak = diaryHandler.findLogStreak(date, username);
-        if(streak > 0 && !acknowledgeStreak) {
+        if(streak > 1 && !acknowledgeStreak) {
             String feedback = "You have logged foods for " + Integer.toString(streak) +
                     "\n days now. \nWell Done!";
             acknowledgeStreak = true;
             launchFeedbackActivity(DiaryActivity.this, feedback, true);
         }
 
-
         // calculate points increase
         pointsHandler.checkForPointsUpdate(pointsBefore, theDate, username, true);
 
-        // reduce points if over a daily amount of something
-/*        pointsHandler.pointsReduction(pointsBefore, theDate, username, regularFoods.get(0).get(3));*/
+        // display food added
+        Toast.makeText(DiaryActivity.this, foodName + " inserted into diary",
+                Toast.LENGTH_SHORT).show();
 
     }
 
@@ -706,10 +712,12 @@ public class DiaryActivity extends MainActivity {
      */
     private void checkForInsert(View view, int ...row) {
 
+        // return if not current date
         if(!date.getCurrentDate().equals(dateText.getText().toString())){
             return;
         }
 
+        // get food name
         String foodName;
         if (row.length > 0) {
             foodName = regularFoods.get(row[0]).get(3);
@@ -720,6 +728,7 @@ public class DiaryActivity extends MainActivity {
 
         String message = generateMessage(foodName);
 
+        // if message is empty, then insert without prompt
         if(message.equals("")) {
             if(row.length > 0) {
                 addFromRegularFoods(date.convertDateFormat(dateText.getText().toString()),
@@ -742,6 +751,14 @@ public class DiaryActivity extends MainActivity {
 
     }
 
+    /**
+     * Generates a message based on the number of food groups the user has had
+     * over their daily allowance
+     * @param foodName - the foodName to be added, which would result in the user going
+     *                 over their daily allowance
+     * @return - string referencing the number of food groups the user has had over their daily
+     * allowance
+     */
     public String generateMessage(String foodName) {
 
         // work out the daily total after food contents have been added
@@ -752,6 +769,8 @@ public class DiaryActivity extends MainActivity {
 
         String message = "";
 
+        // cycle through contents and see which food groups are over daily allowance
+        // and concatenate to message
         for(int i = 0; i < contents.size(); i++) {
             if(today.get(i).get("intake").floatValue() < 100) {
                 if (Double.parseDouble(contents.get(i).get("percentage")) > 100) {
@@ -773,6 +792,7 @@ public class DiaryActivity extends MainActivity {
     private void insert(View view) {
 
         String pointsBefore = pointsHandler.getPointsBefore(username);
+        String foodName = diary.get(view.getId()).get(0);
 
         diaryHandler.insertIntoDiary(view.getId(),
                 date.convertDateFormat(dateText.getText().toString()), username, diary, false);
@@ -784,8 +804,18 @@ public class DiaryActivity extends MainActivity {
         pointsHandler.checkForPointsUpdate(pointsBefore,
                 date.convertDateFormat(dateText.getText().toString()), username, true);
 
+        Toast.makeText(DiaryActivity.this, foodName + " inserted into diary",
+                Toast.LENGTH_SHORT).show();
+
+
     }
 
+    /**
+     * Opens the dialog box whenever user goes over daily allowance of food
+     * @param message - the message tht appears in the dialog box
+     * @param view - the View (from either diary or regular foods)
+     * @param row - if row is present, then inserting from regular foods
+     */
     private void openInsertDialog(String message, final View view, final int ... row) {
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
@@ -825,12 +855,18 @@ public class DiaryActivity extends MainActivity {
 
     }
 
-    // TODO points return issue
     /**
      * Remove the diary entry from the table, update regular foods, diary, and user score
      * @param view - the view that was clicked on
      */
     private void remove(View view) {
+
+        // return if not current date
+        if(!date.getCurrentDate().equals(dateText.getText().toString())){
+            return;
+        }
+
+        String foodName = diary.get(view.getId()).get(0);
 
         // determine points before update
         String pointsBefore = pointsHandler.getPointsBefore(username);
@@ -852,6 +888,8 @@ public class DiaryActivity extends MainActivity {
         // return points?
         pointsHandler.pointsReturn(date.convertDateFormat(dateText.getText().toString()),
                 username, totals);
+
+        Toast.makeText(DiaryActivity.this, foodName + " removed from diary", Toast.LENGTH_SHORT).show();
 
     }
 

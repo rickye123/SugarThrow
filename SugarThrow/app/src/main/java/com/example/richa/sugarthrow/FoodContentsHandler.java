@@ -50,6 +50,10 @@ public class FoodContentsHandler extends MainActivity {
 
     }
 
+    /**
+     * Get the last five days in a string array
+     * @return
+     */
     public String[] findPreviousFiveDays() {
 
         String prevDay = date.getCurrentDate();
@@ -67,7 +71,10 @@ public class FoodContentsHandler extends MainActivity {
         return days;
     }
 
-
+    /**
+     * Reverse an array of Strings
+     * @param inputArray - the array which will be reversed
+     */
     private void reverseArray(String inputArray[]) {
         String temp;
 
@@ -80,6 +87,9 @@ public class FoodContentsHandler extends MainActivity {
 
     }
 
+    /**
+     * Set the quantities of each food group
+     */
     private void setQuantitiesList() {
 
         quantities.add(sugarQuantity);
@@ -92,10 +102,18 @@ public class FoodContentsHandler extends MainActivity {
 
     }
 
+    /**
+     * Get the list of quantities for each food group
+     * @return - list of floats containing daily allowance for each food group
+     */
     public List<Float> getQuantitiesList() {
         return quantities;
     }
 
+    /**
+     * Sets the quantities based on the goals set by the user
+     * @param goals - the goal quantities set by the user
+     */
     private void setQuantitiesFromGoals(List<List<String>> goals ) {
 
         // set sugar
@@ -134,7 +152,7 @@ public class FoodContentsHandler extends MainActivity {
      *               of a particular food the user has had
      * @return amountLeft (float) - the amount of food left based on intake
      */
-    public Float findAmountLeft(Float intake) {
+    private Float findAmountLeft(Float intake) {
 
         // amountLeft is 100% - percentage intake
         Float amountLeft = 100 - intake;
@@ -154,7 +172,7 @@ public class FoodContentsHandler extends MainActivity {
      * @param quantity - the daily quantity the user is allowed
      * @return intake - the percentage intake the user has had
      */
-    public Float findIntake(String itemTotal, Float quantity) {
+    private Float findIntake(String itemTotal, Float quantity) {
 
         Float intake;
 
@@ -191,6 +209,11 @@ public class FoodContentsHandler extends MainActivity {
 
     }
 
+    /**
+     * Find the current daily total of foods contributing to daily allowance
+     * @param username - the user's username used to find the diary entries
+     * @return a list of hashmaps containing the daily totals for a particular user
+     */
     public List<Map<String, BigDecimal>> findDailyTotal(String username) {
 
         List<Map<String, BigDecimal>> dailyTotals = new ArrayList<>();
@@ -208,7 +231,12 @@ public class FoodContentsHandler extends MainActivity {
 
     }
 
-
+    /**
+     * Create the quantities that appear in the Goals activity from the
+     * 2D array list of goals for that particular user
+     * @param goals - the goals for a user
+     * @return a 2D array list containing the goals and their title
+     */
     public List<List<String>> createQuantities(List<List<String>> goals) {
 
         List<List<String>> quantities = new ArrayList<>();
@@ -245,7 +273,6 @@ public class FoodContentsHandler extends MainActivity {
         return quantities;
 
     }
-
 
     /**
      * Create the hashamp corresponding to the intake and amountLeft of a particular food
@@ -357,6 +384,12 @@ public class FoodContentsHandler extends MainActivity {
         return group;
     }
 
+    /**
+     * Used to determine whether a food is one in which a certain food group
+     * is higher than 50% of daily allowance
+     * @param foodContents - the foodcontents of a certain food
+     * @return true if that food has a food group that is over daily allowance
+     */
     public boolean riskFood(List<List<String>> foodContents) {
         for(int i = 0; i < 7; i++) {
             if (Double.parseDouble(foodContents.get(i).get(3)) > 50) {
@@ -367,6 +400,12 @@ public class FoodContentsHandler extends MainActivity {
         return false;
     }
 
+    /**
+     * Get the food eaten over the last 5 days
+     * @param username - the user's username used to find the food they've eaten
+     * @return the hashmap containing the amount of a food that has been eaten
+     * over the past five days
+     */
     public HashMap<String, Integer> getLastFiveDays(String username) {
 
         String[] days = findPreviousFiveDays();
@@ -396,8 +435,15 @@ public class FoodContentsHandler extends MainActivity {
 
     }
 
-    // TODO findContentsPlusSumAmount
-    public HashMap<String, String> findContentsPlusSumAmount(String foodGroup, String quantity,
+    /**
+     * Find total amount following the addition of a certain food
+     * @param foodGroup - the foodgroup, e.g. sugar
+     * @param quantity - the amount of that food
+     * @param amount - the daily amount of that food group
+     * @param sumAmount - the sum amount for that user
+     * @return the hashmap containing this information
+     */
+    private HashMap<String, String> findContentsPlusSumAmount(String foodGroup, String quantity,
                                                              double amount, String sumAmount) {
 
         HashMap<String, String> group = new HashMap<>();
@@ -429,6 +475,13 @@ public class FoodContentsHandler extends MainActivity {
         return group;
     }
 
+    /**
+     * Find the grouped contents for foods plus the sum total contributing to the allowance
+     * for that day
+     * @param foodName - the foodname used to find the contents of that food
+     * @param username - the username to find the diary entries
+     * @return a list of hashmaps containing the grouped contents plus their sum of daily allowance
+     */
     public List<HashMap<String, String>> findGroupedContentsPlusSum(String foodName, String username) {
 
         List<List<String>> foodContents = executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_FOOD,

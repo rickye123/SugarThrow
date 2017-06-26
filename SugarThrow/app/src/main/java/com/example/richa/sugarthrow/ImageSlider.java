@@ -31,7 +31,7 @@ class ImageSlider extends PagerAdapter {
      * The slider images created
      */
     private int[] sliderImagesId = new int[] {
-        R.mipmap.ic_launcher, R.drawable.avacado_b_farias, R.drawable.watermelon_b_farias
+        R.drawable.sugar_background_small, R.drawable.raspberry_background, R.drawable.tip_background
     };
 
     @Override
@@ -42,7 +42,6 @@ class ImageSlider extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int i) {
         ImageView imageView = new ImageView(context);
-       // imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView.setImageResource(sliderImagesId[i]);
         (container).addView(imageView, 0);
         return imageView;

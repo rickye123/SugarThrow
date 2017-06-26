@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="cyan">#40E0D0</color>
+    <color name="cyanTransparent">#40E0D1</color>
     <color name="cyanLighter">#40FFFF</color>
     <color name="cyanDarker">#40C0D0</color>
     <color name="white">#FFFFFF</color>

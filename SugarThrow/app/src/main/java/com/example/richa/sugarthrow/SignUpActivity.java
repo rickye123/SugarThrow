@@ -27,6 +27,9 @@ public class SignUpActivity extends AppCompatActivity {
     passwordView, confirmView, genderView, inchesView, feetView, poundsView;
     private TimeKeeper date = new TimeKeeper();
     private Execute executeSQL;
+    private ServerDatabaseHandler serverDatabaseHandler;
+    private ContentValues contents;
+    private PasswordHash passwordHash = new PasswordHash();
 
     // invoked when activity starts
     @Override
@@ -42,6 +45,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         Connector database = LoginActivity.getDatabaseConnection();
         executeSQL = new Execute(database);
+        serverDatabaseHandler = new ServerDatabaseHandler(SignUpActivity.this);
 
         // create edit text views
         createTextFields();
@@ -82,7 +86,6 @@ public class SignUpActivity extends AppCompatActivity {
 
         View focusView = null;
         boolean cancel = false;
-        boolean valid = false;
 
         // Reset errors.
         firstNameView.setError(null);
@@ -209,9 +212,6 @@ public class SignUpActivity extends AppCompatActivity {
             usernameView.setError("Username is invalid");
             cancel = true;
         }
-        else {
-            valid = true;
-        }
 
         if(TextUtils.isEmpty(passwordView.getText().toString())) {
             focusView = passwordView;
@@ -232,37 +232,54 @@ public class SignUpActivity extends AppCompatActivity {
             cancel = true;
         }
 
-        if(valid) {
-            List<List<String>> user = executeSQL.sqlGetFromQuery(SqlQueries.SQL_USER,
-                    usernameView.getText().toString());
-
-            if (!user.get(0).get(0).equals("Empty set")) {
-                // user exists
-                focusView = usernameView;
-                usernameView.setError("Username already exists");
-                cancel = true;
-            }
-        }
-
+        // if there is an invalid field, then focus on that field
         if(cancel) {
             focusView.requestFocus();
         }
         else {
-            // insert person into database
-            ContentValues values = getUserValues();
-            executeSQL.sqlInsert("User", values);
-            Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
-            intent.putExtra("username", usernameView.getText().toString());
-            startActivity(intent);
+
+            // check if user exists on online database
+            Map<String, String> params = serverDatabaseHandler.setUserParams(usernameView.getText().toString());
+            String url = "http://sugarthrow.hopto.org/my_server/select.php";
+            serverDatabaseHandler.select(url, params, "Users", new ServerCallBack() {
+                @Override
+                public void onSuccess(String result) {
+
+                    contents = serverDatabaseHandler.getContents();
+                    if(contents == null) {
+                        // if user doesn't exist on online database then insert them
+                        // into local and online db
+                        ContentValues values = getUserValues();
+                        executeSQL.sqlInsert("User", values);
+                        List<List<String>> userInfo = executeSQL.sqlGetFromQuery(SqlQueries.SQL_USER, usernameView.getText().toString());
+                        String insertURL = "http://sugarthrow.hopto.org/my_server/insert_into_user.php";
+                        Map<String, String> userContents = serverDatabaseHandler.setUserContents(userInfo);
+                        serverDatabaseHandler.insert(insertURL, userContents, new ServerCallBack() {
+                            @Override
+                            public void onSuccess(String result) {
+                                // launch the app on completion of insertion
+                                SaveSharedPreference.setUserName(SignUpActivity.this, usernameView.getText().toString());
+                                Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
+                                intent.putExtra("username", usernameView.getText().toString());
+                                startActivity(intent);
+                            }
+                        });
+                    }
+                }
+            });
+
+
         }
-
-
 
 
 
     }
 
-    public ContentValues getUserValues() {
+    /**
+     * Get the user information from the EditText fields
+     * @return content values referencing the user information
+     */
+    private ContentValues getUserValues() {
 
         ContentValues values = new ContentValues();
 
@@ -275,13 +292,22 @@ public class SignUpActivity extends AppCompatActivity {
                 + "." + inchesView.getText().toString());
         values.put("weight", stoneView.getText().toString()
                 + "." + poundsView.getText().toString());
-        values.put("password", passwordView.getText().toString());
+
         values.put("points", 0);
+
+        String hash = passwordHash.computeSHAHash(passwordView.getText().toString());
+        values.put("password", hash);
+
 
         return values;
     }
 
-    public boolean isValidName(String name) {
+    /**
+     * Uses regular expression to determine whether a name is valid
+     * @param name - the name of the person as a string
+     * @return true if is a valid name, false otherwise
+     */
+    private boolean isValidName(String name) {
 
         String expression = "^[a-zA-Z]+";
 
@@ -289,11 +315,16 @@ public class SignUpActivity extends AppCompatActivity {
 
     }
 
-    public boolean isValidDateOfBirth(String dob) {
+    /**
+     * Uses regular expression to first determine whether the
+     * format of the dob is valid. Then determines whether the
+     * date exists
+     * @param dob - the date of birth as a string
+     * @return true if dob is valid, false otherwise
+     */
+    private boolean isValidDateOfBirth(String dob) {
 
         String expression = "\\d{2}-\\d{2}-\\d{4}";
-
-        System.out.println("DOB " + dob);
 
         if(dob.isEmpty() || dob.equals("")) {
             return false;
@@ -334,23 +365,40 @@ public class SignUpActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Determine if gender is valid, i.e. that the user has selected
+     * one of the options
+     * @param gender - the gender (M, F, X)
+     * @return true if gender is not equals to "Gender", false otherwise
+     */
     private boolean isGenderValid(String gender) {
 
-        if(gender.equals("Gender")) {
-            System.out.println("FALSE");
-            return false;
-        }
-        return true;
+        return !gender.equals("Gender");
     }
 
+    /**
+     * Determine whether the user has entered anything into the feet field
+     * @param feet - feet as a string
+     * @return true if feet is not equal to "ft", false otherwise
+     */
     private boolean isFeetValid(String feet) {
         return !feet.equals("ft");
     }
 
+    /**
+     * Determine whether the user has entered anything into the inches field
+     * @param inches - inches as a string
+     * @return true if inches is not equal to "in", false otherwise
+     */
     private boolean isInchesValid(String inches) {
         return !inches.equals("in");
     }
 
+    /**
+     * Checks to see if the stone field is valid, i.e. that a number was entere
+     * @param stone - the stone measurement as a string (must be a number)
+     * @return true if valid, false otherwise
+     */
     private boolean isStoneValid(String stone) {
 
         for(int i = 0; i < stone.length(); i++) {
@@ -363,10 +411,22 @@ public class SignUpActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Determine whether user has entered anything in the pounds field
+     * @param pounds - pounds as a string, set field from spinner
+     * @return true if not equal to "lbs", false otherwise
+     */
     private boolean isPoundsValid(String pounds) {
         return !pounds.equals("lbs");
     }
 
+    /**
+     * Uses regular expression to determine if a username is valid. It is allowed
+     * the letters 0-9, the letters A-Z (lowercase and uppercase), underscore,
+     * period, and dash
+     * @param username - the username
+     * @return true if username matches regex, false otherwise
+     */
     private boolean isUsernameValid(String username) {
 
         String regex = "[a-zA-Z0-9._\\-]{3,}";
@@ -375,26 +435,22 @@ public class SignUpActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Determine whether password entered is valid. If password is
+     * shorter than 5 characters, or if the two password fields
+     * don't equal one another, return false
+     * @param password - the password as a string
+     * @param confirm - the confirm password field
+     * @return true if valid, false otherwise
+     */
     private boolean isPasswordValid(String password, String confirm) {
-        if(password.length() < 5) {
-            return false;
-        }
-
-        System.out.println("PASSWORD " + password);
-        System.out.println("CONFIRM " + confirm);
-
-        return password.equals(confirm);
+        return password.length() >= 5 && password.equals(confirm);
     }
 
-/*    public boolean authenticate() {
-
-        if(firstNameView)
-
-        return false;
-
-    }*/
-
-    public void createTextFields() {
+    /**
+     * Create text fields from the corresponding ids in the layout
+     */
+    private void createTextFields() {
 
         firstNameView = (EditText)findViewById(R.id.sign_up_fname);
         lastNameView = (EditText)findViewById(R.id.sign_up_lname);
@@ -406,7 +462,10 @@ public class SignUpActivity extends AppCompatActivity {
 
     }
 
-    public void createSpinners() {
+    /**
+     * Create spinners from the corresponding ids in the layout. Set the spinner listners
+     */
+    private void createSpinners() {
 
         // create adapters
         ArrayAdapter<CharSequence> genderAdapter = createSpinnerAdapter(R.array.gender_array);
@@ -428,7 +487,14 @@ public class SignUpActivity extends AppCompatActivity {
 
     }
 
-    public void setSpinner(Spinner spinner, SpinnerAdapter adapter, String prompt) {
+    /**
+     * Sets which spinner field is selected (first field), and what happens when a spiner
+     * is selected
+     * @param spinner - the spinner
+     * @param adapter - the adapter is used to set the spinner's fields
+     * @param prompt - the prompt that appears when nothing is selected
+     */
+    private void setSpinner(Spinner spinner, SpinnerAdapter adapter, String prompt) {
 
         spinner.setAdapter(adapter);
         spinner.setSelection(0);
@@ -436,7 +502,12 @@ public class SignUpActivity extends AppCompatActivity {
 
     }
 
-    public ArrayAdapter<CharSequence> createSpinnerAdapter(int id) {
+    /**
+     *
+     * @param id - the id referenced in the layout
+     * @return the adapter containing the dropdown for that spinner
+     */
+    private ArrayAdapter<CharSequence> createSpinnerAdapter(int id) {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 id, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -444,6 +515,11 @@ public class SignUpActivity extends AppCompatActivity {
         return adapter;
     }
 
+    /**
+     * Set the text for when the spinner is selected
+     * @param spinner - the spinner, whose id is accessed
+     * @param prompt - the prompt for the spinner if nothing selected
+     */
     public void selectSpinner(final Spinner spinner, final String prompt) {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

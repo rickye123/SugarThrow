@@ -40,12 +40,12 @@
 
                 <TextView
                     android:id="@+id/daily_goals_text"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="40dp"
                     android:layout_weight="1"
                     android:background="@drawable/border_bottom"
                     android:gravity="center_vertical"
-                    android:text="Daily Goals"
+                    android:text="@string/daily_goals"
                     android:textColor="@color/black"
                     android:textSize="18sp" />
             </LinearLayout>
@@ -57,7 +57,8 @@
                 android:layout_gravity="center_horizontal|center"
                 android:baselineAligned="false"
                 android:gravity="center_horizontal|center"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="visible">
 
                 <LinearLayout
                     android:id="@+id/goal_entries"
@@ -82,7 +83,7 @@
                             android:layout_weight="0.59"
                             android:background="@drawable/dashed_border"
                             android:gravity="center_vertical|center_horizontal"
-                            android:text="No Daily Goals"
+                            android:text="@string/no_daily_goals"
                             android:textColor="@color/black"
                             android:textSize="24sp" />
                     </LinearLayout>
@@ -107,13 +108,21 @@
 
                     <TextView
                         android:id="@+id/set_quantities_text"
-                        android:layout_width="0dp"
+                        android:layout_width="250dp"
                         android:layout_height="47dp"
                         android:layout_weight="1"
                         android:gravity="center_vertical|start"
-                        android:text="Set Daily Goals"
+                        android:text="@string/set_daily_goals"
                         android:textColor="@color/black"
                         android:textSize="20sp" />
+
+                    <ImageView
+                        android:id="@+id/daily_goals_arrow"
+                        android:layout_width="0dp"
+                        android:layout_height="47dp"
+                        android:layout_weight="1"
+                        android:contentDescription="@string/dropdown_arrow"
+                        app:srcCompat="@drawable/ic_keyboard_arrow_down_black" />
 
                 </LinearLayout>
             </LinearLayout>
@@ -166,6 +175,7 @@
 
                                 <EditText
                                     android:id="@+id/sugar_input"
+                                    android:labelFor="@+id/sugar_input"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
@@ -225,6 +235,7 @@
 
                                 <EditText
                                     android:id="@+id/calories_input"
+                                    android:labelFor="@+id/calories_input"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
@@ -285,6 +296,7 @@
 
                                 <EditText
                                     android:id="@+id/saturates_input"
+                                    android:labelFor="@+id/saturates_input"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
@@ -345,6 +357,7 @@
 
                                 <EditText
                                     android:id="@+id/fat_input"
+                                    android:labelFor="@+id/fat_input"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
@@ -405,6 +418,7 @@
 
                                 <EditText
                                     android:id="@+id/salt_input"
+                                    android:labelFor="@+id/salt_input"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
@@ -465,6 +479,7 @@
 
                                 <EditText
                                     android:id="@+id/protein_input"
+                                    android:labelFor="@+id/protein_input"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
@@ -525,6 +540,7 @@
 
                                 <EditText
                                     android:id="@+id/carbs_input"
+                                    android:labelFor="@+id/carbs_input"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
@@ -564,7 +580,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:background="@drawable/account_rounded"
-                            android:text="@string/update_quantities" />
+                            android:text="@string/update_quantities"
+                            tools:ignore="NestedWeights" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -580,12 +597,12 @@
 
                 <TextView
                     android:id="@+id/weekly_goals_text"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="40dp"
                     android:layout_weight="1"
                     android:background="@drawable/border_bottom"
                     android:gravity="center_vertical"
-                    android:text="Weekly Goals"
+                    android:text="@string/weekly_goals"
                     android:textColor="@color/black"
                     android:textSize="18sp" />
             </LinearLayout>
@@ -622,7 +639,7 @@
                             android:layout_weight="0.59"
                             android:background="@drawable/dashed_border"
                             android:gravity="center_vertical|center_horizontal"
-                            android:text="No Weekly Goals"
+                            android:text="@string/no_weekly_goals"
                             android:textColor="@color/black"
                             android:textSize="24sp" />
                     </LinearLayout>
@@ -646,13 +663,21 @@
 
                     <TextView
                         android:id="@+id/set_weekly_text"
-                        android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_width="250dp"
+                        android:layout_height="47dp"
                         android:layout_weight="1"
                         android:gravity="center_vertical"
                         android:text="@string/set_weekly_goals"
                         android:textColor="@color/black"
                         android:textSize="20sp" />
+
+                    <ImageView
+                        android:id="@+id/weekly_goals_dropdown"
+                        android:layout_width="0dp"
+                        android:layout_height="47dp"
+                        android:layout_weight="1"
+                        android:contentDescription="@string/dropdown_arrow"
+                        app:srcCompat="@drawable/ic_keyboard_arrow_down_black" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -676,7 +701,8 @@
                         android:layout_height="match_parent"
                         android:layout_marginBottom="10dp"
                         android:gravity="center_vertical|center_horizontal"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        tools:ignore="TooManyViews">
 
                         <TextView
                             android:id="@+id/textView9"
@@ -704,6 +730,7 @@
 
                                 <EditText
                                     android:id="@+id/weekly_allowance_sugar"
+                                    android:labelFor="@+id/weekly_allowance_sugar"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
@@ -749,6 +776,7 @@
 
                                 <EditText
                                     android:id="@+id/weekly_reduce_sugar"
+                                    android:labelFor="@+id/weekly_reduce_sugar"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
@@ -782,7 +810,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:background="@drawable/account_rounded"
-                            android:text="@string/update_weekly_goals" />
+                            android:text="@string/update_weekly_goals"
+                            tools:ignore="NestedWeights" />
                     </LinearLayout>
 
                 </LinearLayout>

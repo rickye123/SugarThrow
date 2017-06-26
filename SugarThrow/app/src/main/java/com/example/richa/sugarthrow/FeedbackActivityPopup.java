@@ -1,5 +1,10 @@
 package com.example.richa.sugarthrow;
 
+/*
+The feedback activity is a popup that is smaller than the other activities and is closeable.
+It is passed a message and whether the message is positive.
+ */
+
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
@@ -41,10 +46,16 @@ public class FeedbackActivityPopup extends AppCompatActivity {
 
         getWindow().setLayout((int)(width * 0.8), (int)(height * 0.5));
 
+        // the feedback message popup
         feedbackMessage();
 
     }
 
+    /**
+     * Create a feedback message, which will contain the message passed to this
+     * activity. The boolean (false or true) determines whether the image that
+     * appears with the feedback is an exclamation mark or a star
+     */
     private void feedbackMessage() {
 
         TextView feedbackMessage = (TextView)findViewById(R.id.feedback_message);

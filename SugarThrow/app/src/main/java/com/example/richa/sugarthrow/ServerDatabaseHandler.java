@@ -3,19 +3,25 @@ package com.example.richa.sugarthrow;
 import android.content.ContentValues;
 import android.content.Context;
 import android.util.Log;
-
+import android.widget.Toast;
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,10 +36,6 @@ class ServerDatabaseHandler {
         this.context = context;
     }
 
-    public void setContents() {
-        this.contents = null;
-    }
-
     public ContentValues getContents() {
         return contents;
     }
@@ -43,15 +45,45 @@ class ServerDatabaseHandler {
         StringRequest insertRequest = new StringRequest(Request.Method.POST, url , new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, response);
+                Log.d(TAG, "Response " + response);
                 callback.onSuccess(response);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d(TAG, ""+error.getMessage()+","+error.toString());
+                Toast.makeText(context, "Error: Cannot sync at this time", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "Error message: " + error.getMessage() + "," + error.toString());
+                if(error.getMessage() == null) {
+                    Toast.makeText(context, "Volley Error", Toast.LENGTH_SHORT).show();
+                }
+                if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                    Toast.makeText(context, "Network time out error", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof AuthFailureError) {
+                    Toast.makeText(context, "Authentication Failure error", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof ServerError) {
+                    Toast.makeText(context, "Server error", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof NetworkError) {
+                    Toast.makeText(context, "Network error", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof ParseError) {
+                    Toast.makeText(context, "Parse error", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(context, "Error: Cannot sync at this time", Toast.LENGTH_SHORT).show();
+                }
             }
         }){
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                if (response.headers == null) {
+                    response = new NetworkResponse(
+                            response.statusCode,
+                            response.data,
+                            Collections.<String, String>emptyMap(),
+                            response.notModified,
+                            response.networkTimeMs);
+                }
+                return super.parseNetworkResponse(response);
+            }
             @Override
             protected Map<String,String> getParams(){
                 return params;
@@ -59,6 +91,134 @@ class ServerDatabaseHandler {
         };
         RequestQueue queue = Volley.newRequestQueue(context);
         queue.add(insertRequest);
+
+    }
+
+    void update(String url, final Map<String, String> params, final ServerCallBack callback) {
+
+        RequestQueue queue = Volley.newRequestQueue(context);
+
+        StringRequest updateRequest = new StringRequest(Request.Method.POST, url , new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, response);
+                callback.onSuccess(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d(TAG, "Error message: " + error.getMessage() + "," + error.toString());
+                if(error.getMessage() == null) {
+                    Toast.makeText(context, "Error: Cannot sync at this time", Toast.LENGTH_SHORT).show();
+                }
+                if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                    Toast.makeText(context, "Network time out error", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof AuthFailureError) {
+                    Toast.makeText(context, "Authentication Failure error", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof ServerError) {
+                    Toast.makeText(context, "Server error", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof NetworkError) {
+                    Toast.makeText(context, "Network error", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof ParseError) {
+                    Toast.makeText(context, "Parse error", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(context, "Error: Cannot sync at this time", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }){
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                if (response.headers == null) {
+                    response = new NetworkResponse(
+                            response.statusCode,
+                            response.data,
+                            Collections.<String, String>emptyMap(),
+                            response.notModified,
+                            response.networkTimeMs);
+                }
+                return super.parseNetworkResponse(response);
+            }
+            @Override
+            protected Map<String,String> getParams(){
+                return params;
+            }
+        };
+
+        queue.add(updateRequest);
+
+    }
+
+    void select(String url, final Map<String, String> params, final String tableName,
+                final ServerCallBack callback) {
+
+        RequestQueue queue = Volley.newRequestQueue(context);
+
+        StringRequest selectRequest = new StringRequest(Request.Method.POST, url , new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, response);
+                try {
+
+                    String id = getTableIdentifier(tableName);
+                    JSONArray hits = (JSONArray) new JSONTokener(response).nextValue();
+                    // empty search results, create no search entries layout
+                    if (hits.getJSONObject(0).getString(id).equals("null")) {
+                        contents = null;
+                    } else {
+                        for (int i = 0; i < hits.length(); i++) {
+                            JSONObject searchResults = hits.getJSONObject(i);
+                            contents = getTableContents(tableName, searchResults);
+                        }
+                    }
+                    callback.onSuccess(response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(context, "Error: Cannot sync at this time", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "Error message: " + error.getMessage() + "," + error.toString());
+                if(error.getMessage() == null) {
+                    Toast.makeText(context, "Error: Cannot sync at this time", Toast.LENGTH_SHORT).show();
+                }
+                if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                    Toast.makeText(context, "Network time out error", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof AuthFailureError) {
+                    Toast.makeText(context, "Authentication Failure error", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof ServerError) {
+                    Toast.makeText(context, "Server error", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof NetworkError) {
+                    Toast.makeText(context, "Network error", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof ParseError) {
+                    Toast.makeText(context, "Parse error", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(context, "Error: Cannot sync at this time", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }){
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                if (response.headers == null) {
+                    response = new NetworkResponse(
+                            response.statusCode,
+                            response.data,
+                            Collections.<String, String>emptyMap(),
+                            response.notModified,
+                            response.networkTimeMs);
+                }
+                return super.parseNetworkResponse(response);
+            }
+            @Override
+            protected Map<String,String> getParams(){
+                return params;
+            }
+        };
+
+        queue.add(selectRequest);
 
     }
 
@@ -149,16 +309,6 @@ class ServerDatabaseHandler {
         return params;
     }
 
-    Map<String, String> setFoodParams(String foodName) {
-        Map<String, String> params = new HashMap<>();
-        params.put("identifier", "foodId");
-        params.put("table", "Food");
-        params.put("row", "name");
-        params.put("value", foodName);
-
-        return params;
-    }
-
     Map<String, String> setUserContents(List<List<String>> userInfo) {
 
         Map<String, String> userContents = new HashMap<>();
@@ -177,24 +327,7 @@ class ServerDatabaseHandler {
 
     }
 
-    public Map<String, String> setFoodContents(List<List<String>> foodInfo) {
-
-        Map<String, String> foodContents = new HashMap<>();
-        foodContents.put("table", "Food");
-        foodContents.put("name", foodInfo.get(0).get(1));
-        foodContents.put("calories", foodInfo.get(0).get(2));
-        foodContents.put("sugar", foodInfo.get(0).get(3));
-        foodContents.put("fat", foodInfo.get(0).get(4));
-        foodContents.put("saturates", foodInfo.get(0).get(5));
-        foodContents.put("carbs", foodInfo.get(0).get(6));
-        foodContents.put("salt", foodInfo.get(0).get(7));
-        foodContents.put("protein", foodInfo.get(0).get(8));
-
-        return foodContents;
-
-    }
-
-    public Map<String, String> setContentContents(List<List<String>> contentInfo,
+    Map<String, String> setContentContents(List<List<String>> contentInfo,
                                                   String userId, String theDate) {
 
         Map<String, String> contentContents = new HashMap<>();
@@ -210,18 +343,6 @@ class ServerDatabaseHandler {
         contentContents.put("protein", contentInfo.get(0).get(6));
 
         return contentContents;
-
-    }
-
-    public Map<String, String> setDiaryContents(String contentId, String userId, String foodId) {
-
-        Map<String, String> diaryContents = new HashMap<>();
-        diaryContents.put("table", "Diary");
-        diaryContents.put("contentId", contentId);
-        diaryContents.put("userId", userId);
-        diaryContents.put("foodId", foodId);
-
-        return diaryContents;
 
     }
 
@@ -241,46 +362,7 @@ class ServerDatabaseHandler {
         }
     }
 
-    public void select(String url, final Map<String, String> params, final String tableName,
-                                 final ServerCallBack callback) {
 
-        StringRequest selectRequest = new StringRequest(Request.Method.POST, url , new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Log.d(TAG, response);
-                try {
-
-                    String id = getTableIdentifier(tableName);
-                    JSONArray hits = (JSONArray) new JSONTokener(response).nextValue();
-                    // empty search results, create no search entries layout
-                    if (hits.getJSONObject(0).getString(id).equals("null")) {
-                        contents = null;
-                    } else {
-                        for (int i = 0; i < hits.length(); i++) {
-                            JSONObject searchResults = hits.getJSONObject(i);
-                            contents = getTableContents(tableName, searchResults);
-                        }
-                    }
-                    callback.onSuccess(response);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d(TAG, ""+error.getMessage()+","+error.toString());
-            }
-        }){
-            @Override
-            protected Map<String,String> getParams(){
-                return params;
-            }
-        };
-        RequestQueue queue = Volley.newRequestQueue(context);
-        queue.add(selectRequest);
-
-    }
 
     private ContentValues getTableContents(String tableName, JSONObject searchResults) throws JSONException {
         if(tableName.equals("Users")) {

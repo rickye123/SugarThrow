@@ -69,6 +69,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private Execute executeSQL;
     private static Connector database;
     private TableDisplay display = new TableDisplay();
+    private PasswordHash passwordHash = new PasswordHash();
 
     /**
      * Getter method returning the initialised database connection
@@ -267,7 +268,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         if(!user.get(0).get(0).equals("Empty set")) {
 
-            if(user.get(0).get(7).equals(password)) {
+            String hash = passwordHash.computeSHAHash(password);
+
+            if(user.get(0).get(7).equals(hash)) {
                 return true;
             }
             return false;

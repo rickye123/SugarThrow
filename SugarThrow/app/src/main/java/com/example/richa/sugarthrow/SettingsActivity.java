@@ -66,10 +66,14 @@ public class SettingsActivity extends MainActivity {
         });
 
         final LinearLayout sync = (LinearLayout)findViewById(R.id.sync_layout);
-        sync.setOnClickListener(new View.OnClickListener() {
+        sync.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                launchFeedbackActivity(SettingsActivity.this, "Cannot Sync at this time", false);
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                    // change colour of layout to show click
+                    launchActivity(SyncActivity.class);
+                }
+                return false;
             }
         });
         TextView text = (TextView)findViewById(R.id.settings_sign_out_text);
@@ -125,6 +129,9 @@ public class SettingsActivity extends MainActivity {
         if(heightSplit.length == 1) {
             profile.get("heightInches").setText("0");
         }
+        else {
+            profile.get("heightInches").setText(heightSplit[1]);
+        }
 
         profile.get("heightFeet").setText(heightSplit[0]);
 
@@ -132,8 +139,15 @@ public class SettingsActivity extends MainActivity {
         String weight = users.get(0).get(6);
         String[] weightSplit = weight.split("\\.");
 
+        for(String s : weightSplit) {
+            System.out.println(s);
+        }
+
         if(weightSplit.length == 1) {
             profile.get("weightPound").setText("0");
+        }
+        else {
+            profile.get("weightPound").setText(weightSplit[1]);
         }
 
         profile.get("weightStone").setText(weightSplit[0]);
@@ -148,6 +162,8 @@ public class SettingsActivity extends MainActivity {
     private HashMap<String, TextView> getProfile() {
 
         HashMap<String, TextView> profileData = new HashMap<>();
+
+
 
         profileData.put("name", (TextView)findViewById(R.id.profile_name));
         profileData.put("username", (TextView)findViewById(R.id.profile_username));

@@ -5,39 +5,39 @@
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_home_black"
-            android:title="Home" />
+            android:title="@string/home" />
         <item
             android:id="@+id/nav_diary"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Diary" />
+            android:icon="@drawable/ic_event_note_black"
+            android:title="@string/diary_title" />
         <item
             android:id="@+id/nav_game"
             android:icon="@drawable/ic_menu_slideshow"
-            android:title="Sugar Throw" />
+            android:title="@string/title" />
         <item
             android:id="@+id/nav_progress"
             android:icon="@drawable/ic_equalizer_black"
-            android:title="Progress" />
+            android:title="@string/progress_title" />
         <item
             android:id="@+id/nav_risk"
-            android:icon="@drawable/ic_menu_send"
-            android:title="Risk Foods" />
+            android:icon="@drawable/ic_report"
+            android:title="@string/risk_foods" />
         <item
             android:id="@+id/nav_database"
             android:icon="@drawable/ic_restaurant_menu_black"
-            android:title="Database" />
+            android:title="@string/database" />
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings_black"
-            android:title="Settings" />
+            android:title="@string/settings_title" />
         <item
             android:id="@+id/nav_info"
             android:icon="@drawable/ic_info_black"
-            android:title="Info" />
+            android:title="@string/info_title" />
         <item
             android:id="@+id/nav_help"
             android:icon="@drawable/ic_help_black"
-            android:title="Help" />
+            android:title="@string/help_title" />
     </group>
 
 </menu>

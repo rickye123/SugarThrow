@@ -16,11 +16,10 @@ import android.view.View;
 import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import java.util.List;
 
-public class UnityGame extends MainActivity
-{
-	protected UnityPlayer mUnityPlayer; // don't change the name of this variable; referenced from native code
+public class UnityGame extends MainActivity {
+
+    protected UnityPlayer mUnityPlayer; // don't change the name of this variable; referenced from native code
     private String username;
 
 	// Setup activity layout
@@ -41,8 +40,16 @@ public class UnityGame extends MainActivity
 			username = (String)savedInstanceState.getSerializable("username");
 		}
 
-		setContentView(R.layout.game_activity);
+		setContentView(R.layout.unity_game_activity);
 		setNavigationUsername(username);
+
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
+		if(getSupportActionBar() != null) {
+			getSupportActionBar().setDisplayShowTitleEnabled(false);
+		}
+		createDrawer(toolbar);
+		createNavigationView(R.id.nav_game);
 
 		startGame();
 
@@ -53,7 +60,7 @@ public class UnityGame extends MainActivity
 
         getWindow().setFormat(PixelFormat.RGBX_8888); // <--- This makes xperia play happy
 
-        ImageView button = (ImageView)findViewById(R.id.exit_button);
+        ImageView button = (ImageView)findViewById(R.id.exit_game);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -57,6 +57,7 @@ public class FoodDatabaseActivity extends DiaryActivity {
     private DiaryHandler diaryHandler;
     private PointsHandler pointsHandler;
     private String username;
+    private boolean acknowledgeStreak = false;
 
     /**
      * Clear searchTerms table
@@ -93,6 +94,15 @@ public class FoodDatabaseActivity extends DiaryActivity {
         setContentView(R.layout.food_database_activity);
         setNavigationUsername(username);
 
+        startContents();
+
+    }
+
+    /**
+     * Start content when the activity loads
+     */
+    private void startContents() {
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if(getSupportActionBar() != null) {
@@ -107,6 +117,7 @@ public class FoodDatabaseActivity extends DiaryActivity {
         diaryHandler = new DiaryHandler(database);
         pointsHandler = new PointsHandler(database, username);
 
+        // Volley used to make requests to Nutritionix API
         queue = Volley.newRequestQueue(this);
 
         String query = DiaryActivity.getRequest();
@@ -118,10 +129,12 @@ public class FoodDatabaseActivity extends DiaryActivity {
         searchView.setQuery(searchView.getQuery(), true);
         clickSearch(searchView);
 
+        // search for food on submit of searchview
         searchForFood();
 
         searchEntries = (LinearLayout)findViewById(R.id.food_search_entries);
 
+        // clear previous results if clear button pressed
         clearResults();
 
     }
@@ -561,6 +574,14 @@ public class FoodDatabaseActivity extends DiaryActivity {
         Toast.makeText(FoodDatabaseActivity.this, foodName + " added to diary",
                 Toast.LENGTH_SHORT).show();
 
+        int streak = diaryHandler.findLogStreak(date, username);
+        if(streak > 1 && !acknowledgeStreak) {
+            String feedback = "You have logged foods for " + Integer.toString(streak) +
+                    "\n days now. \nWell Done!";
+            acknowledgeStreak = true;
+            launchFeedbackActivity(FoodDatabaseActivity.this, feedback, true);
+        }
+
     }
 
     /**
@@ -586,6 +607,11 @@ public class FoodDatabaseActivity extends DiaryActivity {
 
     }
 
+    /**
+     * Dialog box appears when user goes over their daily allowance for a food
+     * @param message - the message passed to the dialog box
+     * @param view - the view is passed to the dialog box to determine its id
+     */
     public void openInsertDialog(String message, final View view) {
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);

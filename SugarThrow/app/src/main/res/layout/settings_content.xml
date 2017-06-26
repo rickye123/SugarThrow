@@ -330,7 +330,7 @@
                     tools:ignore="UselessParent">
 
                     <TextView
-                        android:id="@+id/settings_color_text"
+                        android:id="@+id/settings_sync_text"
                         android:layout_width="0dp"
                         android:layout_height="70dp"
                         android:layout_weight="0.28"

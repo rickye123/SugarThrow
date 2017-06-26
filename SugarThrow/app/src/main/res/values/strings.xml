@@ -171,7 +171,7 @@
     <string name="points_deducted_point2">- Going over daily allowance (-2 pts)"</string>
     <string name="points_deducted_point3">- Failing a goal (-5 pts)"</string>
     <string name="points_explained">You will only be allowed to play the \"Sugar Throw\" game, if you have logged
-        at least 5 foods for that day.</string>
+        at least 7 foods for that day.</string>
     <string name="feedback">Feedback</string>
     <string name="feedback_text">One of the key gamification techniques used in this app is \"Feedback\".
     You will be given personalised feedback based upon your goals, usage, and daily allowance of food.</string>
@@ -277,5 +277,120 @@
         <item>12</item>
         <item>13</item>
     </string-array>
+    <string name="title_activity_sync_online">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_title_social_recommendations">Enable social recommendations</string>
+    <string name="pref_description_social_recommendations">Recommendations for people to contact
+        based on your message history
+    </string>
+
+    <string name="pref_title_display_name">Display name</string>
+    <string name="pref_default_display_name">John Smith</string>
+
+    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
+    <string-array name="pref_example_list_titles">
+        <item>Always</item>
+        <item>When possible</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_example_list_values">
+        <item>1</item>
+        <item>0</item>
+        <item>-1</item>
+    </string-array>
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_data_sync">Data &amp; sync</string>
+
+    <string name="pref_title_sync_frequency">Sync frequency</string>
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+
+    <string-array name="list_preference_entries">
+        <item>Entry 1</item>
+        <item>Entry 2</item>
+        <item>Entry 3</item>
+    </string-array>
+
+    <string-array name="list_preference_entry_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="multi_select_list_preference_default_value" />
+
+    <string name="pref_title_system_sync_settings">System sync settings</string>
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">Notifications</string>
+
+    <string name="pref_title_new_message_notifications">New message notifications</string>
+
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_ringtone_silent">Silent</string>
+
+    <string name="pref_title_vibrate">Vibrate</string>
+
+    <string name="menu_checkbox_undo">Undo</string>
+    <string name="menu_add_5_items">Add 5 items</string>
+    <string name="button_undo">undo</string>
+
+    <string name="tip">Tip</string>
+    <string name="sugar_tip">Many breakfast cereal are high in sugar. Try switching to lower-sugar cereals or those with no added sugar, such as porridge, plain shredded wheat or Weetabix.</string>
+    <string name="cereal_tip">Swapping a bowl of sugar breakfast cereal for plain cereal could cut out 70g of sugar (up to 22 sugar cubes) from your diet over a week</string>
+
+    <string name="many_foods">Many foods that we don\'t consider to be sweet contain a surprisingly large amount of sugar.</string>
+    <string name="pasta_fact">A third of an average-sized jar of pasta (roughly 150g) can contain more than 13g of sugar, the equivalent of 3 teaspoons</string>
+    <string name="cola_tip">A 500ml bottle of cola contains the equivalent of 17 cubes of sugar. Try sugar-free varieties, or – better yet – water, lower-fat milk, or soda water with a splash of fruit juice</string>
+    <string name="an_interesting_fact">An Interesting Fact…</string>
+    <string name="fact_message">Did you know that there is hidden sugar in a lot of the food you eat? A tin of baked beans has as much as 20% of your daily amount</string>
+    <string name="food_diary">Food Diary</string>
+    <string name="play_sugar_throw">Play Sugar Throw</string>
+    <string name="search_for_food">Search For Food</string>
+    <string name="dropdown_arrow">Dropdown arrow</string>
+    <string name="daily_goals">Daily Goals</string>
+    <string name="no_daily_goals">No Daily Goals</string>
+    <string name="no_weekly_goals">No Weekly Goals</string>
+    <string name="set_daily_goals">Set Daily Goals</string>
+    <string name="weekly_goals">Weekly Goals</string>
+    <string name="click_below_to_play_game">Click below to play game</string>
+    <string name="sync_intro">The nutritional content of the food you\'ve eaten are being recorded for Machine Learning purposes. This data will help determine weight gain based on a given diet.</string>
+    <string name="syncing">Syncing</string>
+    <string name="click_sync">Click the Sync Button below to sync your food contents</string>
+    <string name="star_image">Star image</string>
+    <string name="breakfast_values">2 Poached Eggs, Spinach, and Toast</string>
+    <string name="breakfast">Breakfast</string>
+    <string name="dinner">Dinner</string>
+    <string name="lunch">Lunch</string>
+    <string name="example_healthy_meal">Example Healthy Meal</string>
+    <string name="how_to_cut_down_on_sugar">How to Cut Down On Sugar</string>
+    <string name="dinner_values">Mexican Lentil Soup</string>
+    <string name="lunch_values">Smoky White-Bean Chili</string>
+    <string name="visit_this_link_for_more_info">Visit This Link for More Info</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="database">Database</string>
+    <string name="home">Home</string>
+    <string name="risk_foods">Risk Foods</string>
 
 </resources>

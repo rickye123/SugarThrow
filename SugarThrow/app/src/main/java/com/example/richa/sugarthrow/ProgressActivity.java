@@ -8,6 +8,8 @@ import android.widget.Toast;
 import java.math.BigDecimal;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -123,7 +125,7 @@ public class ProgressActivity extends MainActivity {
 
         for(int i = 0; i < 5; i++) {
             String dayAmount = executeSql.sqlGetSingleStringFromQuery(SqlQueries.SQL_STREAK, date.convertDateFormat(days[i]), userName);
-            yValues.add(new Entry(i, Float.parseFloat(dayAmount)));
+            yValues.add(new Entry(i + 1, Float.parseFloat(dayAmount)));
         }
 
         LineChart lineChart = (LineChart)findViewById(R.id.line_chart);
@@ -143,6 +145,7 @@ public class ProgressActivity extends MainActivity {
         LineData data = new LineData(dataSets);
         lineChart.setData(data);
         lineChart.setDescription(" ");
+
     }
 
     private void pieChartCreator(String userName) {

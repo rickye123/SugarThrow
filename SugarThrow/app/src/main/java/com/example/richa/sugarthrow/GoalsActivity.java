@@ -1,5 +1,9 @@
 package com.example.richa.sugarthrow;
 
+/*
+The activity used for controlling the goals of the app
+ */
+
 import android.content.ContentValues;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -29,6 +33,9 @@ public class GoalsActivity extends MainActivity {
     private List<List<String>> weeklyGoals = new ArrayList<>();
     private boolean quantOpen, weeklyOpen = false;
 
+    /**
+     * Clear the daily goals table
+     */
     private void clearGlobalGoalsTable() {
         while (!globalGoals.isEmpty()) {
             int size = globalGoals.size();
@@ -40,6 +47,9 @@ public class GoalsActivity extends MainActivity {
         }
     }
 
+    /**
+     * Clear the weekly goals table
+     */
     private void clearWeeklyGoalsTable() {
         while (!weeklyGoals.isEmpty()) {
             int size = weeklyGoals.size();
@@ -75,6 +85,12 @@ public class GoalsActivity extends MainActivity {
         setContentView(R.layout.goals_activity);
         setNavigationUsername(username);
 
+        startContent();
+
+    }
+
+    private void startContent() {
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if(getSupportActionBar() != null) {
@@ -100,8 +116,6 @@ public class GoalsActivity extends MainActivity {
 
         updateQuantities();
         pressUpdateWeeklyGoals();
-
-        display.printTable("Global goals", globalGoals);
 
     }
 
@@ -136,6 +150,9 @@ public class GoalsActivity extends MainActivity {
         }
     }
 
+    /**
+     * Update the weekly goal layout, after goals have been updated
+     */
     private void updateWeeklyGoalsLayout() {
 
         if(weeklyLayout.getChildCount() > 0) {
@@ -174,6 +191,9 @@ public class GoalsActivity extends MainActivity {
 
     }
 
+    /**
+     * Initialise the weekly goals layout
+     */
     private void initialiseWeeklyGoalsLayout() {
 
         List<List<String>> sugar = executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_WEEKLY_SUGAR, username);
@@ -215,12 +235,14 @@ public class GoalsActivity extends MainActivity {
 
                 TextView quantText = (TextView)findViewById(R.id.set_quantities_text);
                 LinearLayout quantitiesLayout = (LinearLayout) findViewById(R.id.set_quantities_layout);
+                ImageView quantArrow = (ImageView)findViewById(R.id.daily_goals_arrow);
 
                 // if not open, make layout visiable
                 if(!quantOpen) {
                     if(event.getAction() == MotionEvent.ACTION_DOWN) {
                         quantText.setTextColor(Color.BLUE);
                         quantitiesLayout.setVisibility(View.VISIBLE);
+                        quantArrow.setImageResource(R.drawable.ic_keyboard_arrow_up_black);
                         quantOpen = true;
                     }
                 }
@@ -229,6 +251,7 @@ public class GoalsActivity extends MainActivity {
                     if(event.getAction() == MotionEvent.ACTION_DOWN) {
                         quantText.setTextColor(Color.BLACK);
                         quantitiesLayout.setVisibility(View.GONE);
+                        quantArrow.setImageResource(R.drawable.ic_keyboard_arrow_down_black);
                         quantOpen = false;
                     }
                 }
@@ -251,11 +274,13 @@ public class GoalsActivity extends MainActivity {
 
                 TextView weeklyText = (TextView)findViewById(R.id.set_weekly_text);
                 LinearLayout layout = (LinearLayout) findViewById(R.id.weekly_goals);
+                ImageView weeklyDropDown = (ImageView)findViewById(R.id.weekly_goals_dropdown);
 
                 if(!weeklyOpen) {
                     if(event.getAction() == MotionEvent.ACTION_DOWN) {
                         weeklyText.setTextColor(Color.BLUE);
                         layout.setVisibility(View.VISIBLE);
+                        weeklyDropDown.setImageResource(R.drawable.ic_keyboard_arrow_up_black);
                         weeklyOpen = true;
                     }
                 }
@@ -263,6 +288,7 @@ public class GoalsActivity extends MainActivity {
                     if(event.getAction() == MotionEvent.ACTION_DOWN) {
                         weeklyText.setTextColor(Color.BLACK);
                         layout.setVisibility(View.GONE);
+                        weeklyDropDown.setImageResource(R.drawable.ic_keyboard_arrow_down_black);
                         weeklyOpen = false;
                     }
                 }
@@ -275,8 +301,8 @@ public class GoalsActivity extends MainActivity {
 
     /**
      * Check to see if a goal is empty
-     * @param list
-     * @return
+     * @param list - the array list that is being checked
+     * @return true if the goals list is empty, false otherwise
      */
     private boolean isEmptyGoals(List<List<String>> list) {
 
@@ -328,6 +354,11 @@ public class GoalsActivity extends MainActivity {
 
     }
 
+    /**
+     * Get the weekly goal quantities plus the name of the goal
+     * @param sugar - the list which contains the goal quantities
+     * @return the 2D array list containing the name of the goal and its quantity
+     */
     private List<List<String>> getWeeklyQuantities(List<List<String>> sugar) {
 
         List<List<String>> quantities = new ArrayList<>();
@@ -418,7 +449,7 @@ public class GoalsActivity extends MainActivity {
      * If text is too long for the layout, and is truncated,
      * then the user can click it and the text will begin
      * to scroll from right to left
-     * @param text
+     * @param text - the text which becomes scrollable on click
      */
     private void clickToScrollText(final TextView text) {
 
@@ -445,7 +476,7 @@ public class GoalsActivity extends MainActivity {
     /**
      * Touch listener that listens for a click of the minus button,
      * which results in a goal being removed from the list
-     * @param image
+     * @param image - click on the minus image to remove a goal
      */
     private void clickToRemoveGoal(ImageView image) {
 
@@ -496,6 +527,10 @@ public class GoalsActivity extends MainActivity {
 
     }
 
+    /**
+     * Remove from weekly goals list
+     * @param row - the row to be removed
+     */
     private void removeFromWeekly(int row) {
 
         // get the userId so that the row in "Goals" can be accessed
@@ -515,13 +550,18 @@ public class GoalsActivity extends MainActivity {
 
     }
 
+    /**
+     * Update the weekly goals if the user pressed update weekly goals button
+     */
     private void pressUpdateWeeklyGoals() {
 
+        // get the button
         Button updateWeeklyGoals = (Button)findViewById(R.id.update_weekly_goals);
 
         updateWeeklyGoals.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+
                 if(event.getAction() == MotionEvent.ACTION_DOWN) {
                     // validate reduction that it is a percentage
                     List<List<String>> sugar = executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_SUGAR, username);
@@ -547,6 +587,10 @@ public class GoalsActivity extends MainActivity {
 
     }
 
+    /**
+     * Get the weekly goals from the "Goals" table
+     * @return the content values for the goals
+     */
     private ContentValues getWeeklyGoals() {
 
         ContentValues values = new ContentValues();
@@ -594,6 +638,9 @@ public class GoalsActivity extends MainActivity {
         });
     }
 
+    /**
+     * Update the weekly goals section
+     */
     private void updateWeeklyGoals() {
 
         // get the user id from the username in order to update table

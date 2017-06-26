@@ -6,10 +6,12 @@ This is the main activity class, which is called when the app is launched
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
 import android.support.v4.view.ViewPager;
+import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -26,8 +28,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
         implements OnNavigationItemSelectedListener {
@@ -113,6 +116,10 @@ public class MainActivity extends AppCompatActivity
         ImageSlider adapterView = new ImageSlider(this);
         viewPager.setAdapter(adapterView);
 
+        // set the layout wrapping the "Example Healthy Meal" to be transparent
+        LinearLayout healthyMealLayout = (LinearLayout)findViewById(R.id.example_meal);
+        healthyMealLayout.getBackground().setAlpha(100);
+
         // get instance of database
         Connector database = Connector.getInstance(this);
         database.attemptCreate();
@@ -124,8 +131,14 @@ public class MainActivity extends AppCompatActivity
         // handle the links to the diary, search, and game on the homapage
         handleLinks();
 
+        // handle the tip and fact drop downs
+        handleDropDowns();
+
         // the HUD contains the percentage intake of sugar the user has left and their total points
         populateHUD();
+
+        // links to external websites on the home page
+        hyperLinks();
 
         // check to see if daily goals on track
         if(!acknowledgeOnTrack) {
@@ -180,6 +193,84 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
+     * Handle the hyperlinks linking to external websites
+     */
+    private void hyperLinks() {
+
+        // Link to Chatelaine.com, where there is a detailed example of a healthy diet
+        LinearLayout visitChatelaine = (LinearLayout)findViewById(R.id.visit_chatelaine);
+        visitChatelaine.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent redirect = new Intent();
+                redirect.setAction(Intent.ACTION_VIEW);
+                redirect.addCategory(Intent.CATEGORY_BROWSABLE);
+                redirect.setData(Uri.parse("http://www.chatelaine.com/health/healthy-recipes-health/low-sugar-meal-plan/"));
+                startActivity(redirect);
+            }
+        });
+
+        // Link to NHS Choices, where tips for reducing sugar are given
+        LinearLayout visitNHS = (LinearLayout)findViewById(R.id.visit_nhs);
+        visitNHS.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent redirect = new Intent();
+                redirect.setAction(Intent.ACTION_VIEW);
+                redirect.addCategory(Intent.CATEGORY_BROWSABLE);
+                redirect.setData(Uri.parse("http://www.nhs.uk/Livewell/Goodfood/Pages/how-to-cut-down-on-sugar-in-your-diet.aspx"));
+                startActivity(redirect);
+            }
+        });
+
+
+    }
+
+    /**
+     * Used to handle the drop downs that exist on the homepage
+     */
+    private void handleDropDowns() {
+
+        // drop down for the fact on the homepage
+        LinearLayout fact = (LinearLayout)findViewById(R.id.fact_layout);
+        final LinearLayout factDropdown = (LinearLayout)findViewById(R.id.fact_dropdown);
+        final ImageView arrowDownFact = (ImageView)findViewById(R.id.arrow_fact);
+        fact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(factDropdown.getVisibility() == View.GONE) {
+                    factDropdown.setVisibility(View.VISIBLE);
+                    arrowDownFact.setImageResource(R.drawable.ic_keyboard_arrow_up_black);
+                }
+                else {
+                    factDropdown.setVisibility(View.GONE);
+                    arrowDownFact.setImageResource(R.drawable.ic_keyboard_arrow_down_black);
+                }
+            }
+        });
+
+        // drop down for the Tip on the homepage
+        LinearLayout tip = (LinearLayout)findViewById(R.id.tip_layout);
+        final LinearLayout tipDropdown = (LinearLayout)findViewById(R.id.tip_dropdown);
+        final ImageView arrowDownTip = (ImageView)findViewById(R.id.arrow_tip);
+        tip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(tipDropdown.getVisibility() == View.GONE) {
+                    tipDropdown.setVisibility(View.VISIBLE);
+                    arrowDownTip.setImageResource(R.drawable.ic_keyboard_arrow_up_black);
+                }
+                else {
+                    tipDropdown.setVisibility(View.GONE);
+                    arrowDownTip.setImageResource(R.drawable.ic_keyboard_arrow_down_black);
+                }
+            }
+        });
+
+
+    }
+
+    /**
      * Create the HUD (Heads Up Display) which contains the amount of sugar
      * the user has left (daily amount) and the number of points they have
      */
@@ -191,6 +282,9 @@ public class MainActivity extends AppCompatActivity
         // update the points in the HUD with the user's points
         String points = executeSQL.sqlGetSingleStringFromQuery(SqlQueries.SQL_POINTS, username);
         globalPoints.setText(getString(R.string.hud_points, points));
+
+        clickHUD(globalPoints);
+        clickHUD(globalSugar);
 
         // find the total amount of each food group the user has had
         List<List<String>> sumOfFoods =
@@ -206,6 +300,30 @@ public class MainActivity extends AppCompatActivity
         if(sugarPercentage.get("amountLeft").compareTo(BigDecimal.ZERO) < 0) {
             globalSugar.setTextColor(getColor(R.color.removeRed));
         }
+    }
+
+    private void clickHUD(final TextView item) {
+
+        item.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                String text = item.getText().toString();
+                if(v.getId() == R.id.total_points) {
+                    if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                        Toast.makeText(MainActivity.this,
+                                "Total points: " + text, Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else if (v.getId() == R.id.daily_sugar_left) {
+                    if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                        Toast.makeText(MainActivity.this,
+                                "Daily Percentage of Sugar Left : " + text, Toast.LENGTH_SHORT).show();
+                    }
+                }
+                return false;
+            }
+        });
+
     }
 
     /**
@@ -257,7 +375,8 @@ public class MainActivity extends AppCompatActivity
                     case R.id.play_sugar_image:
                     case R.id.play_sugar_chevron:
                     case R.id.play_sugar:
-                        launchActivity(UnityGame.class);
+                        playGame(MainActivity.this);
+/*                        launchActivity(UnityGame.class);*/
                         break;
                     default:
                         // If we got here, the user's action was not recognized.
@@ -266,6 +385,29 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+    }
+
+    public void playGame(Context context) {
+
+        List<List<String>> numberOfFoods = executeSQL.sqlGetFromQuery(SqlQueries.SQL_IN_DIARY,
+                date.convertDateFormat(date.getCurrentDate()), username);
+
+        if(numberOfFoods.size() < 7) {
+            String message;
+            if(numberOfFoods.size()  == 1) {
+                message = "You have only logged " + numberOfFoods.size() + " food today. You need " +
+                        "to log at least 7 foods to play the game";
+            }
+            else {
+                message = "You have only logged " + numberOfFoods.size() + " foods today. You need " +
+                        "to log at least 7 foods to play the game";
+            }
+            launchFeedbackActivity(context, message, false);
+        }
+        else {
+            launchActivity(UnityGame.class);
+        }
+
     }
 
     /**
@@ -435,7 +577,6 @@ public class MainActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.nav_drawer, menu);
         return true;
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

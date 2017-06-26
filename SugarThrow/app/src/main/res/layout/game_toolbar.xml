@@ -25,28 +25,11 @@
                 android:textColor="@color/white"
                 android:textSize="36sp" />
 
-            <ImageView
-                android:id="@+id/search_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_search_white"
-                android:contentDescription="@string/search_icon"/>
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/game_content"
         android:id="@+id/include" />
-
-    <ImageView
-        android:id="@+id/exit_button"
-        android:layout_width="55dp"
-        android:layout_height="51dp"
-        android:layout_gravity="bottom|start"
-        android:background="@color/white"
-        app:layout_anchor="@+id/include"
-        app:layout_anchorGravity="top|right"
-        app:srcCompat="@drawable/ic_close_black"
-        android:contentDescription="@string/close_the_game" />
 
 </android.support.design.widget.CoordinatorLayout>
