@@ -10,7 +10,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -32,6 +34,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
 public class MainActivity extends AppCompatActivity
         implements OnNavigationItemSelectedListener {
 
@@ -40,7 +44,8 @@ public class MainActivity extends AppCompatActivity
     private String username;
     private TimeKeeper date = new TimeKeeper();
     private PointsHandler pointsHandler;
-    private boolean acknowledgeOnTrack, acknowledgeAchieved = false;
+    private static boolean acknowledgeOnTrack, acknowledgeAchieved = false;
+    private String previousActivity;
 
     // invoked when activity starts
     @Override
@@ -51,13 +56,16 @@ public class MainActivity extends AppCompatActivity
             Bundle extras = getIntent().getExtras();
             if(extras == null) {
                 username = "Username";
+                previousActivity = "class com.example.richa.sugarthrow.LoginActivity";
             }
             else {
                 username = extras.getString("username");
+                previousActivity = extras.getString("activity");
             }
         }
         else {
             username = (String)savedInstanceState.getSerializable("username");
+            previousActivity = (String)savedInstanceState.getSerializable("activity");
         }
 
         // set the layout to the home_activity.xml file
@@ -134,11 +142,11 @@ public class MainActivity extends AppCompatActivity
         // handle the tip and fact drop downs
         handleDropDowns();
 
-        // the HUD contains the percentage intake of sugar the user has left and their total points
-        populateHUD();
-
         // links to external websites on the home page
         hyperLinks();
+
+        // handle the dynamic content, i.e. tips, facts, and meals - which vary eacy day of the week
+        handleDynamicContent();
 
         // check to see if daily goals on track
         if(!acknowledgeOnTrack) {
@@ -148,6 +156,9 @@ public class MainActivity extends AppCompatActivity
         if(!acknowledgeAchieved) {
             dailyGoalsAchieved();
         }
+
+        // the HUD contains the percentage intake of sugar the user has left and their total points
+        populateHUD();
 
     }
 
@@ -226,6 +237,23 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    private void handleDynamicContent() {
+
+        TextView interestingFact = (TextView)findViewById(R.id.interesting_fact_changeable);
+        TextView tipPart1 = (TextView)findViewById(R.id.tip_sugar_part1);
+        TextView tipPart2 = (TextView)findViewById(R.id.tip_sugar_part2);
+        TextView breakfastText = (TextView)findViewById(R.id.bfast_text);
+        TextView lunchText = (TextView)findViewById(R.id.lunch_text);
+        TextView dinnerText = (TextView)findViewById(R.id.dinner_text);
+
+        DynamicContentHandler dynamicContentHandler = new DynamicContentHandler();
+        dynamicContentHandler.getFactContent(interestingFact);
+        dynamicContentHandler.getTipContent(tipPart1, tipPart2);
+        dynamicContentHandler.getMealContent(breakfastText, lunchText, dinnerText);
+
+
+    }
+
     /**
      * Used to handle the drop downs that exist on the homepage
      */
@@ -233,6 +261,7 @@ public class MainActivity extends AppCompatActivity
 
         // drop down for the fact on the homepage
         LinearLayout fact = (LinearLayout)findViewById(R.id.fact_layout);
+
         final LinearLayout factDropdown = (LinearLayout)findViewById(R.id.fact_dropdown);
         final ImageView arrowDownFact = (ImageView)findViewById(R.id.arrow_fact);
         fact.setOnClickListener(new View.OnClickListener() {
@@ -298,7 +327,7 @@ public class MainActivity extends AppCompatActivity
 
         // change the text color to red if the user has had over 100% of their daily sugar intake
         if(sugarPercentage.get("amountLeft").compareTo(BigDecimal.ZERO) < 0) {
-            globalSugar.setTextColor(getColor(R.color.removeRed));
+            globalSugar.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.removeRed));
         }
     }
 
@@ -324,20 +353,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-    }
-
-    /**
-     * Create the navigation drawer (side menu) and change the menu
-     * item selected
-     * @param menuId - the id referring to the drawabale image in the menu
-     */
-    public void createNavigationView(int menuId) {
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-
-        navigationView.setNavigationItemSelectedListener(this);
-        // set which menu item is selected
-        navigationView.getMenu().findItem(menuId).setChecked(true);
     }
 
     /**
@@ -392,20 +407,29 @@ public class MainActivity extends AppCompatActivity
         List<List<String>> numberOfFoods = executeSQL.sqlGetFromQuery(SqlQueries.SQL_IN_DIARY,
                 date.convertDateFormat(date.getCurrentDate()), username);
 
-        if(numberOfFoods.size() < 7) {
-            String message;
-            if(numberOfFoods.size()  == 1) {
-                message = "You have only logged " + numberOfFoods.size() + " food today. You need " +
-                        "to log at least 7 foods to play the game";
+        System.out.println("NUMBER OF FOODS " + numberOfFoods.get(0).get(0));
+
+        String message;
+        if(!numberOfFoods.get(0).get(0).equals("Empty set")) {
+            if(numberOfFoods.size() < 7) {
+
+                if(numberOfFoods.size()  == 1) {
+                    message = "You have only logged " + numberOfFoods.size() + " food today. You need " +
+                            "to log at least 7 foods to play the game";
+                }
+                else {
+                    message = "You have only logged " + numberOfFoods.size() + " foods today. You need " +
+                            "to log at least 7 foods to play the game";
+                }
+                launchFeedbackActivity(context, message, false);
             }
             else {
-                message = "You have only logged " + numberOfFoods.size() + " foods today. You need " +
-                        "to log at least 7 foods to play the game";
+                launchActivity(UnityGame.class);
             }
-            launchFeedbackActivity(context, message, false);
         }
         else {
-            launchActivity(UnityGame.class);
+            message = "You haven\'t logged any foods today. You need to log at least 7 foods to play the game";
+            launchFeedbackActivity(context, message, false);
         }
 
     }
@@ -424,7 +448,8 @@ public class MainActivity extends AppCompatActivity
                 List<List<String>> goals = executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_GOALS,
                         username);
                 List<List<String>> quantities = foodContentsHandler.createQuantities(goals);
-                List<Map<String, BigDecimal>> total = foodContentsHandler.findDailyTotal(username);
+                List<Map<String, BigDecimal>> total =
+                        foodContentsHandler.findDailyTotal(date.convertDateFormat(date.getCurrentDate()), username);
 
                 for(int i = 0; i < quantities.size(); i++) {
                     if(!(goals.get(0).get(i).equals("") || goals.get(0).get(i) == null)) {
@@ -455,7 +480,8 @@ public class MainActivity extends AppCompatActivity
                 List<List<String>> goals = executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_GOALS,
                         username);
                 List<List<String>> quantities = foodContentsHandler.createQuantities(goals);
-                List<Map<String, BigDecimal>> total = foodContentsHandler.findDailyTotal(username);
+                List<Map<String, BigDecimal>> total = foodContentsHandler.findDailyTotal(
+                        date.convertDateFormat(date.getCurrentDate()), username);
 
                 for(int i = 0; i < quantities.size(); i++) {
                     if(!(goals.get(0).get(i).equals("") || goals.get(0).get(i) == null)) {
@@ -463,8 +489,8 @@ public class MainActivity extends AppCompatActivity
                             String message = "You reached your daily goal!\n";
                             message = message.concat(quantities.get(i).get(0) + " " + quantities.get(i).get(1) +
                                     " " + quantities.get(i).get(2));
-                            message = message.concat("\nYou've earned an extra 2 points");
-                            pointsHandler.updatePoints(username, SqlQueries.SQL_INCREMENT_POINTS_2);
+                            message = message.concat("\nYou've earned an extra 5 points");
+                            pointsHandler.updatePoints(username, SqlQueries.SQL_INCREMENT_POINTS_5);
                             launchFeedbackActivity(MainActivity.this, message, true);
                             acknowledgeAchieved = true;
                         }
@@ -516,9 +542,12 @@ public class MainActivity extends AppCompatActivity
      */
     public void launchActivity(Class className) {
         Intent intent = new Intent(this, className);
+        intent.putExtra("activity", this.getClass().toString());
         intent.putExtra("username", username);
         startActivity(intent);
     }
+
+
 
     /**
      * Method to control the links in the navigation drawer
@@ -559,6 +588,70 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    /**
+     * Create the navigation drawer (side menu) and change the menu
+     * item selected
+     * @param menuId - the id referring to the drawabale image in the menu
+     */
+    public void createNavigationView(int menuId) {
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+        navigationView.setNavigationItemSelectedListener(this);
+        // set which menu item is selected
+        navigationView.getMenu().findItem(menuId).setChecked(true);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            // do something
+            System.out.println("BACK BUTTON PRESSED");
+            getPreviousActivity(previousActivity);
+
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    public void getPreviousActivity(String previousActivity) {
+
+        if(previousActivity.equals("class com.example.richa.sugarthrow.MainActivity")) {
+            launchActivity(MainActivity.class);
+        }
+        if(previousActivity.equals("class com.example.richa.sugarthrow.DiaryActivity")) {
+            launchActivity(DiaryActivity.class);
+        }
+        if(previousActivity.equals("class com.example.richa.sugarthrow.GameActivity") ||
+                previousActivity.equals("com.example.richa.sugarthrow.UnityGame")) {
+            launchActivity(GameActivity.class);
+        }
+        if(previousActivity.equals("class com.example.richa.sugarthrow.ProgressActivity")) {
+            launchActivity(ProgressActivity.class);
+        }
+        if(previousActivity.equals("class com.example.richa.sugarthrow.RiskActivity")) {
+            launchActivity(RiskActivity.class);
+        }
+        if(previousActivity.equals("class com.example.richa.sugarthrow.FoodDatabaseActivity")) {
+            launchActivity(FoodDatabaseActivity.class);
+        }
+        if(previousActivity.equals("class com.example.richa.sugarthrow.SettingsActivity")) {
+            launchActivity(SettingsActivity.class);
+        }
+        if(previousActivity.equals("class com.example.richa.sugarthrow.InfoActivity")) {
+            launchActivity(InfoActivity.class);
+        }
+        if(previousActivity.equals("class com.example.richa.sugarthrow.HelpActivity")) {
+            launchActivity(HelpActivity.class);
+        }
+        if(previousActivity.equals("class com.example.richa.sugarthrow.LoginActivity")) {
+            launchActivity(MainActivity.class);
+        }
+        if(previousActivity.equals("class com.example.richa.sugarthrow.SignUpActivity")) {
+            launchActivity(MainActivity.class);
+        }
+
     }
 
     @Override

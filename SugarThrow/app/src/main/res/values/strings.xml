@@ -356,14 +356,38 @@
     <string name="button_undo">undo</string>
 
     <string name="tip">Tip</string>
-    <string name="sugar_tip">Many breakfast cereal are high in sugar. Try switching to lower-sugar cereals or those with no added sugar, such as porridge, plain shredded wheat or Weetabix.</string>
-    <string name="cereal_tip">Swapping a bowl of sugar breakfast cereal for plain cereal could cut out 70g of sugar (up to 22 sugar cubes) from your diet over a week</string>
+    <string name="tip_message_1_p1">Many breakfast cereal are high in sugar. Try switching to lower-sugar cereals or those with no added sugar, such as porridge, plain shredded wheat or Weetabix.</string>
+    <string name="tip_message_1_p2">Swapping a bowl of sugar breakfast cereal for plain cereal could cut out 70g of sugar (up to 22 sugar cubes) from your diet over a week</string>
+
+    <string name="tip_message_2_p1">A 500ml bottle of cola contains the equivalent of 17 cubes of sugar.</string>
+    <string name="tip_message_2_p2">Try sugar-free varieties, or – better yet – water, lower-fat milk, or soda water with a splash of fruit juice.</string>
+
+    <string name="tip_message_3_p1">If you like to indulge in chocolate regularly, swap for a lower-calorie hot instance chocolate drink.</string>
+    <string name="tip_message_3_p2">You can also get chocolate with coffee and chocolate with malt varieties.</string>
+
+    <string name="tip_message_5_p1">Healthier snack options are those without added sugar, such as fruit (fresh, tinned or frozen), unsalted nuts, unsalted rice cakes, oatcakes, or homemade plain popcorn.</string>
+    <string name="tip_message_5_p2">If you\'re not ready to give up your favourite flavours, you could start by having less. Instead of two biscuits in one sitting, try having one. If your snack has two bars, have one and share the other, or save it for another day.</string>
+
+    <string name="tip_message_4_p1">Your combined total of drinks from fruit juice, vegetable juice and smoothies should not be more than 150ml a day – which is a small glass.</string>
+    <string name="tip_message_4_p2">For example, if you have 150ml of orange juice and 150ml smoothie in one day, you\'ll have exceeded the recommendation by 150ml.</string>
+
+    <string name="tip_message_6_p1">Some packaging uses a colour-coded system that makes it easy to choose foods that are lower in sugar, salt and fat.</string>
+    <string name="tip_message_6_p2">Look for more "greens" and "ambers", and fewer "reds", in your shopping basket</string>
+
+    <string name="tip_message_7_p1">When shopping, look out for lower-sugar (and lower-fat) versions of your favourite snacks.</string>
+    <string name="tip_message_7_p2">Buy smaller packs, or skip the family bags and just go for the normal-sized one instead</string>
 
     <string name="many_foods">Many foods that we don\'t consider to be sweet contain a surprisingly large amount of sugar.</string>
     <string name="pasta_fact">A third of an average-sized jar of pasta (roughly 150g) can contain more than 13g of sugar, the equivalent of 3 teaspoons</string>
     <string name="cola_tip">A 500ml bottle of cola contains the equivalent of 17 cubes of sugar. Try sugar-free varieties, or – better yet – water, lower-fat milk, or soda water with a splash of fruit juice</string>
     <string name="an_interesting_fact">An Interesting Fact…</string>
-    <string name="fact_message">Did you know that there is hidden sugar in a lot of the food you eat? A tin of baked beans has as much as 20% of your daily amount</string>
+    <string name="fact_message_1">Did you know that there is hidden sugar in a lot of the food you eat? A tin of baked beans has as much as 20% of your daily amount</string>
+    <string name="fact_message_2">A third opf an average-sized jar of pasta sauce (roughly 150g) can contain more than 13g of sugar, including added sugar - the equivalent of three teaspoons of sugar.</string>
+    <string name="fact_message_3">Nearly a quarter of the added sugar in our diets comes from sugary drinks, such as fizzy drinks, sweetened juices, squashes, and cordials.</string>
+    <string name="fact_message_5">Dried fruit, such as raisins, dates and apricots, is high in sugar and can be bad for your dental health because it sticks to your teeth.</string>
+    <string name="fact_message_4">Condiments and sauces such as ketchup can have as much as 23g of sugar in 100g – roughly half a teaspoon per serving.</string>
+    <string name="fact_message_6">Many foods that we don\'t consider to be sweet contain a surprisingly large amount of sugar. Some ready-made soups, stir-in sauces and ready meals can also be higher in sugar than you think.</string>
+    <string name="fact_message_7">Despite their healthy image, many cereal bars can be high in sugar and fat.</string>
     <string name="food_diary">Food Diary</string>
     <string name="play_sugar_throw">Play Sugar Throw</string>
     <string name="search_for_food">Search For Food</string>
@@ -378,19 +402,51 @@
     <string name="syncing">Syncing</string>
     <string name="click_sync">Click the Sync Button below to sync your food contents</string>
     <string name="star_image">Star image</string>
-    <string name="breakfast_values">2 Poached Eggs, Spinach, and Toast</string>
+    <string name="example_healthy_meal">Example Healthy Meal</string>
     <string name="breakfast">Breakfast</string>
     <string name="dinner">Dinner</string>
     <string name="lunch">Lunch</string>
-    <string name="example_healthy_meal">Example Healthy Meal</string>
+
+    <string name="breakfast_example_1">2 Poached Eggs, Spinach, and Toast</string>
+    <string name="lunch_example_1">Smoky White-Bean Chili</string>
+    <string name="dinner_example_1">Mexican Lentil Soup</string>
+
+    <string name="breakfast_example_2">Green Smoothie</string>
+    <string name="lunch_example_2">2 slices aged white cheddar and 2 hard rye crackers</string>
+    <string name="dinner_example_2">Grilled chicken with cauliflower-garlic sauce</string>
+
+    <string name="breakfast_example_3">Avacado Toast</string>
+    <string name="lunch_example_3">Plain Greek yogurt sprinkled with cinnamon and topped with some chopped walnuts and 1 diced date></string>
+    <string name="dinner_example_3">Spring tofu scramble with a green salad on the side</string>
+
+    <string name="breakfast_example_4">Green smoothie</string>
+    <string name="lunch_example_4">Green goodness basil-pesto salad with some wild salmon or light tuna></string>
+    <string name="dinner_example_4">Beef Barley Soup</string>
+
+    <string name="breakfast_example_5">Plain Greek yogurt in a parfait, layered with walnuts, blueberries, and cherries</string>
+    <string name="lunch_example_5">1 cup of Mexican Lentil Soup</string>
+    <string name="dinner_example_5">Seared Halibut with Cilantro Salsa and Rosemary Sweet Potatoes</string>
+
+    <string name="breakfast_example_6">2 poached eggs over a bed of wilted spinach</string>
+    <string name="lunch_example_6">Hummus, 4 Rye Crackers, 2 slices aged white Cheddar, tomatoes, and bell peppers</string>
+    <string name="dinner_example_6">Spring tofy scramble with a green salad on the side</string>
+
+    <string name="breakfast_example_7">Gluten free buckwheat pancakes</string>
+    <string name="lunch_example_7">Apple and walnut super-crunch salad</string>
+    <string name="dinner_example_7">Grilled side of salmon, served with roasted vegetables and brown rice</string>
+
     <string name="how_to_cut_down_on_sugar">How to Cut Down On Sugar</string>
-    <string name="dinner_values">Mexican Lentil Soup</string>
-    <string name="lunch_values">Smoky White-Bean Chili</string>
     <string name="visit_this_link_for_more_info">Visit This Link for More Info</string>
     <string name="no">No</string>
     <string name="yes">Yes</string>
     <string name="database">Database</string>
     <string name="home">Home</string>
     <string name="risk_foods">Risk Foods</string>
+    <string name="zero">0</string>
+    <string name="beginner">Beginner</string>
+    <string name="expert">Expert</string>
+    <string name="intermediate">Intermediate</string>
+    <string name="change_weight">CHANGE WEIGHT</string>
+    <string name="searching">Searching</string>
 
 </resources>

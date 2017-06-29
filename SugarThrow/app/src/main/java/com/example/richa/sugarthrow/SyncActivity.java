@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class SyncActivity extends MainActivity {
 
-    private String username;
+    private String username, previousActivity;
     private ContentValues contents;
     private String TAG = "SyncActivity";
     private Execute executeSQL;
@@ -35,10 +35,13 @@ public class SyncActivity extends MainActivity {
             }
             else {
                 username = extras.getString("username");
+                previousActivity = extras.getString("activity");
+
             }
         }
         else {
             username = (String)savedInstanceState.getSerializable("username");
+            previousActivity = (String)savedInstanceState.getSerializable("activity");
         }
 
         setContentView(R.layout.sync_activity);
@@ -71,26 +74,6 @@ public class SyncActivity extends MainActivity {
     }
 
     /**
-     * The set the userId based on the one that exists on the server
-     */
-    private void setUserId() {
-
-        // Get the userId from the Online database, not the local one
-        Map<String, String> params = serverDatabaseHandler.setUserParams(username);
-        String url = "http://sugarthrow.hopto.org/my_server/select.php";
-        serverDatabaseHandler.select(url, params, "Users", new ServerCallBack() {
-            @Override
-            public void onSuccess(String result) {
-                contents = serverDatabaseHandler.getContents();
-                if(contents != null) {
-                    userId = contents.get("userId").toString();
-                }
-            }
-        });
-
-    }
-
-    /**
      * Click the sync button to commence insertion
      */
     private void clickSyncToAddUsers() {
@@ -100,6 +83,17 @@ public class SyncActivity extends MainActivity {
             @Override
             public void onClick(View v) {
 
+                syncing.setVisibility(View.VISIBLE);
+                syncButton.setVisibility(View.GONE);
+                new Handler().postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        syncing.setVisibility(View.GONE);
+                        syncButton.setVisibility(View.VISIBLE);
+                    }
+
+                }, 8000);
                 // Get the userId from the Online database, not the local one
                 Map<String, String> params = serverDatabaseHandler.setUserParams(username);
                 String url = "http://sugarthrow.hopto.org/my_server/select.php";
@@ -194,13 +188,32 @@ public class SyncActivity extends MainActivity {
     private void insertContents() {
 
         List<List<String>> dates = executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_DATES, username);
+        if(dates.get(0).get(0).equals("Empty set")) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(SyncActivity.this, "No Entries to Sync", Toast.LENGTH_SHORT).show();
+                }
+            }, 6000);
+
+        }
 
         for(int i = 0; i < dates.size(); i++) {
             List<List<String>> rows = executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_DIARY_ENTRIES,
                     dates.get(i).get(0), username);
+
+            for(int j = 0; j < rows.get(0).size(); j++) {
+                if(rows.get(0).get(j) == null) {
+                    rows.get(0).set(j, "0");
+                }
+                System.out.println(rows.get(0).get(j));
+            }
+
+
             Map<String, String> values = serverDatabaseHandler.setContentContents(rows,
                     userId, dates.get(i).get(0));
             final String theDate = dates.get(i).get(0);
+            System.out.println(theDate);
 
             // check if contents already in table...
             insertIntoContents(theDate, values);

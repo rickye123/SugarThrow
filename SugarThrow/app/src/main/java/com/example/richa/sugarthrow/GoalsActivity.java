@@ -6,7 +6,10 @@ The activity used for controlling the goals of the app
 
 import android.content.ContentValues;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.constraint.solver.Goal;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -17,13 +20,15 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class GoalsActivity extends MainActivity {
 
     private EditText sugar, calories, fat, saturates, salt, protein, carbs, allowance, reduceSugar;
-    private String username;
+    private String username, previousActivity;
     private Execute executeSQL;
     private ViewCreator viewCreator = new ViewCreator(this);
     private LayoutCreator layoutCreator = new LayoutCreator(this, viewCreator);
@@ -76,10 +81,13 @@ public class GoalsActivity extends MainActivity {
             }
             else {
                 username = extras.getString("username");
+                previousActivity = extras.getString("activity");
+
             }
         }
         else {
             username = (String)savedInstanceState.getSerializable("username");
+            previousActivity = (String)savedInstanceState.getSerializable("activity");
         }
 
         setContentView(R.layout.goals_activity);
@@ -179,6 +187,7 @@ public class GoalsActivity extends MainActivity {
                     row++;
                 }
             }
+            Toast.makeText(GoalsActivity.this, "Weekly Goals updated", Toast.LENGTH_SHORT).show();
         }
         else {
             // create no entries layout if the table "diary" is in fact empty
@@ -345,6 +354,7 @@ public class GoalsActivity extends MainActivity {
                     row++;
                 }
             }
+            Toast.makeText(GoalsActivity.this, "Daily Goals updated", Toast.LENGTH_SHORT).show();
         }
         else {
             // create no entries layout if the table "diary" is in fact empty
@@ -433,7 +443,7 @@ public class GoalsActivity extends MainActivity {
 
         ImageView minus = viewCreator.createImage(row, R.drawable.ic_remove_circle_black,
                 40, 50, Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, tag);
-        minus.setColorFilter(getColor(R.color.removeRed));
+        minus.setColorFilter(ContextCompat.getColor(GoalsActivity.this, R.color.removeRed));
 
         clickToScrollText(goal);
         clickToRemoveGoal(minus);
@@ -462,7 +472,9 @@ public class GoalsActivity extends MainActivity {
                         text.setEllipsize(TextUtils.TruncateAt.MARQUEE);
                         text.isFocusable();
                         text.setSelected(true);
-                        text.canScrollHorizontally(View.SCROLL_INDICATOR_RIGHT);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            text.canScrollHorizontally(View.SCROLL_INDICATOR_RIGHT);
+                        }
                         // repeat scroll 3 times
                         text.setMarqueeRepeatLimit(3);
                     }
@@ -488,6 +500,8 @@ public class GoalsActivity extends MainActivity {
                         // remove image at position in table
                         remove(v.getId());
                         // update the goals list
+                        Toast.makeText(GoalsActivity.this, "Goal removed: " + globalGoals.get(v.getId()).get(0) + " Daily",
+                                Toast.LENGTH_SHORT).show();
                         updateGoalLayout();
                     }
                 }
@@ -495,6 +509,8 @@ public class GoalsActivity extends MainActivity {
                     if(event.getAction() == MotionEvent.ACTION_DOWN) {
                         // remove from the weekly goals layout
                         removeFromWeekly(v.getId());
+                        Toast.makeText(GoalsActivity.this, "Goal removed: " + weeklyGoals.get(v.getId()).get(0) + " Weekly",
+                                Toast.LENGTH_SHORT).show();
                         updateWeeklyGoalsLayout();
                     }
                 }
@@ -556,13 +572,14 @@ public class GoalsActivity extends MainActivity {
     private void pressUpdateWeeklyGoals() {
 
         // get the button
-        Button updateWeeklyGoals = (Button)findViewById(R.id.update_weekly_goals);
+        final Button updateWeeklyGoals = (Button)findViewById(R.id.update_weekly_goals);
 
         updateWeeklyGoals.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
                 if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                    updateWeeklyGoals.setBackgroundResource(R.drawable.account_clicked);
                     // validate reduction that it is a percentage
                     List<List<String>> sugar = executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_SUGAR, username);
                     if(sugar.get(0).get(0).equals("Empty set")) {
@@ -577,8 +594,9 @@ public class GoalsActivity extends MainActivity {
                         // update weekly goals layout
                         updateWeeklyGoalsLayout();
                     }
-
-
+                }
+                if(event.getAction() ==MotionEvent.ACTION_UP) {
+                    updateWeeklyGoals.setBackgroundResource(R.drawable.account_rounded);
                 }
 
                 return false;
@@ -614,11 +632,13 @@ public class GoalsActivity extends MainActivity {
      * existing goals
      */
     private void updateQuantities() {
-        Button updateQuantities = (Button)findViewById(R.id.update_quantities);
+        final Button updateQuantities = (Button)findViewById(R.id.update_quantities);
         updateQuantities.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if(event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    updateQuantities.setBackgroundResource(R.drawable.account_clicked);
 
                     List<List<String>> goals = executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_GOAL, username);
                     if(goals.get(0).get(0).equals("Empty set")) {
@@ -632,6 +652,9 @@ public class GoalsActivity extends MainActivity {
                         updateGoals();
                         updateGoalLayout();
                     }
+                }
+                if(event.getAction() == MotionEvent.ACTION_UP) {
+                    updateQuantities.setBackgroundResource(R.drawable.account_rounded);
                 }
                 return false;
             }

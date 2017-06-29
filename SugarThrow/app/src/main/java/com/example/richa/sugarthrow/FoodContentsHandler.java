@@ -28,6 +28,7 @@ public class FoodContentsHandler extends MainActivity {
      * @param database - the initialised database
      */
     public FoodContentsHandler(Connector database, String username) {
+
         executeSQL = new Execute(database);
 
         List<List<String>> hasGoals = executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_GOAL, username);
@@ -52,7 +53,7 @@ public class FoodContentsHandler extends MainActivity {
 
     /**
      * Get the last five days in a string array
-     * @return
+     * @return - reversed array showing previus five dates
      */
     public String[] findPreviousFiveDays() {
 
@@ -212,18 +213,25 @@ public class FoodContentsHandler extends MainActivity {
     /**
      * Find the current daily total of foods contributing to daily allowance
      * @param username - the user's username used to find the diary entries
+     * @param theDate - the date selected
      * @return a list of hashmaps containing the daily totals for a particular user
      */
-    public List<Map<String, BigDecimal>> findDailyTotal(String username) {
+    public List<Map<String, BigDecimal>> findDailyTotal(String theDate, String username) {
 
         List<Map<String, BigDecimal>> dailyTotals = new ArrayList<>();
 
+        System.out.println("DATE " + theDate);
+        System.out.println("USERNAME " + username);
+        System.out.println("SQL " + SqlQueries.SQL_SELECT_DIARY_ON_DAY);
         List<List<String>> sumOfFoods =
-                executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_CURRENT_DIARY, username);
+                executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_DIARY_ON_DAY, theDate, username);
         int size = sumOfFoods.get(0).size();
 
 
+
+
         for(int i = 0; i < size; i++) {
+            System.out.println(sumOfFoods.get(0).get(i));
             dailyTotals.add(findFoodPercentages(sumOfFoods.get(0).get(i), i));
         }
 
@@ -250,24 +258,24 @@ public class FoodContentsHandler extends MainActivity {
         quantities.get(1).add(goals.get(0).get(1));
         quantities.get(1).add("kcal");
         quantities.add(new ArrayList<String>());
-        quantities.get(2).add("Fat - ");
-        quantities.get(2).add(goals.get(0).get(3));
+        quantities.get(2).add("Saturates - ");
+        quantities.get(2).add(goals.get(0).get(2));
         quantities.get(2).add("g");
         quantities.add(new ArrayList<String>());
-        quantities.get(3).add("Saturates - ");
-        quantities.get(3).add(goals.get(0).get(2));
+        quantities.get(3).add("Fat - ");
+        quantities.get(3).add(goals.get(0).get(3));
         quantities.get(3).add("g");
         quantities.add(new ArrayList<String>());
-        quantities.get(4).add("Carbs - ");
-        quantities.get(4).add(goals.get(0).get(6));
+        quantities.get(4).add("Salt - ");
+        quantities.get(4).add(goals.get(0).get(4));
         quantities.get(4).add("g");
         quantities.add(new ArrayList<String>());
-        quantities.get(5).add("Salt - ");
-        quantities.get(5).add(goals.get(0).get(4));
+        quantities.get(5).add("Protein - ");
+        quantities.get(5).add(goals.get(0).get(5));
         quantities.get(5).add("g");
         quantities.add(new ArrayList<String>());
-        quantities.get(6).add("Protein - ");
-        quantities.get(6).add(goals.get(0).get(5));
+        quantities.get(6).add("Carbs - ");
+        quantities.get(6).add(goals.get(0).get(6));
         quantities.get(6).add("g");
 
         return quantities;
@@ -482,12 +490,13 @@ public class FoodContentsHandler extends MainActivity {
      * @param username - the username to find the diary entries
      * @return a list of hashmaps containing the grouped contents plus their sum of daily allowance
      */
-    public List<HashMap<String, String>> findGroupedContentsPlusSum(String foodName, String username) {
+    public List<HashMap<String, String>> findGroupedContentsPlusSum(String foodName, String username,
+                                                                    String theDate) {
 
         List<List<String>> foodContents = executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_FOOD,
                 foodName);
-        List<List<String>> sumOfFood = executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_CURRENT_DIARY,
-                username);
+        List<List<String>> sumOfFood = executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_DIARY_ON_DAY,
+                theDate, username);
 
         List<HashMap<String, String>> groupedContents = new ArrayList<>();
         groupedContents.add(findContentsPlusSumAmount("Sugar", foodContents.get(0).get(3),

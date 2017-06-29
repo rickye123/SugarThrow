@@ -20,7 +20,7 @@ import android.widget.ImageView;
 public class UnityGame extends MainActivity {
 
     protected UnityPlayer mUnityPlayer; // don't change the name of this variable; referenced from native code
-    private String username;
+    private String username, previousActivity;
 
 	// Setup activity layout
 	@Override protected void onCreate (Bundle savedInstanceState) {
@@ -30,14 +30,17 @@ public class UnityGame extends MainActivity {
 		if(savedInstanceState == null) {
 			Bundle extras = getIntent().getExtras();
 			if(extras == null) {
-				username = "username";
+				username = "Username";
 			}
 			else {
 				username = extras.getString("username");
+				previousActivity = extras.getString("activity");
+
 			}
 		}
 		else {
 			username = (String)savedInstanceState.getSerializable("username");
+			previousActivity = (String)savedInstanceState.getSerializable("activity");
 		}
 
 		setContentView(R.layout.unity_game_activity);

@@ -37,6 +37,10 @@ class TimeKeeper {
 
     }
 
+    /**
+     *
+     * @return
+     */
     String getCurrentTime() {
 
         Calendar time = Calendar.getInstance();
@@ -47,6 +51,44 @@ class TimeKeeper {
 
         return String.format(Locale.ENGLISH, "%02d:%02d:%02d",
                 hours, minutes, seconds);
+
+    }
+
+    /**
+     *
+     * @return
+     */
+    String getDay() {
+
+        Date date = new Date();
+        Calendar cal = Calendar.getInstance();
+
+        // pass the date into the calendar object
+        cal.setTime(date);
+
+        int day = cal.get(Calendar.DAY_OF_WEEK);
+
+        if(day == 1) {
+            return "Sunday";
+        }
+        if(day == 2) {
+            return "Monday";
+        }
+        if(day == 3) {
+            return "Tuesday";
+        }
+        if(day == 4) {
+            return "Wednesday";
+        }
+        if(day == 5) {
+            return "Thursday";
+        }
+        if(day == 6) {
+            return "Friday";
+        }
+        else {
+            return "Saturday";
+        }
 
     }
 

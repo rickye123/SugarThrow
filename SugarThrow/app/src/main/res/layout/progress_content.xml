@@ -24,6 +24,17 @@
             android:orientation="vertical"
             android:weightSum="1">
 
+            <TextView
+                android:id="@+id/achievement_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_weight="0.06"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="@string/beginner"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
@@ -34,6 +45,7 @@
                 android:weightSum="1">
 
                 <LinearLayout
+                    android:id="@+id/achievement_circle"
                     android:layout_width="200dp"
                     android:layout_height="200dp"
                     android:background="@drawable/circle"
@@ -323,7 +335,7 @@
                 </LinearLayout>
 
                 <TextView
-                    android:id="@+id/textView2"
+                    android:id="@+id/date_intake"
                     android:layout_width="300dp"
                     android:layout_height="42dp"
                     android:background="@drawable/border_bottom"
@@ -337,7 +349,8 @@
                     android:layout_height="match_parent"
                     android:layout_marginBottom="10dp"
                     android:baselineAligned="false"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:visibility="visible">
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -349,7 +362,17 @@
                             android:id="@+id/pie_sugar"
                             android:layout_width="match_parent"
                             android:layout_height="300dp"
+                            android:layout_marginTop="10dp"
                             android:visibility="visible" />
+
+                        <TextView
+                            android:id="@+id/sugar_number"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:text="@string/zero"
+                            android:textColor="@color/black"
+                            android:textSize="18sp" />
 
                         <TextView
                             android:id="@+id/desc_sugar"
@@ -387,6 +410,15 @@
                             android:clipToPadding="false" />
 
                         <TextView
+                            android:id="@+id/calories_number"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:text="@string/zero"
+                            android:textColor="@color/black"
+                            android:textSize="18sp" />
+
+                        <TextView
                             android:id="@+id/desc_calories"
                             android:layout_width="match_parent"
                             android:layout_height="40dp"
@@ -406,6 +438,15 @@
                             android:id="@+id/pie_salt"
                             android:layout_width="match_parent"
                             android:layout_height="200dp" />
+
+                        <TextView
+                            android:id="@+id/salt_number"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:text="@string/zero"
+                            android:textColor="@color/black"
+                            android:textSize="18sp" />
 
                         <TextView
                             android:id="@+id/desc_salt"
@@ -430,6 +471,15 @@
                             android:id="@+id/pie_fat"
                             android:layout_width="match_parent"
                             android:layout_height="200dp" />
+
+                        <TextView
+                            android:id="@+id/fat_number"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:text="@string/zero"
+                            android:textColor="@color/black"
+                            android:textSize="18sp" />
 
                         <TextView
                             android:id="@+id/desc_fat"
@@ -466,6 +516,15 @@
                             android:layout_height="200dp" />
 
                         <TextView
+                            android:id="@+id/carbs_number"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:text="@string/zero"
+                            android:textColor="@color/black"
+                            android:textSize="18sp" />
+
+                        <TextView
                             android:id="@+id/desc_carbs"
                             android:layout_width="match_parent"
                             android:layout_height="40dp"
@@ -485,6 +544,15 @@
                             android:id="@+id/pie_protein"
                             android:layout_width="match_parent"
                             android:layout_height="200dp" />
+
+                        <TextView
+                            android:id="@+id/protein_number"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:text="@string/zero"
+                            android:textColor="@color/black"
+                            android:textSize="18sp" />
 
                         <TextView
                             android:id="@+id/desc_protein"
@@ -509,6 +577,15 @@
                             android:id="@+id/pie_saturates"
                             android:layout_width="match_parent"
                             android:layout_height="200dp" />
+
+                        <TextView
+                            android:id="@+id/saturates_number"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:text="@string/zero"
+                            android:textColor="@color/black"
+                            android:textSize="18sp" />
 
                         <TextView
                             android:id="@+id/desc_saturates"

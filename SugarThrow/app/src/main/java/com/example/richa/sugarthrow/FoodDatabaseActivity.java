@@ -9,6 +9,8 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.util.TypedValue;
@@ -22,7 +24,6 @@ import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -57,7 +58,9 @@ public class FoodDatabaseActivity extends DiaryActivity {
     private DiaryHandler diaryHandler;
     private PointsHandler pointsHandler;
     private String username;
-    private boolean acknowledgeStreak = false;
+    private static boolean acknowledgeStreak = false;
+    private String globalDate, previousActivity;
+    private LinearLayout searchWrapper, searchProgress;
 
     /**
      * Clear searchTerms table
@@ -85,10 +88,13 @@ public class FoodDatabaseActivity extends DiaryActivity {
             }
             else {
                 username = extras.getString("username");
+                previousActivity = extras.getString("activity");
+
             }
         }
         else {
             username = (String)savedInstanceState.getSerializable("username");
+            previousActivity = (String)savedInstanceState.getSerializable("activity");
         }
 
         setContentView(R.layout.food_database_activity);
@@ -121,6 +127,18 @@ public class FoodDatabaseActivity extends DiaryActivity {
         queue = Volley.newRequestQueue(this);
 
         String query = DiaryActivity.getRequest();
+        if(DiaryActivity.getDate() == null) {
+            globalDate = date.getCurrentDate();
+        }
+        else {
+            globalDate = DiaryActivity.getDate();
+        }
+
+        searchWrapper = (LinearLayout)findViewById(R.id.food_search_wrapper);
+        searchProgress = (LinearLayout)findViewById(R.id.searching_progress);
+
+        TextView changeableDate = (TextView)findViewById(R.id.changeable_date);
+        changeableDate.setText(globalDate);
         if(query != null) {
             searchOnline(query);
         }
@@ -294,6 +312,9 @@ public class FoodDatabaseActivity extends DiaryActivity {
      * @param url - the URL which was passed (including the query from the user)
      */
     public void sendSearchRequest(String url) {
+
+        final String uri = url;
+
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
@@ -315,10 +336,22 @@ public class FoodDatabaseActivity extends DiaryActivity {
                                 }
                             }
                             else {
-                                Log.d("Searched", "search");
+                                Log.d("Search", "searched at " + uri);
                                 clearTableContents();
                                 // search through the items
                                 searchThroughItems(hits);
+                                searchWrapper.setVisibility(View.GONE);
+                                searchProgress.setVisibility(View.VISIBLE);
+
+                                new Handler().postDelayed(new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        searchWrapper.setVisibility(View.VISIBLE);
+                                        searchProgress.setVisibility(View.GONE);
+                                    }
+
+                                }, 1000); // delay for 1 seconds
                             }
                         } catch (JSONException foodDatabaseException) {
                             foodDatabaseException.printStackTrace();
@@ -342,6 +375,7 @@ public class FoodDatabaseActivity extends DiaryActivity {
     public void searchThroughItems(JSONArray hits) throws JSONException {
 
         boolean populated = false;
+        searchKeys.clear(); // issue fixed
 
         // cycle through results and populate table
         for(int i = 0; i < hits.length(); i++) {
@@ -440,6 +474,7 @@ public class FoodDatabaseActivity extends DiaryActivity {
      * @param isOpen - boolean representing whether drop down is open or not
      */
     public void populateSearchFields(String foodName, int row, boolean isOpen) {
+
         int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50 ,
                 getResources().getDisplayMetrics());
 
@@ -459,7 +494,7 @@ public class FoodDatabaseActivity extends DiaryActivity {
         ImageView plus = viewCreator.createImage(row, R.drawable.ic_add_circle_black,
                 LinearLayout.LayoutParams.MATCH_PARENT, 40,
                 Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, "plusTag");
-        plus.setColorFilter(getColor(R.color.correctGreen));
+        plus.setColorFilter(ContextCompat.getColor(FoodDatabaseActivity.this, R.color.correctGreen));
 
         clickToAdd(plus);
         clickDropDown(food);
@@ -527,7 +562,8 @@ public class FoodDatabaseActivity extends DiaryActivity {
             public boolean onTouch(final View v, MotionEvent event) {
                 if(v.getTag() != null && v.getTag().equals("plusTag")) {
                     if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                        image.setColorFilter(getColor(R.color.cyan));
+                        image.setColorFilter(ContextCompat.getColor(FoodDatabaseActivity.this,
+                                R.color.cyan));
 
                         // if not in the database, make UPC request, get the UPC results
                         // and add the data to the food table
@@ -549,7 +585,8 @@ public class FoodDatabaseActivity extends DiaryActivity {
                         }
                     }
                     else if(event.getAction() == MotionEvent.ACTION_UP) {
-                        image.setColorFilter(getColor(R.color.correctGreen));
+                        image.setColorFilter(ContextCompat.getColor(FoodDatabaseActivity.this,
+                                R.color.correctGreen));
                     }
                 }
                 return true;
@@ -566,21 +603,24 @@ public class FoodDatabaseActivity extends DiaryActivity {
         String foodName = searchTerms.get(view.getId()).get(1);
 
         diaryHandler.insertIntoDiary(view.getId(),
-                date.convertDateFormat(date.getCurrentDate()),username, searchTerms, true);
+                date.convertDateFormat(globalDate),username, searchTerms, true);
 
-        pointsHandler.checkForPointsUpdate(pointsBefore,
-                date.convertDateFormat(date.getCurrentDate()), username, true);
+        if(globalDate.equals(date.getCurrentDate())) {
+            pointsHandler.checkForPointsUpdate(pointsBefore,
+                    date.convertDateFormat(date.getCurrentDate()), username, true);
 
-        Toast.makeText(FoodDatabaseActivity.this, foodName + " added to diary",
-                Toast.LENGTH_SHORT).show();
+            int streak = diaryHandler.findLogStreak(date, username);
+            if(streak > 1 && !acknowledgeStreak) {
+                String feedback = "You have logged foods for " + Integer.toString(streak) +
+                        "\n days now. \nWell Done!";
+                acknowledgeStreak = true;
+                launchFeedbackActivity(FoodDatabaseActivity.this, feedback, true);
+            }
 
-        int streak = diaryHandler.findLogStreak(date, username);
-        if(streak > 1 && !acknowledgeStreak) {
-            String feedback = "You have logged foods for " + Integer.toString(streak) +
-                    "\n days now. \nWell Done!";
-            acknowledgeStreak = true;
-            launchFeedbackActivity(FoodDatabaseActivity.this, feedback, true);
         }
+
+        Toast.makeText(FoodDatabaseActivity.this, foodName + " added to diary on " + globalDate,
+                Toast.LENGTH_SHORT).show();
 
     }
 

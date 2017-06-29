@@ -9,7 +9,7 @@ import android.widget.ImageView;
 
 public class HelpActivity extends MainActivity {
 
-    private String username;
+    private String username, previousActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,10 +22,13 @@ public class HelpActivity extends MainActivity {
             }
             else {
                 username = extras.getString("username");
+                previousActivity = extras.getString("activity");
+
             }
         }
         else {
             username = (String)savedInstanceState.getSerializable("username");
+            previousActivity = (String)savedInstanceState.getSerializable("activity");
         }
 
         startContent();

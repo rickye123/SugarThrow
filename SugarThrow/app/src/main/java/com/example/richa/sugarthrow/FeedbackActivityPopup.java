@@ -6,6 +6,7 @@ It is passed a message and whether the message is positive.
  */
 
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -75,7 +76,7 @@ public class FeedbackActivityPopup extends AppCompatActivity {
 
         if(!positive) {
             feedbackImage.setImageResource(R.drawable.ic_error_black);
-            feedbackImage.setColorFilter(getColor(R.color.removeRed));
+            feedbackImage.setColorFilter(ContextCompat.getColor(FeedbackActivityPopup.this,R.color.removeRed));
         }
 
 

@@ -7,8 +7,10 @@ Activity called when user attempts to sign up for an account
 import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -72,7 +74,8 @@ public class SignUpActivity extends AppCompatActivity {
                     authenticate();
                 }
                 else if(event.getAction() == MotionEvent.ACTION_UP) {
-                    createAccount.setBackgroundColor(getColor(R.color.orange));
+                    createAccount.setBackgroundColor(ContextCompat.getColor(SignUpActivity.this,
+                            R.color.orange));
                 }
                 return false;
             }
@@ -261,6 +264,7 @@ public class SignUpActivity extends AppCompatActivity {
                                 SaveSharedPreference.setUserName(SignUpActivity.this, usernameView.getText().toString());
                                 Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
                                 intent.putExtra("username", usernameView.getText().toString());
+                                intent.putExtra("activity", this.getClass().toString());
                                 startActivity(intent);
                             }
                         });
@@ -550,6 +554,18 @@ public class SignUpActivity extends AppCompatActivity {
                 spinner.setPrompt(prompt);
             }
         });
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            // do something
+            System.out.println("BACK BUTTON PRESSED");
+            Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+            startActivity(intent);
+
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
 }

@@ -9,7 +9,7 @@ import android.support.v7.widget.Toolbar;
 
 public class RiskActivity extends MainActivity {
 
-    private String username;
+    private String username, previousActivity;
     private Execute executeSQL;
 
     @Override
@@ -23,10 +23,13 @@ public class RiskActivity extends MainActivity {
             }
             else {
                 username = extras.getString("username");
+                previousActivity = extras.getString("activity");
+
             }
         }
         else {
             username = (String)savedInstanceState.getSerializable("username");
+            previousActivity = (String)savedInstanceState.getSerializable("activity");
         }
 
         setContentView(R.layout.risk_activity);

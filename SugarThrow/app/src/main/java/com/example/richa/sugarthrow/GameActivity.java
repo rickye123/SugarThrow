@@ -12,7 +12,7 @@ import java.util.List;
 
 public class GameActivity extends MainActivity {
 
-    private String username;
+    private String username, previousActivity;
     private Execute executeSQL;
     private TimeKeeper date = new TimeKeeper();
 
@@ -24,14 +24,17 @@ public class GameActivity extends MainActivity {
         if(savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             if(extras == null) {
-                username = "username";
+                username = "Username";
             }
             else {
                 username = extras.getString("username");
+                previousActivity = extras.getString("activity");
+
             }
         }
         else {
             username = (String)savedInstanceState.getSerializable("username");
+            previousActivity = (String)savedInstanceState.getSerializable("activity");
         }
 
         setContentView(R.layout.game_activity);
@@ -55,13 +58,13 @@ public class GameActivity extends MainActivity {
         Connector database = Connector.getInstance(this);
         executeSQL = new Execute(database);
 
-        createGame();
+        playGame(GameActivity.this);
 
         TextView button = (TextView)findViewById(R.id.play_game);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createGame();
+                playGame(GameActivity.this);
             }
         });
 

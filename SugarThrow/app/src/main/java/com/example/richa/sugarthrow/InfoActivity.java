@@ -1,18 +1,15 @@
 package com.example.richa.sugarthrow;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.widget.ImageView;
 
 public class InfoActivity extends MainActivity {
 
-    private String username;
+/*    private String username;*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        String username, previousActivity;
         super.onCreate(savedInstanceState);
 
         if(savedInstanceState == null) {
@@ -22,10 +19,13 @@ public class InfoActivity extends MainActivity {
             }
             else {
                 username = extras.getString("username");
+                previousActivity = extras.getString("activity");
+
             }
         }
         else {
             username = (String)savedInstanceState.getSerializable("username");
+            previousActivity = (String)savedInstanceState.getSerializable("activity");
         }
 
         setContentView(R.layout.info_activity);

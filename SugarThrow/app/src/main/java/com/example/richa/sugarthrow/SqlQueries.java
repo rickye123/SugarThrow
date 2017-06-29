@@ -19,16 +19,16 @@ class SqlQueries {
     static final String SQL_INCREMENT_POINTS_10 = "UPDATE User SET points = points + 10 WHERE User.userName = ?";
     static final String SQL_DECREMENT_POINTS_10 = "UPDATE User SET points = points - 10 WHERE User.userName = ?";
     static final String SQL_INCREMENT_POINTS_5 = "UPDATE User SET points = points + 5 WHERE User.userName = ?";
-    static final String SQL_DECREMENT_POINTS_5 = "UPDATE User SET points = points - 5 WHERE User.userName = ?";
+/*    static final String SQL_DECREMENT_POINTS_5 = "UPDATE User SET points = points - 5 WHERE User.userName = ?";*/
 
 
     static final String SQL_IN_DIARY= "SELECT Food.name as food, COUNT(*) AS quantity, Food.foodId FROM Diary INNER JOIN " +
             "User ON Diary.userId = User.userId INNER JOIN Food ON Diary.foodId = Food.foodId WHERE Diary.theDate = ? " +
             "AND User.userName = ? GROUP BY Diary.foodId";
 
-    static final String SQL_DIARY_ENTRY = "SELECT Food.name, Food.foodId FROM Diary INNER JOIN " +
+/*    static final String SQL_DIARY_ENTRY = "SELECT Food.name, Food.foodId FROM Diary INNER JOIN " +
             "User ON Diary.userId = User.userId INNER JOIN Food ON Diary.foodId = Food.foodId WHERE Diary.theDate = ? " +
-            "AND User.userName = ?";
+            "AND User.userName = ?";*/
 
     static final String SQL_SIZE_DIARY = "SELECT COUNT(*) FROM (SELECT Food.name as food, COUNT(*) AS quantity, Food.foodId FROM Diary " +
             "INNER JOIN User ON Diary.userId = User.userId INNER JOIN Food ON Diary.foodId = Food.foodId WHERE Diary.theDate = ? " +
@@ -52,12 +52,18 @@ class SqlQueries {
 
     static final String SQL_SELECT_FOOD = "SELECT * FROM Food WHERE name = ?";
 
+    static final String SQL_UPDATE_WEIGHT = "UPDATE User SET weight = ? WHERE User.userName = ?";
+
     static final String SQL_SELECT_DATES = "SELECT theDate FROM Diary INNER JOIN User ON User.userId = Diary.userId WHERE User.userName = ? " +
             "GROUP BY theDate";
 
     static final String SQL_SELECT_CURRENT_DIARY = "SELECT SUM(Food.sugar), SUM(Food.calories), SUM(Food.fat), SUM(Food.saturates), " +
             "SUM(Food.carbs), SUM(Food.salt), SUM(Food.protein) FROM Food INNER JOIN Diary ON Diary.foodId = Food.foodId INNER JOIN " +
             "User ON User.userId = Diary.userId WHERE theDate = date('now') AND User.userName = ?";
+
+    static final String SQL_SELECT_DIARY_ON_DAY = "SELECT SUM(Food.sugar), SUM(Food.calories), SUM(Food.fat), SUM(Food.saturates), " +
+            "SUM(Food.carbs), SUM(Food.salt), SUM(Food.protein) FROM Food INNER JOIN Diary ON Diary.foodId = Food.foodId INNER JOIN " +
+            "User ON User.userId = Diary.userId WHERE theDate = ? AND User.userName = ?";
 
     static final String SQL_SELECT_DIARY_ENTRIES = "SELECT SUM(Food.sugar), SUM(Food.calories), SUM(Food.fat), SUM(Food.saturates), " +
             "SUM(Food.carbs), SUM(Food.salt), SUM(Food.protein) FROM Food INNER JOIN Diary ON Diary.foodId = Food.foodId INNER JOIN " +

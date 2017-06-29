@@ -5,8 +5,6 @@ This class is responsible for all the point updates
  */
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -77,23 +75,6 @@ public class PointsHandler extends MainActivity {
         }
     }
 
-    // TODO
-    public void pointsReduction(String pointsBefore, String theDate,
-                                String username, String foodName) {
-        // if date is equal to the current date, points can be updated
-        if(date.convertDateFormat(date.getCurrentDate()).equals(theDate)) {
-
-            String pointsAfter = getPoints();
-
-            // use the foodname to find the contents of the food
-            List<HashMap<String, String>> groupedContents =
-                    foodContentsHandler.findGroupedContentsPlusSum(foodName, username);
-            deductPointsBasedOnContent(username, pointsAfter, groupedContents);
-
-        }
-    }
-
-    // TODO
     public void pointsReturn(String theDate, String username,
                              List<Map<String, BigDecimal>> contents) {
 
@@ -107,8 +88,9 @@ public class PointsHandler extends MainActivity {
     private void returnPointsIfNecessary(String username,
                                          List<Map<String, BigDecimal>> previousContents) {
 
-        List<Map<String, BigDecimal>> currentContents = foodContentsHandler.findDailyTotal(username);
-        String points = getPoints();
+        List<Map<String, BigDecimal>> currentContents =
+                foodContentsHandler.findDailyTotal(date.convertDateFormat(date.getCurrentDate()),
+                        username);
 
         for(int i = 0; i < currentContents.size(); i++) {
             if(previousContents.get(i).get("intake").floatValue() > 100) {
@@ -116,34 +98,11 @@ public class PointsHandler extends MainActivity {
                 if(currentContents.get(0).get("intake").floatValue() < 100) {
                     // give back points
                     updatePoints(username, SqlQueries.SQL_INCREMENT_POINTS_1);
-                    points = getPoints();
                 }
             }
         }
 
     }
-
-
-    public void deductPointsBasedOnContent(String username, String points, List<HashMap<String, String>> contents) {
-
-        int currentPoints = Integer.parseInt(getPoints());
-
-        if(Double.parseDouble(contents.get(0).get("percentage")) > 100) {
-            // reduce 10 points for sugar
-            updatePoints(username, SqlQueries.SQL_DECREMENT_POINTS_5);
-            currentPoints -= 5;
-        }
-
-        for(int i = 1; i < contents.size(); i++) {
-            if(Double.parseDouble(contents.get(i).get("percentage")) > 100) {
-                // remove 5 points
-                updatePoints(username, SqlQueries.SQL_DECREMENT_POINTS_1);
-                currentPoints -= 1;
-            }
-        }
-
-    }
-
 
     public void increasePoints(String username) {
         updatePoints(username, SqlQueries.SQL_INCREMENT_POINTS_1);
@@ -160,7 +119,7 @@ public class PointsHandler extends MainActivity {
     }
 
     public void implementPoints(String username, boolean increasePoints) {
-        String points = getPoints();
+        String points;
         String dailyPoints = getDailyPoints();
 
         if(increasePoints) {
@@ -177,16 +136,14 @@ public class PointsHandler extends MainActivity {
                 }
             }
         }
-        String pointsAgain = getPoints();
 
 
     }
 
     public void decreasePoints(String username) {
 
-        String points = getPoints();
         updatePoints(username, SqlQueries.SQL_DECREMENT_POINTS_1);
-        points = getPoints();
+        String points = getPoints();
         if(Integer.parseInt(points) <= 0) {
             updatePoints(username, SqlQueries.SQL_SET_POINTS_0);
         }

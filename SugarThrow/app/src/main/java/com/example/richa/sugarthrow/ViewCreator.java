@@ -5,6 +5,7 @@ This class handles some of the creation of Views, such as TextViews and ImageVie
  */
 
 import android.content.Context;
+import android.os.Build;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -79,7 +80,9 @@ public class ViewCreator extends MainActivity {
         image.setImageResource(drawableResource);
         image.setLayoutParams(new LinearLayoutCompat.LayoutParams(imageWidth,
                 imageHeight));
-        image.setForegroundGravity(gravity);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            image.setForegroundGravity(gravity);
+        }
         image.setClickable(true);
         image.setId(row);
         image.setTag(tag);

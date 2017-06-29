@@ -1,15 +1,19 @@
 package com.example.richa.sugarthrow;
 
+/*
+This activity shows the progress the user is making, i.e. points, streak,
+percentage daily amounts
+ */
+
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.math.BigDecimal;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.AxisBase;
-import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -27,7 +31,6 @@ import java.util.Map;
 
 public class ProgressActivity extends MainActivity {
 
-    //private static String TAG = "ProgressActivityTag";
     private Execute executeSql;
     private TableDisplay display = new TableDisplay();
     private TimeKeeper date = new TimeKeeper();
@@ -36,7 +39,8 @@ public class ProgressActivity extends MainActivity {
     R.id.pie_carbs, R.id.pie_salt, R.id.pie_protein};
     private TextView sugar, calories, salt, fat, carbs, protein, saturates;
     private FoodContentsHandler foodContentsHandler;
-    private String username;
+    private PointsHandler pointsHandler;
+    private String username, globalDate, previousActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,10 +53,13 @@ public class ProgressActivity extends MainActivity {
             }
             else {
                 username = extras.getString("username");
+                previousActivity = extras.getString("activity");
+
             }
         }
         else {
             username = (String)savedInstanceState.getSerializable("username");
+            previousActivity = (String)savedInstanceState.getSerializable("activity");
         }
 
         setContentView(R.layout.progress_activity);
@@ -70,6 +77,11 @@ public class ProgressActivity extends MainActivity {
         Connector database = LoginActivity.getDatabaseConnection();
         executeSql = new Execute(database);
         foodContentsHandler = new FoodContentsHandler(database, username);
+        pointsHandler = new PointsHandler(database, username);
+
+        setDate();
+
+        determineAchievement();
 
         getDailyAmounts();
         setDailyAmounts();
@@ -78,9 +90,78 @@ public class ProgressActivity extends MainActivity {
         pieChartCreator(username);
 
         setPoints();
+        setQuantities();
 
     }
 
+    /**
+     *
+     */
+    private void setDate() {
+
+        TextView theIntakeDate = (TextView)findViewById(R.id.date_intake);
+
+        if(DiaryActivity.getDate() == null) {
+            globalDate = date.getCurrentDate();
+        }
+        else {
+            globalDate = DiaryActivity.getDate();
+            theIntakeDate.setText(globalDate);
+        }
+
+    }
+
+    /**
+     *
+     */
+    private void determineAchievement() {
+
+        TextView achievementText = (TextView)findViewById(R.id.achievement_text);
+        LinearLayout achievementCircle = (LinearLayout)findViewById(R.id.achievement_circle);
+        String points = pointsHandler.getPoints();
+
+        if(Integer.parseInt(points) > 100) {
+            achievementText.setText(R.string.intermediate);
+            achievementCircle.setBackgroundResource(R.drawable.intermediate_circle);
+        }
+        if(Integer.parseInt(points) > 200) {
+            achievementText.setText(R.string.expert);
+            achievementCircle.setBackgroundResource(R.drawable.expert_circle);
+        }
+
+    }
+
+    /**
+     *
+     */
+    private void setQuantities() {
+
+        List<List<String>> quantities =
+                executeSql.sqlGetFromQuery(SqlQueries.SQL_SELECT_DIARY_ON_DAY,
+                        date.convertDateFormat(globalDate), username);
+
+        TextView sugar = (TextView)findViewById(R.id.sugar_number);
+        TextView calories = (TextView)findViewById(R.id.calories_number);
+        TextView fat = (TextView)findViewById(R.id.fat_number);
+        TextView saturates = (TextView)findViewById(R.id.saturates_number);
+        TextView carbs = (TextView)findViewById(R.id.carbs_number);
+        TextView salt = (TextView)findViewById(R.id.salt_number);
+        TextView protein = (TextView)findViewById(R.id.protein_number);
+
+        sugar.setText(quantities.get(0).get(0));
+        calories.setText(quantities.get(0).get(1));
+        fat.setText(quantities.get(0).get(2));
+        saturates.setText(quantities.get(0).get(3));
+        carbs.setText(quantities.get(0).get(4));
+        salt.setText(quantities.get(0).get(5));
+        protein.setText(quantities.get(0).get(6));
+
+
+    }
+
+    /**
+     *
+     */
     private void setPoints() {
 
         TextView points = (TextView)findViewById(R.id.progress_points);
@@ -91,6 +172,9 @@ public class ProgressActivity extends MainActivity {
 
     }
 
+    /**
+     *
+     */
     private void getDailyAmounts() {
 
         sugar = (TextView)findViewById(R.id.progress_sugar_amount);
@@ -103,6 +187,9 @@ public class ProgressActivity extends MainActivity {
 
     }
 
+    /**
+     *
+     */
     private void setDailyAmounts() {
 
         List<Float> quantities = foodContentsHandler.getQuantitiesList();
@@ -117,7 +204,10 @@ public class ProgressActivity extends MainActivity {
 
     }
 
-
+    /**
+     *
+     * @param userName
+     */
     private void lineChartCreator(String userName) {
 
         String[] days = foodContentsHandler.findPreviousFiveDays();
@@ -148,9 +238,14 @@ public class ProgressActivity extends MainActivity {
 
     }
 
+    /**
+     *
+     * @param userName
+     */
     private void pieChartCreator(String userName) {
 
-        List<List<String>> sumOfFoods = executeSql.sqlGetFromQuery(SqlQueries.SQL_SELECT_CURRENT_DIARY, userName);
+        List<List<String>> sumOfFoods = executeSql.sqlGetFromQuery(SqlQueries.SQL_SELECT_DIARY_ON_DAY,
+                date.convertDateFormat(globalDate), userName);
         int size = sumOfFoods.get(0).size();
 
         for(int i = 0; i < size; i++) {
@@ -181,6 +276,14 @@ public class ProgressActivity extends MainActivity {
 
     }
 
+    /**
+     *
+     * @param id
+     * @param name
+     * @param intake
+     * @param amountLeft
+     * @param textSize
+     */
     private void createPieChart(int id, String name, float intake, float amountLeft, int textSize) {
         PieChart pieChart = (PieChart)findViewById(id);
         createPieChartVariables(pieChart, name,
@@ -190,6 +293,15 @@ public class ProgressActivity extends MainActivity {
                 textSize);
     }
 
+    /**
+     *
+     * @param pieChart
+     * @param name
+     * @param content
+     * @param colorIntegers
+     * @param percentage
+     * @param textSize
+     */
     private void createPieChartVariables(PieChart pieChart, final String name, String[] content,
                                          Integer[] colorIntegers, Float[] percentage, int textSize) {
         final List<String> xEntries = new ArrayList<>();
@@ -205,6 +317,13 @@ public class ProgressActivity extends MainActivity {
 
     }
 
+    /**
+     *
+     * @param pieChart
+     * @param dataset
+     * @param xEntries
+     * @param name
+     */
     private void pieChartListener(PieChart pieChart, final List<Float> dataset,
                                   final List<String> xEntries,
                                   final String name) {
@@ -232,6 +351,15 @@ public class ProgressActivity extends MainActivity {
         });
     }
 
+    /**
+     *
+     * @param pieChart
+     * @param name
+     * @param xEntries
+     * @param dataset
+     * @param colors
+     * @param textSize
+     */
     private void addPieChart(PieChart pieChart, String name, List<String> xEntries,
                              List<Float> dataset, List<Integer> colors, int textSize) {
 

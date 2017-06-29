@@ -2,13 +2,16 @@ package com.example.richa.sugarthrow;
 
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -31,12 +34,12 @@ public class DiaryActivity extends MainActivity {
     private Execute executeSQL;
     private TimeKeeper date = new TimeKeeper();
     private boolean isOpen = false;
-    private static String queryRequest;
+    private static String queryRequest, dateSelected;
     private DiaryHandler diaryHandler;
     private PointsHandler pointsHandler;
     private FoodContentsHandler foodContentsHandler;
-    private String username;
-    private boolean acknowledgeStreak = false;
+    private String username, previousActivity;
+    private static boolean acknowledgeStreak, acknowledgeRisk = false;
 
     /**
      * Getter method invoked in the FoodDatabaseActivity to obtain the
@@ -45,6 +48,15 @@ public class DiaryActivity extends MainActivity {
      */
     public static String getRequest() {
         return queryRequest;
+    }
+
+    /**
+     * Getter method invokved in the FoodDatabaseActivity to obtain the
+     * date in which the diary entry is being added
+     * @return the date that exists in the diary
+     */
+    public static String getDate() {
+        return dateSelected;
     }
 
     /**
@@ -87,10 +99,13 @@ public class DiaryActivity extends MainActivity {
             }
             else {
                 username = extras.getString("username");
+                previousActivity = extras.getString("activity");
+
             }
         }
         else {
             username = (String)savedInstanceState.getSerializable("username");
+            previousActivity = (String)savedInstanceState.getSerializable("activity");
         }
 
         // set the layout to the diary_activity.xml file
@@ -140,7 +155,11 @@ public class DiaryActivity extends MainActivity {
         }
 
         // see if any foods are at risk to the user
-        checkQuantities();
+        if(!acknowledgeRisk) {
+            checkQuantities();
+            acknowledgeRisk = true;
+        }
+
 
     }
 
@@ -210,6 +229,15 @@ public class DiaryActivity extends MainActivity {
         changeDate(dateLeft);
         changeDate(dateRight);
 
+        dateText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // set queryRequest and launch the FoodDatabaseActivity
+                dateSelected = dateText.getText().toString();
+                launchActivity(ProgressActivity.class);
+            }
+        });
+
     }
 
     /**
@@ -241,6 +269,7 @@ public class DiaryActivity extends MainActivity {
             public boolean onQueryTextSubmit(String query) {
                 // set queryRequest and launch the FoodDatabaseActivity
                 queryRequest = query;
+                dateSelected = dateText.getText().toString();
                 launchActivity(FoodDatabaseActivity.class);
                 return false;
             }
@@ -372,7 +401,7 @@ public class DiaryActivity extends MainActivity {
         ImageView minus = viewCreator.createImage(row, R.drawable.ic_remove_circle_black,
                 LinearLayout.LayoutParams.MATCH_PARENT, 40,
                 Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, "minusTag");
-        minus.setColorFilter(getColor(R.color.removeRed));
+        minus.setColorFilter(ContextCompat.getColor(DiaryActivity.this, R.color.removeRed));
 
         clickToAddOrRemove(arrowDown);
         clickToAddOrRemove(arrowUp);
@@ -413,7 +442,9 @@ public class DiaryActivity extends MainActivity {
         food.setEllipsize(TextUtils.TruncateAt.MARQUEE);
         food.isFocusable();
         food.setSelected(true);
-        food.canScrollHorizontally(View.SCROLL_INDICATOR_RIGHT);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            food.canScrollHorizontally(View.SCROLL_INDICATOR_RIGHT);
+        }
         // repeat scroll 3 times
         food.setMarqueeRepeatLimit(3);
 
@@ -647,6 +678,15 @@ public class DiaryActivity extends MainActivity {
         // update diary
         UpdateDiaryEntries(theDate, username);
 
+        // display food added
+        Toast.makeText(DiaryActivity.this, foodName + " inserted into diary on " +
+                dateText.getText().toString(), Toast.LENGTH_SHORT).show();
+
+        // return if not current date
+        if(!date.getCurrentDate().equals(dateText.getText().toString())){
+            return;
+        }
+
         // see if user has logged foods for more than 2 days
         int streak = diaryHandler.findLogStreak(date, username);
         if(streak > 1 && !acknowledgeStreak) {
@@ -658,10 +698,6 @@ public class DiaryActivity extends MainActivity {
 
         // calculate points increase
         pointsHandler.checkForPointsUpdate(pointsBefore, theDate, username, true);
-
-        // display food added
-        Toast.makeText(DiaryActivity.this, foodName + " inserted into diary",
-                Toast.LENGTH_SHORT).show();
 
     }
 
@@ -679,24 +715,24 @@ public class DiaryActivity extends MainActivity {
                     // if pressed down, then change the colour of the image to blue
                     // and change the date
                     if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                        image.setColorFilter(getColor(R.color.cyan));
+                        image.setColorFilter(ContextCompat.getColor(DiaryActivity.this, R.color.cyan));
                         String prevDay = date.getPrevDate(dateText.getText().toString());
                         dateText.setText(prevDay);
                         UpdateDiaryEntries(date.convertDateFormat(dateText.getText().toString()), username);
                     } else {
                         // change the image back to black when the image is released
-                        image.setColorFilter(getColor(R.color.black));
+                        image.setColorFilter(ContextCompat.getColor(DiaryActivity.this, R.color.black));
                     }
                 }
                 else if(v.getId() == R.id.date_right) {
                     if(event.getAction() == MotionEvent.ACTION_DOWN) {
-                        image.setColorFilter(getColor(R.color.cyan));
+                        image.setColorFilter(ContextCompat.getColor(DiaryActivity.this, R.color.cyan));
                         String nextDay = date.getNextDate(dateText.getText().toString());
                         dateText.setText(nextDay);
                         UpdateDiaryEntries(date.convertDateFormat(dateText.getText().toString()), username);
                     }
                     else {
-                        image.setColorFilter(getColor(R.color.black));
+                        image.setColorFilter(ContextCompat.getColor(DiaryActivity.this, R.color.black));
                     }
                 }
                 return true;
@@ -711,11 +747,6 @@ public class DiaryActivity extends MainActivity {
      * @param view - the view representing the view clicked on
      */
     private void checkForInsert(View view, int ...row) {
-
-        // return if not current date
-        if(!date.getCurrentDate().equals(dateText.getText().toString())){
-            return;
-        }
 
         // get food name
         String foodName;
@@ -733,6 +764,7 @@ public class DiaryActivity extends MainActivity {
             if(row.length > 0) {
                 addFromRegularFoods(date.convertDateFormat(dateText.getText().toString()),
                         username, row[0]);
+
             }
             else {
                 insert(view);
@@ -751,6 +783,21 @@ public class DiaryActivity extends MainActivity {
 
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            // do something
+            System.out.println("BACK BUTTON PRESSED");
+            Class className = this.getClass();
+
+            if(className.equals(FoodDatabaseActivity.class)) {
+                launchActivity(DiaryActivity.class);
+            }
+
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
     /**
      * Generates a message based on the number of food groups the user has had
      * over their daily allowance
@@ -761,11 +808,15 @@ public class DiaryActivity extends MainActivity {
      */
     public String generateMessage(String foodName) {
 
+        System.out.println("CURRENT DATE SELECTED IS " + dateText.getText().toString());
         // work out the daily total after food contents have been added
         List<HashMap<String, String>> contents =
-                foodContentsHandler.findGroupedContentsPlusSum(foodName, username);
+                foodContentsHandler.findGroupedContentsPlusSum(foodName, username,
+                        date.convertDateFormat(dateText.getText().toString()));
 
-        List<Map<String, BigDecimal>> today = foodContentsHandler.findDailyTotal(username);
+        List<Map<String, BigDecimal>> today =
+                foodContentsHandler.findDailyTotal(date.convertDateFormat(dateText.getText().toString()),
+                        username);
 
         String message = "";
 
@@ -773,6 +824,7 @@ public class DiaryActivity extends MainActivity {
         // and concatenate to message
         for(int i = 0; i < contents.size(); i++) {
             if(today.get(i).get("intake").floatValue() < 100) {
+                System.out.println("TODAY " + today.get(i).get("intake"));
                 if (Double.parseDouble(contents.get(i).get("percentage")) > 100) {
                     message = message.concat(contents.get(i).get("Food group") + "; ");
                 }
@@ -792,7 +844,6 @@ public class DiaryActivity extends MainActivity {
     private void insert(View view) {
 
         String pointsBefore = pointsHandler.getPointsBefore(username);
-        String foodName = diary.get(view.getId()).get(0);
 
         diaryHandler.insertIntoDiary(view.getId(),
                 date.convertDateFormat(dateText.getText().toString()), username, diary, false);
@@ -801,12 +852,12 @@ public class DiaryActivity extends MainActivity {
         // update diary entries
         UpdateDiaryEntries(date.convertDateFormat(dateText.getText().toString()), username);
 
+        // return if not current date
+        if(!date.getCurrentDate().equals(dateText.getText().toString())){
+            return;
+        }
         pointsHandler.checkForPointsUpdate(pointsBefore,
                 date.convertDateFormat(dateText.getText().toString()), username, true);
-
-        Toast.makeText(DiaryActivity.this, foodName + " inserted into diary",
-                Toast.LENGTH_SHORT).show();
-
 
     }
 
@@ -861,17 +912,12 @@ public class DiaryActivity extends MainActivity {
      */
     private void remove(View view) {
 
-        // return if not current date
-        if(!date.getCurrentDate().equals(dateText.getText().toString())){
-            return;
-        }
-
-        String foodName = diary.get(view.getId()).get(0);
-
         // determine points before update
         String pointsBefore = pointsHandler.getPointsBefore(username);
 
-        List<Map<String, BigDecimal>> totals = foodContentsHandler.findDailyTotal(username);
+        List<Map<String, BigDecimal>> totals =
+                foodContentsHandler.findDailyTotal(date.convertDateFormat(dateText.getText().toString()),
+                        username);
 
         diaryHandler.removeFromDiaryEntries(date.convertDateFormat(dateText.getText().toString()),
                 username, view.getId());
@@ -881,6 +927,9 @@ public class DiaryActivity extends MainActivity {
         // update diary entries
         UpdateDiaryEntries(date.convertDateFormat(dateText.getText().toString()), username);
 
+        if(!date.getCurrentDate().equals(dateText.getText().toString())) {
+            return;
+        }
         // determine decrease in points
         pointsHandler.checkForPointsUpdate(pointsBefore,
                 date.convertDateFormat(dateText.getText().toString()), username, false);
@@ -888,8 +937,6 @@ public class DiaryActivity extends MainActivity {
         // return points?
         pointsHandler.pointsReturn(date.convertDateFormat(dateText.getText().toString()),
                 username, totals);
-
-        Toast.makeText(DiaryActivity.this, foodName + " removed from diary", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -905,7 +952,10 @@ public class DiaryActivity extends MainActivity {
                 // the minus tag in the diary
                 if (v.getTag() != null && v.getTag().equals("minusTag")) {
                     if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                        String foodName = diary.get(v.getId()).get(0);
                         remove(v);
+                        Toast.makeText(DiaryActivity.this, foodName + " removed from diary on "
+                                + dateText.getText().toString(), Toast.LENGTH_SHORT).show();
                     }
                 }
                 // arrow up image in the diary (increases quantity)
