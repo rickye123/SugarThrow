@@ -21,9 +21,10 @@
             <TextView
                 android:layout_width="275dp"
                 android:layout_height="wrap_content"
+                android:fontFamily="monospace"
                 android:text="@string/diary_title"
                 android:textColor="@color/white"
-                android:textSize="36sp" />
+                android:textSize="28sp" />
 
         </android.support.v7.widget.Toolbar>
 

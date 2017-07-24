@@ -34,4 +34,5 @@ dependencies {
     compile 'com.android.support:support-v4:25.3.1'
     compile 'commons-codec:commons-codec:1.10'
     testCompile 'junit:junit:4.12'
+    compile 'joda-time:joda-time:2.9.4'
 }

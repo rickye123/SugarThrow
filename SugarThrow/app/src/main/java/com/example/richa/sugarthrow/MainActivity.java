@@ -34,8 +34,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
 public class MainActivity extends AppCompatActivity
         implements OnNavigationItemSelectedListener {
 
@@ -209,7 +207,7 @@ public class MainActivity extends AppCompatActivity
     private void hyperLinks() {
 
         // Link to Chatelaine.com, where there is a detailed example of a healthy diet
-        LinearLayout visitChatelaine = (LinearLayout)findViewById(R.id.visit_chatelaine);
+        LinearLayout visitChatelaine = (LinearLayout)findViewById(R.id.external_chatelaine);
         visitChatelaine.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -230,6 +228,19 @@ public class MainActivity extends AppCompatActivity
                 redirect.setAction(Intent.ACTION_VIEW);
                 redirect.addCategory(Intent.CATEGORY_BROWSABLE);
                 redirect.setData(Uri.parse("http://www.nhs.uk/Livewell/Goodfood/Pages/how-to-cut-down-on-sugar-in-your-diet.aspx"));
+                startActivity(redirect);
+            }
+        });
+
+        // Link to Change 4 life website, where there are tips to improve children's sugar levels
+        LinearLayout visitChangeForLife = (LinearLayout)findViewById(R.id.visit_change4life);
+        visitChangeForLife.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent redirect = new Intent();
+                redirect.setAction(Intent.ACTION_VIEW);
+                redirect.addCategory(Intent.CATEGORY_BROWSABLE);
+                redirect.setData(Uri.parse("https://www.nhs.uk/change4life-beta/sugar#vaLWHtmec8GRXrAm.97"));
                 startActivity(redirect);
             }
         });
@@ -606,11 +617,15 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             // do something
-            System.out.println("BACK BUTTON PRESSED");
-            getPreviousActivity(previousActivity);
-
+            Class className = this.getClass();
+            if(!className.equals(MainActivity.class)) {
+                System.out.println("BACK BUTTON PRESSED");
+                getPreviousActivity(previousActivity);
+            }
+            else finish();
         }
         return super.onKeyDown(keyCode, event);
     }

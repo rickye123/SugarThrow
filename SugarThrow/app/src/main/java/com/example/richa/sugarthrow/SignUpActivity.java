@@ -7,6 +7,7 @@ Activity called when user attempts to sign up for an account
 import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -17,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import java.util.List;
@@ -32,6 +34,8 @@ public class SignUpActivity extends AppCompatActivity {
     private ServerDatabaseHandler serverDatabaseHandler;
     private ContentValues contents;
     private PasswordHash passwordHash = new PasswordHash();
+    private LinearLayout signUpProgress;
+    private Button createAccount;
 
     // invoked when activity starts
     @Override
@@ -65,7 +69,7 @@ public class SignUpActivity extends AppCompatActivity {
      * Clicking the sign up button results in the form being authenticated
      */
     private void clickSignUpButton() {
-        final Button createAccount = (Button)findViewById(R.id.sign_up_create_account);
+        createAccount = (Button)findViewById(R.id.sign_up_create_account);
         createAccount.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -240,6 +244,24 @@ public class SignUpActivity extends AppCompatActivity {
             focusView.requestFocus();
         }
         else {
+
+            signUpProgress = (LinearLayout)findViewById(R.id.sign_up_progress);
+            signUpProgress.setVisibility(View.VISIBLE);
+            createAccount.setVisibility(View.GONE);
+
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    signUpProgress.setVisibility(View.GONE);
+                    createAccount.setVisibility(View.VISIBLE);
+                }
+
+            }, 6000);
+
+            signUpProgress = (LinearLayout)findViewById(R.id.sign_up_progress);
+            signUpProgress.setVisibility(View.VISIBLE);
+            createAccount.setVisibility(View.GONE);
 
             // check if user exists on online database
             Map<String, String> params = serverDatabaseHandler.setUserParams(usernameView.getText().toString());

@@ -208,6 +208,7 @@
     <string name="ft">ft</string>
     <string name="in">in</string>
     <string name="lb">lb</string>
+    <string name="lbs">lbs</string>
     <string name="st">st</string>
     <string name="coming_soon">Coming Soon</string>
     <string name="diary_screenshot">Diary screenshot</string>
@@ -229,6 +230,15 @@
         <item>M</item>
         <item>F</item>
         <item>X</item>
+    </string-array>
+
+    <string-array name="exercise_array">
+        <item>Resting Metabolic Rate</item>
+        <item>Little or No Exercise</item>
+        <item>Lightly Active - Exercise 1 to 3 times a week</item>
+        <item>Moderately Active - Exercise 3 to 5 days a week</item>
+        <item>Very Active - Exercise 6 to 7 times a week</item>
+        <item>Extra Active - Very hard exercise or physical job</item>
     </string-array>
 
     <string-array name="feet_array">
@@ -382,7 +392,7 @@
     <string name="cola_tip">A 500ml bottle of cola contains the equivalent of 17 cubes of sugar. Try sugar-free varieties, or – better yet – water, lower-fat milk, or soda water with a splash of fruit juice</string>
     <string name="an_interesting_fact">An Interesting Fact…</string>
     <string name="fact_message_1">Did you know that there is hidden sugar in a lot of the food you eat? A tin of baked beans has as much as 20% of your daily amount</string>
-    <string name="fact_message_2">A third opf an average-sized jar of pasta sauce (roughly 150g) can contain more than 13g of sugar, including added sugar - the equivalent of three teaspoons of sugar.</string>
+    <string name="fact_message_2">A third of an average-sized jar of pasta sauce (roughly 150g) can contain more than 13g of sugar, including added sugar - the equivalent of three teaspoons of sugar.</string>
     <string name="fact_message_3">Nearly a quarter of the added sugar in our diets comes from sugary drinks, such as fizzy drinks, sweetened juices, squashes, and cordials.</string>
     <string name="fact_message_5">Dried fruit, such as raisins, dates and apricots, is high in sugar and can be bad for your dental health because it sticks to your teeth.</string>
     <string name="fact_message_4">Condiments and sauces such as ketchup can have as much as 23g of sugar in 100g – roughly half a teaspoon per serving.</string>
@@ -448,5 +458,24 @@
     <string name="intermediate">Intermediate</string>
     <string name="change_weight">CHANGE WEIGHT</string>
     <string name="searching">Searching</string>
+    <string name="nhs_logo">NHS Logo</string>
+    <string name="compute">Compute</string>
+    <string name="computing">Computing</string>
+    <string name="value_ten">10</string>
+    <string name="weekly_calories">Weekly Calories: %1$s</string>
+    <string name="how_much_exercise">How much exercise do you do?</string>
+    <string name="daily_weight_change">Daily Weight Change</string>
+    <string name="change_in_weight">Change in Weight:</string>
+    <string name="daily_change_placeholder">0.2456</string>
+    <string name="weight_placeholder">135.02456</string>
+    <string name="daily_amount">Daily Amount</string>
+    <string name="little_or_no_exercise">Little Or No Exercise</string>
+    <string name="machine_learning">Machine Learning</string>
+    <string name="weight_change_based_on_st_mifflin_jeor_equation">Weight Change Based on St.Mifflin-Jeor Equation</string>
+    <string name="weekly_weight_change">Weekly Weight Change</string>
+    <string name="weight_change">Weight Change</string>
+    <string name="weekly_calories_placeholder">Weekly Calories: 12152.20</string>
+    <string name="see_how_your_diet_is_affecting_your_weight">See how your diet is affecting your weight</string>
+    <string name="creating_account">Creating Account</string>
 
 </resources>

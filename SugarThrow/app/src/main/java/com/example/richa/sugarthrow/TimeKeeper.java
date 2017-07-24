@@ -5,6 +5,10 @@ This class is responsible for handling the Time (in particular)
 the date.
  */
 
+import org.joda.time.LocalDate;
+import org.joda.time.Period;
+import org.joda.time.PeriodType;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -136,6 +140,49 @@ class TimeKeeper {
 
         return time;
     }
+
+    /**
+     *
+     * @param dateVariables
+     * @return
+     */
+    int getAge(Map<String, String> dateVariables) {
+
+        LocalDate birthdate = new LocalDate (Integer.parseInt(dateVariables.get("year")),
+                Integer.parseInt(dateVariables.get("month")),
+                Integer.parseInt(dateVariables.get("day"))); //Birth date
+        LocalDate now = new LocalDate(); //Today's date
+        Period period = new Period(birthdate, now, PeriodType.yearMonthDay());
+
+        return period.getYears();
+
+    }
+
+    /**
+     * Similar to getDateVariables except the date format passed is in the
+     * form YYYY-MM-DD
+     * @param currentDate - day as string in form YYYY-MM-DD
+     * @return the date variables in a hashmap
+     */
+    Map<String, String> getReverseDateVariables(String currentDate) {
+
+        // format is "2017-06-01"
+        // year is the first 4 characters
+        String year = "" + currentDate.charAt(0) + currentDate.charAt(1)
+        + currentDate.charAt(2) + currentDate.charAt(3);
+        // month is the 6th and 7th character
+        String month = "" + currentDate.charAt(5) + currentDate.charAt(6);
+        // day is last 2 characters
+        String day = "" + currentDate.charAt(8) + currentDate.charAt(9);
+
+        Map<String, String> time = new HashMap<>();
+        time.put("day", day);
+        time.put("month", month);
+        time.put("year", year);
+
+        return time;
+    }
+
 
     /**
      * Get the previous date String based on the String passed into

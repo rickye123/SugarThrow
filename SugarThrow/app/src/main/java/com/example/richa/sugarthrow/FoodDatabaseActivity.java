@@ -9,7 +9,6 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -155,6 +154,24 @@ public class FoodDatabaseActivity extends DiaryActivity {
         // clear previous results if clear button pressed
         clearResults();
 
+        // clickable date returns to the diary
+        clickChangeableDate(changeableDate);
+
+    }
+
+    /**
+     * Click data and return to the diary
+     * @param changeableDate - the TextView to be clicked on
+     */
+    private void clickChangeableDate(final TextView changeableDate) {
+
+        changeableDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
     }
 
     /**
@@ -267,7 +284,7 @@ public class FoodDatabaseActivity extends DiaryActivity {
             values.put("salt", "null");
         }
         else {
-            Double saltInGrams = Double.parseDouble(salt) / 1000;
+            Double saltInGrams = Double.parseDouble(salt) / 400; // 1g of salt is 400mg of sodium
             values.put("salt", saltInGrams.toString());
         }
         values.put("sugar", searchResults.getString("nf_sugars"));
@@ -303,7 +320,38 @@ public class FoodDatabaseActivity extends DiaryActivity {
                 "&appKey=ffafe694e6e329a42e7f9d11338a90bd";
 
         // Request a string response from the provided URL.
-        sendSearchRequest(url);
+        sendSearchRequest(url, new ServerCallBack() {
+
+            @Override
+            public void onSuccess(String result) {
+                searchWrapper.setVisibility(View.VISIBLE);
+                searchProgress.setVisibility(View.GONE);
+                try  {
+                    // create initial JSON object and put it into a String
+                    JSONObject jsonObject = (JSONObject) new JSONTokener(result).nextValue();
+                    String results = jsonObject.getString("hits");
+
+                    JSONArray hits = new JSONArray(results);
+                    // empty search results, create no search entries layout
+                    if(hits.length() == 0) {
+                        Log.d("Empty hits", "empty");
+                        // if there are results already, remove these results
+                        if(searchEntries.getChildCount() > 0) {
+                            searchEntries.removeAllViews();
+                            LinearLayout noEntries = layoutCreator.createNoResultsLayout();
+                            searchEntries.addView(noEntries);
+                        }
+                    }
+                    else {
+                        clearTableContents();
+                        // search through the items
+                        searchThroughItems(hits);
+                    }
+                } catch (JSONException foodDatabaseException) {
+                    foodDatabaseException.printStackTrace();
+                }
+            }
+        });
 
     }
 
@@ -311,52 +359,16 @@ public class FoodDatabaseActivity extends DiaryActivity {
      * Send the Search request (only have 5000 of these a day)
      * @param url - the URL which was passed (including the query from the user)
      */
-    public void sendSearchRequest(String url) {
+    public void sendSearchRequest(String url, final ServerCallBack callBack) {
 
-        final String uri = url;
+        searchWrapper.setVisibility(View.GONE);
+        searchProgress.setVisibility(View.VISIBLE);
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        try  {
-                            // create initial JSON object and put it into a String
-                            JSONObject jsonObject = (JSONObject) new JSONTokener(response).nextValue();
-                            String results = jsonObject.getString("hits");
-
-                            JSONArray hits = new JSONArray(results);
-                            // empty search results, create no search entries layout
-                            if(hits.length() == 0) {
-                                Log.d("Empty hits", "empty");
-                                // if there are results already, remove these results
-                                if(searchEntries.getChildCount() > 0) {
-                                    searchEntries.removeAllViews();
-                                    LinearLayout noEntries = layoutCreator.createNoResultsLayout();
-                                    searchEntries.addView(noEntries);
-                                }
-                            }
-                            else {
-                                Log.d("Search", "searched at " + uri);
-                                clearTableContents();
-                                // search through the items
-                                searchThroughItems(hits);
-                                searchWrapper.setVisibility(View.GONE);
-                                searchProgress.setVisibility(View.VISIBLE);
-
-                                new Handler().postDelayed(new Runnable() {
-
-                                    @Override
-                                    public void run() {
-                                        searchWrapper.setVisibility(View.VISIBLE);
-                                        searchProgress.setVisibility(View.GONE);
-                                    }
-
-                                }, 1000); // delay for 1 seconds
-                            }
-                        } catch (JSONException foodDatabaseException) {
-                            foodDatabaseException.printStackTrace();
-                        }
-
+                        callBack.onSuccess(response);
                     }
                 }, new Response.ErrorListener() {
             @Override

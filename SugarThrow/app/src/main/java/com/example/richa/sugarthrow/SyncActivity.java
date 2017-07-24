@@ -67,8 +67,6 @@ public class SyncActivity extends MainActivity {
         executeSQL = new Execute(database);
         serverDatabaseHandler = new ServerDatabaseHandler(this);
 
-
-
         clickSyncToAddUsers();
 
     }

@@ -41,6 +41,7 @@ public class ProgressActivity extends MainActivity {
     private FoodContentsHandler foodContentsHandler;
     private PointsHandler pointsHandler;
     private String username, globalDate, previousActivity;
+    private List<PieChart> pieCharts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +74,8 @@ public class ProgressActivity extends MainActivity {
 
         createDrawer(toolbar);
         createNavigationView(R.id.nav_progress);
+
+        pieCharts = new ArrayList<>();
 
         Connector database = LoginActivity.getDatabaseConnection();
         executeSql = new Execute(database);
@@ -276,6 +279,11 @@ public class ProgressActivity extends MainActivity {
 
     }
 
+    protected void onPause() {
+        finish();
+        super.onPause();
+    }
+
     /**
      *
      * @param id
@@ -291,6 +299,7 @@ public class ProgressActivity extends MainActivity {
                 new Integer[] {Color.GREEN, Color.CYAN},
                 new Float[] {intake, amountLeft},
                 textSize);
+        pieCharts.add(pieChart);
     }
 
     /**

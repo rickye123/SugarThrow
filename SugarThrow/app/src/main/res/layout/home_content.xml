@@ -123,10 +123,12 @@
                         android:layout_gravity="center_vertical"
                         android:layout_weight="1"
                         android:clickable="true"
+                        android:fontFamily="monospace"
                         android:gravity="center_vertical"
                         android:text="@string/food_diary"
+                        android:textAppearance="@android:style/TextAppearance.Material.Small"
                         android:textColor="@color/black"
-                        android:textSize="26sp" />
+                        android:textSize="22sp" />
 
                     <ImageView
                         android:id="@+id/diary_chevron"
@@ -174,10 +176,11 @@
                         android:layout_gravity="center_vertical"
                         android:layout_weight="1"
                         android:clickable="true"
+                        android:fontFamily="monospace"
                         android:gravity="center_vertical"
                         android:text="@string/search_for_food"
                         android:textColor="@color/black"
-                        android:textSize="26sp" />
+                        android:textSize="22sp" />
 
                     <ImageView
                         android:id="@+id/search_database_chevron"
@@ -225,10 +228,11 @@
                         android:layout_gravity="center_vertical"
                         android:layout_weight="1"
                         android:clickable="true"
+                        android:fontFamily="monospace"
                         android:gravity="center_vertical"
                         android:text="@string/play_sugar_throw"
                         android:textColor="@color/black"
-                        android:textSize="26sp" />
+                        android:textSize="22sp" />
 
                     <ImageView
                         android:id="@+id/play_sugar_chevron"
@@ -270,6 +274,7 @@
                             android:layout_width="250dp"
                             android:layout_height="50dp"
                             android:layout_weight="1"
+                            android:fontFamily="monospace"
                             android:gravity="center_vertical"
                             android:text="@string/an_interesting_fact"
                             android:textColor="@color/black"
@@ -351,6 +356,7 @@
                             android:layout_width="250dp"
                             android:layout_height="50dp"
                             android:layout_weight="1"
+                            android:fontFamily="monospace"
                             android:gravity="center_vertical"
                             android:text="@string/tip"
                             android:textColor="@color/black"
@@ -411,8 +417,9 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/external_chatelaine"
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1.90"
                 android:background="@drawable/cherries_background"
                 android:gravity="center_vertical|center_horizontal"
@@ -430,7 +437,7 @@
                     <TextView
                         android:id="@+id/example_text"
                         android:layout_width="wrap_content"
-                        android:layout_height="50dp"
+                        android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="center_vertical|center_horizontal"
                         android:text="@string/example_healthy_meal"
@@ -439,7 +446,7 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_marginBottom="10dp"
                         android:layout_weight="1"
                         android:orientation="vertical">
@@ -514,7 +521,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/visit_chatelaine"
+                android:id="@+id/visit_nhs"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.83"
@@ -536,22 +543,32 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:id="@+id/visit_link_text"
-                            android:layout_width="250dp"
+                            android:id="@+id/how_to_cut_down_sugar"
+                            android:layout_width="200dp"
                             android:layout_height="50dp"
-                            android:layout_weight="1"
+                            android:layout_weight="1.59"
+                            android:fontFamily="monospace"
                             android:gravity="center_vertical"
-                            android:text="@string/visit_this_link_for_more_info"
+                            android:text="@string/how_to_cut_down_on_sugar"
                             android:textColor="@color/black"
-                            android:textSize="22sp"
+                            android:textSize="16sp"
                             tools:ignore="NestedWeights" />
 
                         <ImageView
-                            android:id="@+id/imageView19"
+                            android:id="@+id/imageView15"
+                            android:layout_width="33dp"
+                            android:layout_height="match_parent"
+                            android:adjustViewBounds="true"
+                            android:contentDescription="@string/nhs_logo"
+                            android:cropToPadding="false"
+                            app:srcCompat="@mipmap/nhs" />
+
+                        <ImageView
+                            android:id="@+id/cutdown_sugar_chevron"
                             android:layout_width="10dp"
                             android:layout_height="50dp"
                             android:layout_weight="1"
-                            android:contentDescription="@string/dropdown_arrow"
+                            android:contentDescription="@string/right_chevron"
                             app:srcCompat="@drawable/ic_chevron_right_black" />
                     </LinearLayout>
 
@@ -559,7 +576,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/visit_nhs"
+                android:id="@+id/visit_change4life"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.83"
@@ -581,22 +598,23 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:id="@+id/how_to_cut_down_sugar"
+                            android:id="@+id/visit_link_text"
                             android:layout_width="250dp"
                             android:layout_height="50dp"
                             android:layout_weight="1"
+                            android:fontFamily="monospace"
                             android:gravity="center_vertical"
-                            android:text="@string/how_to_cut_down_on_sugar"
+                            android:text="@string/visit_this_link_for_more_info"
                             android:textColor="@color/black"
-                            android:textSize="22sp"
+                            android:textSize="16sp"
                             tools:ignore="NestedWeights" />
 
                         <ImageView
-                            android:id="@+id/cutdown_sugar_chevron"
+                            android:id="@+id/imageView19"
                             android:layout_width="10dp"
                             android:layout_height="50dp"
                             android:layout_weight="1"
-                            android:contentDescription="@string/right_chevron"
+                            android:contentDescription="@string/dropdown_arrow"
                             app:srcCompat="@drawable/ic_chevron_right_black" />
                     </LinearLayout>
 

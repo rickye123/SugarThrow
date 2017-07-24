@@ -72,6 +72,23 @@ public class FoodContentsHandler extends MainActivity {
         return days;
     }
 
+    public String[] findPreviousSevenDays() {
+
+        String prevDay = date.getCurrentDate();
+        String[] days = new String[7];
+
+        for(int i = 0; i < 7; i++) {
+            String day = date.getPrevDate(prevDay);
+            days[i] = day;
+            prevDay = day;
+        }
+
+        reverseArray(days);
+
+        return days;
+
+    }
+
     /**
      * Reverse an array of Strings
      * @param inputArray - the array which will be reversed
@@ -515,6 +532,30 @@ public class FoodContentsHandler extends MainActivity {
                 proteinQuantity, sumOfFood.get(0).get(6)));
 
         return groupedContents;
+
+    }
+
+    /**
+     *
+     * @param contents
+     * @return
+     */
+    public Map<String, String> getContents(List<List<String>> contents) {
+
+        Map<String, String> group = new HashMap<>();
+
+        /* If a contents row is equal to null, then set its value to 0
+         * otherwise, use the value of the row
+         */
+        group.put("Sugar", contents.get(0).get(0) == null ? "0" : contents.get(0).get(0));
+        group.put("Calories", contents.get(0).get(1) == null ? "0" : contents.get(0).get(1));
+        group.put("Fat", contents.get(0).get(2) == null ? "0" : contents.get(0).get(2));
+        group.put("Saturates", contents.get(0).get(3) == null ? "0" : contents.get(0).get(3));
+        group.put("Carbs", contents.get(0).get(4) == null ? "0" : contents.get(0).get(4));
+        group.put("Salt", contents.get(0).get(5) == null ? "0" : contents.get(0).get(5));
+        group.put("Protein", contents.get(0).get(6) == null ? "0" : contents.get(0).get(6));
+
+        return group;
 
     }
 

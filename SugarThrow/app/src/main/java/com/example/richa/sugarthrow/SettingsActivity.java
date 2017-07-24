@@ -1,10 +1,14 @@
 package com.example.richa.sugarthrow;
 
-import android.content.Intent;
+/*
+Settings activity sits a menu in which the user can see their profile details,
+Go to the Goals Activity, Sync their food contents to the online database, and
+sign out of the app
+ */
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -18,10 +22,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 public class SettingsActivity extends MainActivity {
 
@@ -29,7 +31,7 @@ public class SettingsActivity extends MainActivity {
     private String username;
     private Execute executeSQL;
     private String TAG = "SettingsActivity";
-    private boolean weightClicked, profileOpen = false;
+    private boolean weightClicked;
     private String stoneAmount, poundAmount;
     private EditText pound, stone;
     private String previousActivity;
@@ -163,7 +165,15 @@ public class SettingsActivity extends MainActivity {
             poundText.setText("0");
         }
         else {
-            poundText.setText(weightSplit[1]);
+            if(weightSplit[1].equals("01")) {
+                poundText.setText("1");
+            }
+            else if(weightSplit[1].equals("1")) {
+                poundText.setText("10");
+            }
+            else {
+                poundText.setText(weightSplit[1]);
+            }
         }
 
         poundText.setTextColor(ContextCompat.getColor(SettingsActivity.this, R.color.black));
@@ -204,20 +214,35 @@ public class SettingsActivity extends MainActivity {
             profile.get("heightInches").setText("0");
         }
         else {
-            profile.get("heightInches").setText(heightSplit[1]);
+            if(heightSplit[1].equals("10")) {
+                profile.get("heightInches").setText(R.string.value_ten);
+            }
+            else {
+                profile.get("heightInches").setText(heightSplit[1]);
+            }
         }
 
         profile.get("heightFeet").setText(heightSplit[0]);
 
 
         String weight = users.get(0).get(6);
+        System.out.println("WEIGHT " + weight);
         String[] weightSplit = weight.split("\\.");
 
         if(weightSplit.length == 1) {
             profile.get("weightPound").setText("0");
         }
         else {
-            profile.get("weightPound").setText(weightSplit[1]);
+            System.out.println("WEIGHT SPLIT " + weightSplit[1]);
+            if(weightSplit[1].equals("01")) {
+                profile.get("weightPound").setText("1");
+            }
+            else if(weightSplit[1].equals("1")) {
+                profile.get("weightPound").setText("10");
+            }
+            else {
+                profile.get("weightPound").setText(weightSplit[1]);
+            }
         }
 
 
@@ -275,7 +300,13 @@ public class SettingsActivity extends MainActivity {
                                     Integer.parseInt(pound.getText().toString()) >= 0) {
                                 poundAmount = pound.getText().toString();
                             }
-                            String updateWeight = stoneAmount.concat("." + poundAmount);
+                            String updateWeight;
+                            if(poundAmount.equals("1")) {
+                                updateWeight = stoneAmount.concat("." + "0" + poundAmount);
+                            }
+                            else {
+                                updateWeight = stoneAmount.concat("." + poundAmount);
+                            }
                             executeSQL.sqlExecuteSQL(SqlQueries.SQL_UPDATE_WEIGHT, updateWeight, username);
                             Toast.makeText(SettingsActivity.this, "Weight updated", Toast.LENGTH_SHORT).show();
                             setWeight();

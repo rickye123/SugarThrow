@@ -262,9 +262,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             // do something
             System.out.println("BACK BUTTON PRESSED");
-            Intent intent = new Intent(LoginActivity.this, LoginActivity.class);
-            startActivity(intent);
-
+            finish();
         }
         return super.onKeyDown(keyCode, event);
     }
