@@ -72,6 +72,10 @@ public class FoodContentsHandler extends MainActivity {
         return days;
     }
 
+    /**
+     * Find previous five dates as Strings
+     * @return the previous five dates from the current date as a string
+     */
     public String[] findPreviousSevenDays() {
 
         String prevDay = date.getCurrentDate();
@@ -237,18 +241,11 @@ public class FoodContentsHandler extends MainActivity {
 
         List<Map<String, BigDecimal>> dailyTotals = new ArrayList<>();
 
-        System.out.println("DATE " + theDate);
-        System.out.println("USERNAME " + username);
-        System.out.println("SQL " + SqlQueries.SQL_SELECT_DIARY_ON_DAY);
         List<List<String>> sumOfFoods =
                 executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_DIARY_ON_DAY, theDate, username);
         int size = sumOfFoods.get(0).size();
 
-
-
-
         for(int i = 0; i < size; i++) {
-            System.out.println(sumOfFoods.get(0).get(i));
             dailyTotals.add(findFoodPercentages(sumOfFoods.get(0).get(i), i));
         }
 
@@ -536,9 +533,9 @@ public class FoodContentsHandler extends MainActivity {
     }
 
     /**
-     *
-     * @param contents
-     * @return
+     * Put contents for food groups into a hashmap
+     * @param contents - array list containing the food group quantities
+     * @return hashmap containing food group quantities
      */
     public Map<String, String> getContents(List<List<String>> contents) {
 

@@ -581,8 +581,6 @@ public class SignUpActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            // do something
-            System.out.println("BACK BUTTON PRESSED");
             Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
             startActivity(intent);
 

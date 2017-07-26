@@ -89,8 +89,8 @@ public class ProgressActivity extends MainActivity {
         getDailyAmounts();
         setDailyAmounts();
 
-        lineChartCreator(username);
-        pieChartCreator(username);
+        lineChartCreator();
+        pieChartCreator();
 
         setPoints();
         setQuantities();
@@ -98,7 +98,7 @@ public class ProgressActivity extends MainActivity {
     }
 
     /**
-     *
+     * Set the date in the activity
      */
     private void setDate() {
 
@@ -115,7 +115,8 @@ public class ProgressActivity extends MainActivity {
     }
 
     /**
-     *
+     * Determine achievements - whether the user has a beginners, intermediate
+     * or expert badge
      */
     private void determineAchievement() {
 
@@ -135,7 +136,7 @@ public class ProgressActivity extends MainActivity {
     }
 
     /**
-     *
+     * Set the quantities of the TextViews
      */
     private void setQuantities() {
 
@@ -163,7 +164,7 @@ public class ProgressActivity extends MainActivity {
     }
 
     /**
-     *
+     * Set the points in the Progress Activity
      */
     private void setPoints() {
 
@@ -176,7 +177,7 @@ public class ProgressActivity extends MainActivity {
     }
 
     /**
-     *
+     * Get the daily amounts for each food group and set the TextViews
      */
     private void getDailyAmounts() {
 
@@ -191,7 +192,7 @@ public class ProgressActivity extends MainActivity {
     }
 
     /**
-     *
+     * Set the daily amounts for each food group
      */
     private void setDailyAmounts() {
 
@@ -209,18 +210,20 @@ public class ProgressActivity extends MainActivity {
 
     /**
      *
-     * @param userName
+     * Create line charts for the Progress Activity
      */
-    private void lineChartCreator(String userName) {
+    private void lineChartCreator() {
 
         String[] days = foodContentsHandler.findPreviousFiveDays();
         List<Entry> yValues = new ArrayList<>();
 
         for(int i = 0; i < 5; i++) {
-            String dayAmount = executeSql.sqlGetSingleStringFromQuery(SqlQueries.SQL_STREAK, date.convertDateFormat(days[i]), userName);
+            String dayAmount = executeSql.sqlGetSingleStringFromQuery(SqlQueries.SQL_STREAK,
+                    date.convertDateFormat(days[i]), username);
             yValues.add(new Entry(i + 1, Float.parseFloat(dayAmount)));
         }
 
+        // set values of line chart
         LineChart lineChart = (LineChart)findViewById(R.id.line_chart);
         LineDataSet set1 = new LineDataSet(yValues, "Streak");
         set1.setFillAlpha(110);
@@ -235,6 +238,7 @@ public class ProgressActivity extends MainActivity {
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1);
 
+        // add line chart dataset to line chart
         LineData data = new LineData(dataSets);
         lineChart.setData(data);
         lineChart.setDescription(" ");
@@ -243,12 +247,12 @@ public class ProgressActivity extends MainActivity {
 
     /**
      *
-     * @param userName
+     * Creates pie chart in the Progress Activity
      */
-    private void pieChartCreator(String userName) {
+    private void pieChartCreator() {
 
         List<List<String>> sumOfFoods = executeSql.sqlGetFromQuery(SqlQueries.SQL_SELECT_DIARY_ON_DAY,
-                date.convertDateFormat(globalDate), userName);
+                date.convertDateFormat(globalDate), username);
         int size = sumOfFoods.get(0).size();
 
         for(int i = 0; i < size; i++) {
@@ -279,18 +283,22 @@ public class ProgressActivity extends MainActivity {
 
     }
 
+    /**
+     * Set onPause() to finish to ensure that the MPAndroidChart doesn't
+     * use up too much memory
+     */
     protected void onPause() {
         finish();
         super.onPause();
     }
 
     /**
-     *
-     * @param id
-     * @param name
-     * @param intake
-     * @param amountLeft
-     * @param textSize
+     * Creates the pie chart
+     * @param id - the id of the piechart
+     * @param name - the name of pie chart
+     * @param intake - the percentage intake left on the piechart
+     * @param amountLeft - the amount of that food group left
+     * @param textSize - the size of text
      */
     private void createPieChart(int id, String name, float intake, float amountLeft, int textSize) {
         PieChart pieChart = (PieChart)findViewById(id);
@@ -303,13 +311,13 @@ public class ProgressActivity extends MainActivity {
     }
 
     /**
-     *
-     * @param pieChart
-     * @param name
-     * @param content
-     * @param colorIntegers
-     * @param percentage
-     * @param textSize
+     * Create the variables for the pie chart, which will be used to create the pie chart
+     * @param pieChart - the piechart object
+     * @param name - the name of the chart
+     * @param content - the content to be added to the xEntries array list
+     * @param colorIntegers - the integers to be added to the array list of colors
+     * @param percentage - the percentages to be added to the dataset array list
+     * @param textSize - the size of the text
      */
     private void createPieChartVariables(PieChart pieChart, final String name, String[] content,
                                          Integer[] colorIntegers, Float[] percentage, int textSize) {
@@ -327,11 +335,11 @@ public class ProgressActivity extends MainActivity {
     }
 
     /**
-     *
-     * @param pieChart
-     * @param dataset
-     * @param xEntries
-     * @param name
+     * Listens for a click on the pie chart, resulting in a toast message appearing
+     * @param pieChart - the piechart object
+     * @param dataset - the dataset as a list of numbers
+     * @param xEntries - the x entries of the pie chart as a list of strings
+     * @param name - the name of the chart, which appears in the toast message
      */
     private void pieChartListener(PieChart pieChart, final List<Float> dataset,
                                   final List<String> xEntries,
@@ -361,13 +369,13 @@ public class ProgressActivity extends MainActivity {
     }
 
     /**
-     *
-     * @param pieChart
-     * @param name
-     * @param xEntries
-     * @param dataset
-     * @param colors
-     * @param textSize
+     * Add pie chart to pie chart array
+     * @param pieChart - the piechart
+     * @param name - the name of the data set
+     * @param xEntries - the x entries for the pie chart as a list of strings
+     * @param dataset - the dataset for the pie chart as a list of numbers
+     * @param colors - colors for the pie chart as a list of integers
+     * @param textSize - the size of the text
      */
     private void addPieChart(PieChart pieChart, String name, List<String> xEntries,
                              List<Float> dataset, List<Integer> colors, int textSize) {

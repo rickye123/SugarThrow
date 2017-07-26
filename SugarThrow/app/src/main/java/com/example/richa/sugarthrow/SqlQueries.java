@@ -14,7 +14,7 @@ class SqlQueries {
 
     static final String SQL_SET_POINTS_0 = "UPDATE User SET points = 0 WHERE User.userName = ?";
     static final String SQL_INCREMENT_POINTS_1 = "UPDATE User SET points = points + 1 WHERE User.userName = ?";
-    static final String SQL_INCREMENT_POINTS_2 = "UPDATE User SET points = points + 2 WHERE User.userName = ?";
+/*    static final String SQL_INCREMENT_POINTS_2 = "UPDATE User SET points = points + 2 WHERE User.userName = ?";*/
     static final String SQL_DECREMENT_POINTS_1 = "UPDATE User SET points = points - 1 WHERE User.userName = ?";
     static final String SQL_INCREMENT_POINTS_10 = "UPDATE User SET points = points + 10 WHERE User.userName = ?";
     static final String SQL_DECREMENT_POINTS_10 = "UPDATE User SET points = points - 10 WHERE User.userName = ?";

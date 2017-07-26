@@ -418,8 +418,6 @@ public class MainActivity extends AppCompatActivity
         List<List<String>> numberOfFoods = executeSQL.sqlGetFromQuery(SqlQueries.SQL_IN_DIARY,
                 date.convertDateFormat(date.getCurrentDate()), username);
 
-        System.out.println("NUMBER OF FOODS " + numberOfFoods.get(0).get(0));
-
         String message;
         if(!numberOfFoods.get(0).get(0).equals("Empty set")) {
             if(numberOfFoods.size() < 7) {
@@ -619,10 +617,9 @@ public class MainActivity extends AppCompatActivity
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            // do something
+
             Class className = this.getClass();
             if(!className.equals(MainActivity.class)) {
-                System.out.println("BACK BUTTON PRESSED");
                 getPreviousActivity(previousActivity);
             }
             else finish();

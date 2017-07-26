@@ -152,8 +152,6 @@ public class SettingsActivity extends MainActivity {
         poundText.setId(R.id.weight_pound_amount);
         List<List<String>> users = executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_SPECIFIC_USER, username);
 
-        System.out.println("STONE AMOUNT " + stoneAmount);
-
         String weight = users.get(0).get(6);
         String[] weightSplit = weight.split("\\.");
         stoneText.setText(weightSplit[0]);
@@ -165,14 +163,16 @@ public class SettingsActivity extends MainActivity {
             poundText.setText("0");
         }
         else {
-            if(weightSplit[1].equals("01")) {
-                poundText.setText("1");
-            }
-            else if(weightSplit[1].equals("1")) {
-                poundText.setText("10");
-            }
-            else {
-                poundText.setText(weightSplit[1]);
+            switch (weightSplit[1]) {
+                case "01":
+                    poundText.setText("1");
+                    break;
+                case "1":
+                    poundText.setText(R.string.value_ten);
+                    break;
+                default:
+                    poundText.setText(weightSplit[1]);
+                    break;
             }
         }
 
@@ -226,22 +226,22 @@ public class SettingsActivity extends MainActivity {
 
 
         String weight = users.get(0).get(6);
-        System.out.println("WEIGHT " + weight);
         String[] weightSplit = weight.split("\\.");
 
         if(weightSplit.length == 1) {
             profile.get("weightPound").setText("0");
         }
         else {
-            System.out.println("WEIGHT SPLIT " + weightSplit[1]);
-            if(weightSplit[1].equals("01")) {
-                profile.get("weightPound").setText("1");
-            }
-            else if(weightSplit[1].equals("1")) {
-                profile.get("weightPound").setText("10");
-            }
-            else {
-                profile.get("weightPound").setText(weightSplit[1]);
+            switch (weightSplit[1]) {
+                case "01":
+                    profile.get("weightPound").setText("1");
+                    break;
+                case "1":
+                    profile.get("weightPound").setText(R.string.value_ten);
+                    break;
+                default:
+                    profile.get("weightPound").setText(weightSplit[1]);
+                    break;
             }
         }
 

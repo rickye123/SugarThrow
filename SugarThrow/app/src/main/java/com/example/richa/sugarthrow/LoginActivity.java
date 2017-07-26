@@ -232,8 +232,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private boolean isUsernameValid(String username) {
 
-        System.out.println("USERNAME IS " + username);
-
         List<List<String>> user = executeSQL.sqlGetFromQuery(SqlQueries.SQL_USER,
                 username);
 
@@ -260,8 +258,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            // do something
-            System.out.println("BACK BUTTON PRESSED");
             finish();
         }
         return super.onKeyDown(keyCode, event);

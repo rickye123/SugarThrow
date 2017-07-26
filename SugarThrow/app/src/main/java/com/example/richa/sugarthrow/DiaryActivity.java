@@ -786,8 +786,7 @@ public class DiaryActivity extends MainActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            // do something
-            System.out.println("BACK BUTTON PRESSED");
+
             Class className = this.getClass();
 
             if(className.equals(FoodDatabaseActivity.class)) {
@@ -808,7 +807,6 @@ public class DiaryActivity extends MainActivity {
      */
     public String generateMessage(String foodName) {
 
-        System.out.println("CURRENT DATE SELECTED IS " + dateText.getText().toString());
         // work out the daily total after food contents have been added
         List<HashMap<String, String>> contents =
                 foodContentsHandler.findGroupedContentsPlusSum(foodName, username,
@@ -824,7 +822,6 @@ public class DiaryActivity extends MainActivity {
         // and concatenate to message
         for(int i = 0; i < contents.size(); i++) {
             if(today.get(i).get("intake").floatValue() < 100) {
-                System.out.println("TODAY " + today.get(i).get("intake"));
                 if (Double.parseDouble(contents.get(i).get("percentage")) > 100) {
                     message = message.concat(contents.get(i).get("Food group") + "; ");
                 }

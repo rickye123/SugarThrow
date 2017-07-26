@@ -8,7 +8,6 @@ import android.content.ContentValues;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.constraint.solver.Goal;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -65,6 +64,7 @@ public class GoalsActivity extends MainActivity {
             }
         }
     }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -97,6 +97,7 @@ public class GoalsActivity extends MainActivity {
 
     }
 
+    // start content
     private void startContent() {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

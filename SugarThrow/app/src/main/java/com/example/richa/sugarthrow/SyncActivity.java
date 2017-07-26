@@ -133,7 +133,7 @@ public class SyncActivity extends MainActivity {
 
         Map<String, String> params = serverDatabaseHandler.setContentParams(userId, theDate);
         String url = "http://sugarthrow.hopto.org/my_server/select_where.php";
-        Log.d(TAG, "SELECTING CONTENTS");
+
         serverDatabaseHandler.select(url, params, "Contents", new ServerCallBack() {
             @Override
             public void onSuccess(String result) {
@@ -141,7 +141,7 @@ public class SyncActivity extends MainActivity {
                 if(contents == null) {
                     // insert into Contents table
                     String url = "http://sugarthrow.hopto.org/my_server/insert_into_contents.php";
-                    Log.d(TAG, "INSERTING CONTENTS");
+
                     serverDatabaseHandler.insert(url, values, new ServerCallBack() {
                         @Override
                         public void onSuccess(String result) {
@@ -159,7 +159,7 @@ public class SyncActivity extends MainActivity {
                 }
                 else {
                     String url = "http://sugarthrow.hopto.org/my_server/update_contents.php";
-                    Log.d(TAG, "UPDATING CONTENTS");
+
                     serverDatabaseHandler.update(url, values, new ServerCallBack() {
                         @Override
                         public void onSuccess(String result) {
@@ -204,14 +204,12 @@ public class SyncActivity extends MainActivity {
                 if(rows.get(0).get(j) == null) {
                     rows.get(0).set(j, "0");
                 }
-                System.out.println(rows.get(0).get(j));
             }
 
 
             Map<String, String> values = serverDatabaseHandler.setContentContents(rows,
                     userId, dates.get(i).get(0));
             final String theDate = dates.get(i).get(0);
-            System.out.println(theDate);
 
             // check if contents already in table...
             insertIntoContents(theDate, values);

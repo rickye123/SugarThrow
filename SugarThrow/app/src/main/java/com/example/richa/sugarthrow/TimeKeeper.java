@@ -42,8 +42,9 @@ class TimeKeeper {
     }
 
     /**
-     *
-     * @return
+     * Get the current time as HH:MM:SS
+     * @return - the current time (hours, minutes, and seconds)
+     * in the form HH:MM:SS
      */
     String getCurrentTime() {
 
@@ -60,7 +61,7 @@ class TimeKeeper {
 
     /**
      *
-     * @return
+     * @return - the day of the week based on a number
      */
     String getDay() {
 
@@ -72,27 +73,13 @@ class TimeKeeper {
 
         int day = cal.get(Calendar.DAY_OF_WEEK);
 
-        if(day == 1) {
-            return "Sunday";
-        }
-        if(day == 2) {
-            return "Monday";
-        }
-        if(day == 3) {
-            return "Tuesday";
-        }
-        if(day == 4) {
-            return "Wednesday";
-        }
-        if(day == 5) {
-            return "Thursday";
-        }
-        if(day == 6) {
-            return "Friday";
-        }
-        else {
-            return "Saturday";
-        }
+        if(day == 1) return "Sunday";
+        if(day == 2) return "Monday";
+        if(day == 3) return "Tuesday";
+        if(day == 4) return "Wednesday";
+        if(day == 5) return "Thursday";
+        if(day == 6) return "Friday";
+        else return "Saturday";
 
     }
 
@@ -142,9 +129,9 @@ class TimeKeeper {
     }
 
     /**
-     *
-     * @param dateVariables
-     * @return
+     * Gets someone's age based on the year, month, and day they were born
+     * @param dateVariables - the variables referring to the year, month, and day
+     * @return age based on date variables as an integer
      */
     int getAge(Map<String, String> dateVariables) {
 

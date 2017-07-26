@@ -11,7 +11,6 @@ import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -19,8 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -151,7 +148,6 @@ public class RiskActivity extends MainActivity {
                     public void run() {
                         computeMachineLearning.setVisibility(View.GONE);
                         machineLearningSync.setVisibility(View.VISIBLE);
-                        // TODO compute machine learning
                         machineLearning();
                     }
 
@@ -394,15 +390,12 @@ public class RiskActivity extends MainActivity {
     private double getLastWeek() {
 
         String[] days = foodContentsHandler.findPreviousSevenDays();
-        for(String day: days) {
-            System.out.println("DAY " + day);
-        }
+
         double calorieSum = 0;
 
         for(int i = 0; i < 7; i++) {
             List<List<String>> contents = executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_DIARY_ON_DAY,
                     date.convertDateFormat(days[i]), username);
-            System.out.println(i + " " + contents.get(0).get(0));
             // if contents for a day are empty, then return 0
             if(contents.get(0).get(0) == null) {
                 return 0;
@@ -666,14 +659,16 @@ public class RiskActivity extends MainActivity {
         }
         else {
             // ensures that .10 is turned into 10 rather than 1
-            if(weightSplit[1].equals("01")) {
-                decimal = 1;
-            }
-            else if(weightSplit[1].equals("1")) {
-                decimal = 10;
-            }
-            else {
-                decimal = Double.parseDouble(weightSplit[1]);
+            switch (weightSplit[1]) {
+                case "01":
+                    decimal = 1;
+                    break;
+                case "1":
+                    decimal = 10;
+                    break;
+                default:
+                    decimal = Double.parseDouble(weightSplit[1]);
+                    break;
             }
         }
 
@@ -705,14 +700,16 @@ public class RiskActivity extends MainActivity {
         }
         else {
             // ensures that weight is 10 rather than 1, when .10
-            if(weightSplit[1].equals("01")) {
-                decimal = 1;
-            }
-            else if(weightSplit[1].equals("1")) {
-                decimal = 10;
-            }
-            else {
-                decimal = Double.parseDouble(weightSplit[1]);
+            switch (weightSplit[1]) {
+                case "01":
+                    decimal = 1;
+                    break;
+                case "1":
+                    decimal = 10;
+                    break;
+                default:
+                    decimal = Double.parseDouble(weightSplit[1]);
+                    break;
             }
         }
 
@@ -822,7 +819,9 @@ public class RiskActivity extends MainActivity {
     }
 
     /**
-     * TODO
+     * Computes the machine learning equation for the user and
+     * determines the change in weight and how many days it will
+     * take for the user to gain / lose a pound
      */
     private void machineLearning() {
 
@@ -861,8 +860,8 @@ public class RiskActivity extends MainActivity {
     }
 
     /**
-     *
-     * @param changeInWeight
+     * Determine the weight change based on the ML equation
+     * @param changeInWeight - the change in weight based on ML equation
      */
     private void addMachineLearningWeightChange(String changeInWeight) {
 
@@ -925,6 +924,9 @@ public class RiskActivity extends MainActivity {
 
     }
 
+    /**
+     * Determine the weejly weight change based on the ML equation
+     */
     private void machineLearningWeeklyWeightChange() {
 
         double totalCalories = getLastWeek();
@@ -934,9 +936,8 @@ public class RiskActivity extends MainActivity {
         if(totalCalories > 0) {
 
             double totalWeightChange = 0;
-            List<String> amount = new ArrayList<>();
+
             for(String day : days) {
-                amount.add(getAmountsFromDate(date.convertDateFormat(day)));
                 totalWeightChange += Double.parseDouble(getAmountsFromDate(date.convertDateFormat(day)));
             }
             double changeWeight = Math.abs(1 / totalWeightChange);
@@ -959,6 +960,11 @@ public class RiskActivity extends MainActivity {
 
     }
 
+    /**
+     * Get the change in weight on a given date
+     * @param theDate - the date as a string
+     * @return regression as a string based on the given date
+     */
     private String getAmountsFromDate(String theDate) {
 
         List<List<String>> contents = executeSQL.sqlGetFromQuery(SqlQueries.SQL_SELECT_DIARY_ON_DAY,
@@ -983,9 +989,17 @@ public class RiskActivity extends MainActivity {
 
     }
 
+    /**
+     * Calculate the weight based on the ML regression equation provided
+     * @param percentageContribution - the percentage of each food group a user has had that
+     *                               given day
+     * @return the change in weight as a double
+     */
     private double calculateRegression(Map<String, String> percentageContribution) {
 
-        double regression = -1.031 + (0.0006514*Double.parseDouble(percentageContribution.get("Sugar"))) +
+        double regression;
+
+        regression = -1.031 + (0.0006514*Double.parseDouble(percentageContribution.get("Sugar"))) +
                 (0.004631*Double.parseDouble(percentageContribution.get("Calories"))) +
                 (0.001321*Double.parseDouble(percentageContribution.get("Fat"))) +
                 (0.0003925*Double.parseDouble(percentageContribution.get("Saturates"))) +
@@ -997,13 +1011,16 @@ public class RiskActivity extends MainActivity {
 
     }
 
+    /**
+     * Finds the percentage contribution from the required amount
+     * @param group - hashmap containing the food group percentages
+     * @param required - hashmap containing the required amount of each food group
+     * @return hashmap containing the percentage contribution for each food group
+     */
     private Map<String, String> findPercentageContribution(Map<String, String> group,
                                                        Map<String, String> required) {
 
         Map<String, String> percentageContribution = new HashMap<>();
-
-        System.out.println(group.get("Calories"));
-        System.out.println(calories);
 
         percentageContribution.put("Calories", String.format(Locale.ENGLISH, "%.5f",
                 (Double.parseDouble(group.get("Calories")) / Double.parseDouble(calories)) * 100));
