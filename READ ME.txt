@@ -1,0 +1,70 @@
+How to Navigate Project Folder
+
+1. Accessing the Source Code
+The source code for this project sits within the "./source_code" folder.
+This folder splits the code up into four subfolders, "java", "php", "xml", 
+and "sql". 
+
+The "java" folder contains all the source code used for running the app. 
+Each activity (or page) of the app has its own Java file - these files
+are named _Activity.java. The other java files are simply just different
+classes that these activities reference. All these files have been properly
+commented and relevant javadocs created. 
+
+The "php" folder contains all the source code that was used for accessing an 
+online MySQL database from a server. This includes files which referenced the 
+data, e.g. "contents.php" and files used to insert records into tables, e.g.
+"insert_into_contents.php". 
+
+The "sql" folder contains the create / drop scripts for the two databases, the
+local SQLite database used within the app and the online MySQL database used on
+the server. 
+
+Finally, the "xml" folder contains all the layout files used in the app. These are 
+simply XML files identifying the different layouts and views used for the activities. 
+Each activity has 3 XML files related to it, named: "_activity.xml", "_toolbar.xml" 
+and "_content.xml", respectively. The first xml file is used to reference the 
+"_toolbar.xml" file, which is then used to reference the "_content.xml" file. 
+The latter file contains all the different layouts and views used within that activity. 
+
+
+2. Running the app on Android Studio
+If you do not own an Android Device, please read the following steps: 
+
+Make sure you have Android Studio (versions 2.3.3) installed on your computer. If you 
+do not have this, download it from https://developer.android.com/studio/index.html. 
+Installing Android studio is simple, you just need to make sure that the Android SDK
+and Android Virtual Devices are selected when you install). 
+
+After Android Studio is installed and running, click open existing project and then open
+the folder containing the Android Studio project (this should be titled "SugarThrow" - 
+you will be able to tell what the project is as the folder will appear as the Android 
+Studio logo). 
+
+The gradle will then start to build the project. Android Studio is a bit buggy, so you may 
+be told that you have certain build tools that are out of date, so click on the links
+to update / install them when asked to do so.If the gradle is still reporting problms, go 
+to Tools > Android > Sync Project with gradle files. Once the gradle build is finished, 
+no error messages will appear in the IDE. 
+
+You can now run the app by clicking the green play button towards the top, or by clicking
+Run > Run 'app'. You will then need to create a virtual device, which can be done
+by adding one of the defaults (i.e. create virtual device, select Pixel XL). If Android
+Studio reports further problems, this is because of the "Instant Run" feature, which can
+be deselected by going File > Settings > Build, Execution, Deployment > Instant Run, and
+then untick the first option. 
+
+It will take a while (approx. 15 seconds) for the app to appear in the virtual device. 
+When it does, the setup has been successful and the app can be viewed. 
+
+
+
+3. Downloading the APK and Running the app on an Android Device
+An alternative to the above is to download the APK directly onto your phone. 
+Simply follow this link: https://drive.google.com/open?id=0Bwc3UWVFZi8iNkZBU1l0aF9UM1E
+on your phone and download. The app should install once it has been downloaded. 
+If this doesn't work, follow this link: 
+http://mobileaccessibility.cs.washington.edu/apps/docs/HowToInstallAPKFiles.pdf
+
+
+

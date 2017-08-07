@@ -117,7 +117,7 @@ public class RiskActivity extends MainActivity {
             @Override
             public void onClick(View v) {
                 if(dropdown.getVisibility() == View.GONE) {
-                    wrapper.setBackgroundResource(R.drawable.shape_borderbottom);
+                    wrapper.setBackgroundResource(R.drawable.shape_borderbottomtop);
                     dropdown.setVisibility(View.VISIBLE);
                     dropdown.setBackgroundResource(R.drawable.shape_borderbottom);
                     dropDownArrow.setImageResource(R.drawable.ic_keyboard_arrow_up_black);
@@ -125,7 +125,7 @@ public class RiskActivity extends MainActivity {
                 else {
                     dropdown.setVisibility(View.GONE);
                     dropdown.setBackgroundResource(R.drawable.border_bottom);
-                    wrapper.setBackgroundResource(R.drawable.border_bottom);
+                    wrapper.setBackgroundResource(R.drawable.cyanshape_bordertop);
                     dropDownArrow.setImageResource(R.drawable.ic_keyboard_arrow_down_black);
                     if(mlLayout.getChildCount() > 0) {
                         mlLayout.removeAllViews();
@@ -181,7 +181,7 @@ public class RiskActivity extends MainActivity {
                 else {
                     amountDropdown.setVisibility(View.GONE);
                     amountDropdown.setBackgroundResource(R.drawable.border_bottom);
-                    amountWrapper.setBackgroundResource(R.drawable.border_top_and_bottom);
+                    amountWrapper.setBackgroundResource(R.drawable.cyanshape_bordertop);
                     dropDownArrow.setImageResource(R.drawable.ic_keyboard_arrow_down_black);
                     exerciseText.setVisibility(View.GONE);
                     if(riskLayout.getChildCount() > 0) {
@@ -233,7 +233,7 @@ public class RiskActivity extends MainActivity {
             @Override
             public void onClick(View v) {
                 if(weightDropdown.getVisibility() == View.GONE) {
-                    weightWrapper.setBackgroundResource(R.drawable.shape_borderbottom);
+                    weightWrapper.setBackgroundResource(R.drawable.shape_borderbottomtop);
                     weightDropdown.setVisibility(View.VISIBLE);
                     weightDropdown.setBackgroundResource(R.drawable.shape_borderbottom);
                     dropDownArrow.setImageResource(R.drawable.ic_keyboard_arrow_up_black);

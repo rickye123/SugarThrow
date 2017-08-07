@@ -475,7 +475,12 @@
     <string name="weekly_weight_change">Weekly Weight Change</string>
     <string name="weight_change">Weight Change</string>
     <string name="weekly_calories_placeholder">Weekly Calories: 12152.20</string>
-    <string name="see_how_your_diet_is_affecting_your_weight">See how your diet is affecting your weight</string>
+    <string name="see_how_your_diet_is_affecting_your_weight">See How Your Diet is Affecting Your Weight</string>
     <string name="creating_account">Creating Account</string>
+    <string name="click_below">Click On the Items Below to Determine the Amount of Food You Need Each Day and Your Subsequent Change in Weight Based On Your Diet</string>
+    <string name="ml_explained">Click Machine Learning to Determine Your Change in Weight Based on Historical Data</string>
+    <string name="build_tool">Build Tool</string>
+    <string name="machine_learning_gear">Machine Learning Gear</string>
+    <string name="fat_person">Fat Person</string>
 
 </resources>

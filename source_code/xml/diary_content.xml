@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.example.richa.sugarthrow.DiaryActivity"
+    tools:showIn="@layout/diary_toolbar">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="8dp"
+        tools:ignore="UselessParent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:weightSum="1">
+
+            <SearchView
+                android:id="@+id/diary_search"
+                android:layout_width="match_parent"
+                android:layout_height="53dp"
+                android:background="@drawable/search_bar">
+
+            </SearchView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/date_left"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:contentDescription="@string/yesterdayChevron"
+                    app:srcCompat="@drawable/ic_chevron_left_black" />
+
+                <TextView
+                    android:id="@+id/date_text"
+                    android:layout_width="252dp"
+                    android:layout_height="51dp"
+                    android:layout_weight="0.15"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:text="@string/placeholder_date"
+                    android:textColor="@color/black"
+                    android:textSize="24sp"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/date_right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:contentDescription="@string/tomorrowChevron"
+                    app:srcCompat="@drawable/ic_chevron_right_black" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/wrapper_diary"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal|center"
+                android:gravity="center_horizontal|center"
+                android:orientation="horizontal"
+                android:baselineAligned="false">
+
+                <LinearLayout
+                    android:id="@+id/diary_entries"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:layout_weight="0.7"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/no_entry_wrapper"
+                        android:layout_width="200dp"
+                        android:layout_height="158dp"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/entry_text"
+                            android:layout_width="0dp"
+                            android:layout_height="42dp"
+                            android:layout_weight="0.59"
+                            android:background="@drawable/dashed_border"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:text="@string/placeholder_no_entries"
+                            android:textColor="@color/black"
+                            android:textSize="24sp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/reg_food"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="@string/your_regular"
+                android:textColor="@color/black"
+                android:textSize="24sp" />
+
+            <LinearLayout
+                android:id="@+id/first_reg_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|center_horizontal"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/first_reg_inner_layout"
+                    android:layout_width="290dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="10dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/firstRegItem"
+                        android:layout_width="225dp"
+                        android:layout_height="46dp"
+                        android:layout_weight="1.00"
+                        android:clickable="true"
+                        android:ellipsize="end"
+                        android:gravity="start|center_vertical|center"
+                        android:maxLines="1"
+                        android:text="@string/space"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
+
+                    <ImageView
+                        android:id="@+id/addFirstReg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1.00"
+                        android:clickable="true"
+                        android:contentDescription="@string/firstAdd"
+                        android:tint="@color/correctGreen"
+                        android:visibility="gone"
+                        app:srcCompat="@drawable/ic_add_circle_black" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/second_reg_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|center_horizontal"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/second_reg_inner_layout"
+                    android:layout_width="290dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="10dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/secondRegItem"
+                        android:layout_width="225dp"
+                        android:layout_height="46dp"
+                        android:layout_weight="1.00"
+                        android:clickable="true"
+                        android:ellipsize="end"
+                        android:gravity="start|center_vertical|center"
+                        android:maxLines="1"
+                        android:text="@string/space"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
+
+                    <ImageView
+                        android:id="@+id/addSecondReg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1.00"
+                        android:clickable="true"
+                        android:contentDescription="@string/firstAdd"
+                        android:tint="@color/correctGreen"
+                        android:visibility="gone"
+                        app:srcCompat="@drawable/ic_add_circle_black" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/third_reg_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|center_horizontal"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/third_reg_inner_layout"
+                    android:layout_width="290dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="10dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/thirdRegItem"
+                        android:layout_width="225dp"
+                        android:layout_height="46dp"
+                        android:layout_weight="1.00"
+                        android:clickable="true"
+                        android:ellipsize="end"
+                        android:gravity="start|center_vertical|center"
+                        android:maxLines="1"
+                        android:text="@string/space"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
+
+                    <ImageView
+                        android:id="@+id/addThirdReg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1.00"
+                        android:clickable="true"
+                        android:contentDescription="@string/firstAdd"
+                        android:tint="@color/correctGreen"
+                        android:visibility="gone"
+                        app:srcCompat="@drawable/ic_add_circle_black" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fourth_reg_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|center_horizontal"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/fourth_reg_inner_layout"
+                    android:layout_width="290dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="10dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/fourthRegItem"
+                        android:layout_width="225dp"
+                        android:layout_height="46dp"
+                        android:layout_weight="1.00"
+                        android:clickable="true"
+                        android:ellipsize="end"
+                        android:gravity="start|center_vertical|center"
+                        android:maxLines="1"
+                        android:text="@string/space"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
+
+                    <ImageView
+                        android:id="@+id/addFourthReg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1.00"
+                        android:clickable="true"
+                        android:contentDescription="@string/firstAdd"
+                        android:tint="@color/correctGreen"
+                        android:visibility="gone"
+                        app:srcCompat="@drawable/ic_add_circle_black" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fifth_reg_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|center_horizontal"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/fifth_reg_inner_layout"
+                    android:layout_width="290dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="10dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/fifthRegItem"
+                        android:layout_width="225dp"
+                        android:layout_height="46dp"
+                        android:layout_weight="1.00"
+                        android:clickable="true"
+                        android:ellipsize="end"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:gravity="start|center_vertical|center"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:maxLines="1"
+                        android:scrollHorizontally="true"
+                        android:text="@string/space"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
+
+                    <ImageView
+                        android:id="@+id/addFifthReg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1.00"
+                        android:clickable="true"
+                        android:contentDescription="@string/firstAdd"
+                        android:tint="@color/correctGreen"
+                        android:visibility="gone"
+                        app:srcCompat="@drawable/ic_add_circle_black" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>
